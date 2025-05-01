@@ -1,0 +1,40 @@
+@use "../variables" as *;
+@use "../animation" as *;
+@use "../shared" as *;
+.footer {
+  width: 100%;
+  background-color: rgba($primary-background, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem 0;
+  z-index: 10;
+  border-top: 1px solid rgba($light-accent, 0.2);
+  .footer-container {
+    .footer-content {
+      width:80%;
+      margin: 0 auto;
+  
+      h6 {  
+        color: $primary-text;
+        font-family: $secondary-font;
+        @extend %h6-style;  
+        margin: 0;
+        .creator-name a {
+          color: $light-accent;
+          font-weight: 600;
+          position: relative;
+          text-decoration: none;
+        }
+        .site-name {
+          color: $dark-accent;
+          font-weight: 600;
+        }
+        .heart-icon {
+          color: #ff4d4d;
+          display: inline-block;
+          animation: heartbeat 1.5s infinite;
+        }
+      }
+    }
+  }
+}
+
