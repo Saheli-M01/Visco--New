@@ -22,10 +22,10 @@ const TypeWriter = ({ text }) => {
       "#ed9a77": ["const", "function", "div"],
       "#d26cce": ["state", "setState", "useState"],
       "#88E08B": [
-        "null", "animate", "container-fluid", "text-center",
-        "100vh", "flex", "$secondary-background"
+        "null", "animate", "container",
+        "100vh", "flex"
       ],
-      "#ab86f3": ["requestAnimationFrame"],
+      "#ab86f3": ["animationFrame"],
       "#f9d201": ["className", "#about"],
      
     };
@@ -51,7 +51,7 @@ const TypeWriter = ({ text }) => {
   let position = 0;
   
   return (
-    <pre>
+    <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', wordBreak: 'break-word', margin: 0 }}>
       <code>
         {words.map((word, wordIndex) => {
           const chars = word.split('');
@@ -66,7 +66,9 @@ const TypeWriter = ({ text }) => {
                   color: color,
                   opacity: 0,
                   animation: `typing 0.1s forwards ${currentPosition * 0.1}s`,
-                  whiteSpace: 'pre'
+                  whiteSpace: 'pre-wrap',
+                  wordWrap: 'break-word',
+                  wordBreak: 'break-word'
                 }}
               >
                 {char}
@@ -111,36 +113,37 @@ const About = () => {
       code: "const [state, setState] = useState(null);",
     },
     {
-      name: "JavaScript",
-      icon: faJs,
-      code: "function animate() {\n  requestAnimationFrame(animate);\n}",
-    },
-    {
       name: "Bootstrap",
       icon: faBootstrap,
-      code: '<div className ="container-fluid text-center">',
+      code: '<div className ="container">',
     },
+    {
+      name: "JavaScript",
+      icon: faJs,
+      code: "function animate() {\n  animationFrame(animate);\n}",
+    },
+    
     {
       name: "Sass",
       icon: faSass,
-      code: "#about {\n  min-height: 100vh;\n  background: $secondary-background;\n  display: flex;\n}",
+      code: "#about {\n  min-height: 100vh;\n  display: flex;\n}",
     },
   ];
 
   return (
     <section id="about">
-      <div className="container-fluid custom-container">
-        <div className="left">
-          <div className="feature">
+      <div className="container-fluid custom-container d-flex justify-content-center align-items-center">
+        <div className="left d-grid justify-content-center align-items-center">
+          <div className="feature d-grid justify-content-center align-items-center glass-background">
             {features.map((feature, index) => (
               <div key={index} className="feature-item">
                 <FontAwesomeIcon icon={feature.icon} />
-                <h3>{feature.title}</h3>
+                <h4>{feature.title}</h4>
                 <p>{feature.description}</p>
               </div>
             ))}
           </div>
-          <div className="contact">
+          <div className="contact  glass-background">
             <h3>Contacts</h3>
             <div className="contact-icons">
               <a href="mailto:your.email@example.com" className="contact-icon">
@@ -158,7 +161,7 @@ const About = () => {
           </div>
         </div>
         <div className="right">
-          <div className="mission">
+          <div className="mission  glass-background">
             <h3>Mission</h3>
             <p>
               Visco's mission is to empower students to grasp algorithms with
@@ -168,7 +171,7 @@ const About = () => {
               foundation in computer science.
             </p>
           </div>
-          <div className="tech-stack">
+          <div className="tech-stack  glass-background">
             <h3>Tech Stack Used</h3>
             <div className="tech-boxes">
               {techStack.map((tech, index) => (
@@ -176,7 +179,7 @@ const About = () => {
                   <div className="window-header">
                     <FontAwesomeIcon icon={tech.icon} />
                   </div>
-                  <div className="code-content">
+                  <div className="code-content px-3">
                     <TypeWriter text={tech.code} />
                   </div>
                 </div>

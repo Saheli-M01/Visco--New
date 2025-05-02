@@ -10,7 +10,7 @@ const Home = () => {
     };
   return (
     <section id="home">
-      <div className="container text-center">
+      <div className="container text-center py-3">
         <h1>
           Welcome to <span className="heavy-h1">Visco</span>
         </h1>
