@@ -1,4 +1,5 @@
 @use "variables" as *;
+@use "./PageStyle/topicStyle";
 //Font style
 @font-face {
   font-family: "Montserrat";
@@ -65,4 +66,8 @@ body {
   flex-direction: column;
   position: relative;
   z-index: 1;
+
 }
+
+// Import the new TopicLayout styles
+

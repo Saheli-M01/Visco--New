@@ -2,10 +2,12 @@
 @use "../shared" as *;
 @use "../animation" as *;
 #topic {
+
   padding-block: 2.5rem;
   min-height: 100vh;
   background-color: $primary-text;
   h2 {
+    margin-top: 3rem;
     color: $primary-background;
     font-family: $primary-font;
     font-weight: 600;
