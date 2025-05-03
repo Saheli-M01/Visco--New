@@ -4,11 +4,10 @@
 
 #home {
   height: 100vh ;
-  
   display: flex;
   align-items: center;
   justify-content: center;
-
+ 
   .container {
     opacity: 0;
     animation: slideInFromBottom 0.8s ease forwards;

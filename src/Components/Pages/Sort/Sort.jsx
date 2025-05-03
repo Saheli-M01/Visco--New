@@ -94,7 +94,7 @@ const Sort = () => {
           </ol>
         </nav>
         
-        <h2 className="algorithm-category">Comparison-Based Algorithms</h2>
+        <h4 className="algorithm-category">Comparison-Based Algorithms</h4>
         <div className="row g-4">
           {sortingAlgorithms.map((algo, index) => (
             <div key={index} className="col-lg-3 col-md-4 col-sm-6">
@@ -118,7 +118,7 @@ const Sort = () => {
           ))}
         </div>
         
-        <h2 className="algorithm-category mt-5">Non-Comparison-Based Algorithms</h2>
+        <h4 className="algorithm-category mt-5">Non-Comparison-Based Algorithms</h4>
         <div className="row g-4">
           {nonComparisonAlgorithms.map((algo, index) => (
             <div key={index} className="col-lg-3 col-md-4 col-sm-6">
