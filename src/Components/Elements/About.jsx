@@ -132,6 +132,7 @@ const About = () => {
 
   return (
     <section id="about">
+
       <div className="container-fluid custom-container d-flex justify-content-center align-items-center">
         <div className="left d-grid justify-content-center align-items-center">
           <div className="feature d-grid justify-content-center align-items-center glass-background">
@@ -161,7 +162,7 @@ const About = () => {
           </div>
         </div>
         <div className="right">
-          <div className="mission  glass-background">
+          <div className="mission">
             <h3>Mission</h3>
             <p>
               Visco's mission is to empower students to grasp algorithms with

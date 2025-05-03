@@ -7,6 +7,7 @@
   background: $secondary-background;
   display: flex;
   padding-block: 2.5rem;
+ 
   h3 {
     color: $light-accent;
     @extend %h3-style;
@@ -184,9 +185,11 @@
         margin-top: 2rem;
         text-align: center;
         padding: 2rem;
-        border-radius: 12px;
+        border-radius: 0;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+        background: rgba($light-accent, 0.03);
+        backdrop-filter: blur(10px);
+        
         &:hover {
           transform: translateY(-5px);
           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -196,21 +199,6 @@
           position: relative;
           display: inline-block;
 
-          &::after {
-            content: "";
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -5px;
-            left: 50%;
-            background: $light-accent;
-            transition: all 0.3s ease;
-          }
-
-          &:hover::after {
-            width: 100%;
-            left: 0;
-          }
         }
 
         .contact-icons {
@@ -234,15 +222,13 @@
             background: rgba(85, 85, 85, 0.429);
             border-radius: 6px;
             transition: all 0.3s ease;
-
+            background: rgba($light-accent, 0.05);
+            border:1px solid rgba($primary-text, 0.2);
             &:hover {
               opacity: 0.8;
               background: rgba(255, 255, 255, 0.05);
             }
           }
-        }
-        @media (max-width: 1366px) {
-          display: none;
         }
       }
     }
@@ -266,12 +252,7 @@
           overflow: hidden;
           text-align: justify;
         }
-        &:hover {
-          background-color: rgba($secondary-text, 0.1);
-
-          box-shadow: 0 5px 3px rgba(255, 255, 255, 0.2);
-         
-        }
+       
       }
       .tech-stack {
         .tech-boxes {
@@ -293,8 +274,7 @@
 
             &:hover {
               transform: translateY(-5px);
-              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4),
-                0 0 10px rgba($secondary-text, 0.2);
+            
             }
 
             .window-header {
@@ -337,10 +317,98 @@
           }
         }
       }
-      @media (max-width: 1366px) {
-        max-width: 80%;
-        margin: auto;
+    }
+    @media (max-width: 1366px) {
+      .left,
+      .right {
+        width: 100%;
+        max-width: 600px;
       }
     }
+    @media (max-width: 768px) {
+      .left,
+      .right {
+        max-width: 400px;
+      }
+    }
+  }
+}
+
+.mission {
+  transition: all 0.3s ease;
+  border-radius: 0px;
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+  background-image: 
+    radial-gradient(circle, rgba(255, 255, 255, 0.185) 1px, transparent 1px);
+  background-size: 20px 20px;
+  
+  // Top-left corner
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%;
+    height: 40%;
+    border-top: 3px solid $light-accent;
+    border-left: 3px solid $light-accent;
+  }
+  
+  
+    
+    // Bottom-right corner
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 30%;
+      height: 40%;
+      border-bottom: 3px solid $light-accent;
+      border-right: 3px solid $light-accent;
+      z-index: 1; // Add z-index
+    }
+  
+  // Remove duplicate hover effect
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(49, 49, 49, 0.2);
+    
+    &::before,
+    &::after{
+      border-color: rgba($light-accent, 0.8);
+    }
+  }
+  
+  h3 {
+    @extend %h3-style;
+    font-family: $primary-font;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    
+    
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(37, 37, 37, 0.2);
+    
+    &::before,
+    &::after,
+    h3::before,
+    h3::after {
+      border-color: rgba($light-accent, 0.8);
+    }
+  }
+  
+  p {
+    @extend %p-style;
+    font-family: $secondary-font;
+    color: $secondary-text;
+    line-height: 1.7;
+    overflow: hidden;
+    text-align: justify;
   }
 }

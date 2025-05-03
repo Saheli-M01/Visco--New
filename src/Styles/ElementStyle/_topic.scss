@@ -1,3 +1,108 @@
+@use "../variables" as *;
+@use "../shared" as *;
+@use "../animation" as *;
 #topic {
-  height: 100vh;
+  padding-block: 2.5rem;
+  min-height: 100vh;
+  background-color: $primary-text;
+  h2 {
+    color: $primary-background;
+    font-family: $primary-font;
+    font-weight: 600;
+    @extend %h2-style;
+    text-shadow: 6px 6px 2px rgba(160, 160, 160, 0.5);
+  }
+  .custom-container {
+    width: 90%;
+    margin: auto;
+    display: grid;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1rem;  // Moved before media queries
+
+    // Tablet: 2 columns
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    // Mobile: 1 column
+    @media (max-width: 576px) {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    .topic-card {
+      background: rgba($primary-text, 0.6);
+      box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      height: 100%;
+      position: relative;
+      cursor: pointer;
+
+      h3 {
+        color: $primary-background;
+        font-family: $primary-font;
+        @extend %h3-style;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      p {
+        color: $primary-background;
+        font-family: $secondary-font;
+        @extend %p-style;
+        margin-bottom: 1.5rem;
+      }
+      .card-icon {
+        text-align: center;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+        width: 80px;
+        height: 80px;
+        background: rgba($dark-accent, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        position: relative;
+        &::after {
+          content: "";
+          position: absolute;
+          top: -5px;
+          left: -5px;
+          right: -5px;
+          bottom: -5px;
+          border-radius: 50%;
+          // border: 1px solid rgba($dark-accent, 0.5);
+          transition: all 0.3s ease;
+          background-color: rgba($dark-accent, 0.2);
+        }
+        svg {
+          font-size: 3rem;
+          color: $dark-accent;
+          transition: color 0.3s ease;
+        }
+      }
+
+      &:hover {
+        transform: translateY(-10px);
+
+        .card-icon {
+          transform: scale(1.1);
+          background: $dark-accent;
+
+          &::after {
+            border-color: rgba($dark-accent, 0.2);
+          }
+
+          svg {
+            color: $primary-text;
+          }
+        }
+      }
+    }
+  }
 }
