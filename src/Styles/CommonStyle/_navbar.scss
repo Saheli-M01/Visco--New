@@ -35,21 +35,24 @@
 
   .primary-links {
     margin: 0 auto;
-    gap: 2rem;
+    gap: 5rem;
 
     .nav-link {
       font-family: $secondary-font;
       color: $dark-accent;
       transition: all 0.3s ease;
       font-weight: 600;
-      padding: 0.5rem 1rem;
+      padding: 1.3rem 4rem;
+      min-width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       &:hover,
       &.active,
       &[aria-current="page"] {
         color: $primary-text;
         background-color: $dark-accent;
-       
       }
     }
   }
@@ -57,7 +60,8 @@
   #contacts {
     display: flex;
     gap: 1.5rem;
-
+    padding-left: 2rem;
+    border-left: 2px solid $dark-accent;
     .contact-icon {
       color: $dark-accent;
       transition: all 0.3s ease;
@@ -132,6 +136,8 @@
         opacity: 0;
         transform: translateY(-10px);
         transition: all 0.3s ease 0.2s;
+        border:none;
+        padding: 0;
       }
 
       &.show {
