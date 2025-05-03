@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavigationBar from "./Components/Common/Navbar";
+import ScrollToTop from "./Components/Common/ScrollToTop";
 import Home from "./Components/Elements/Home";
 import About from "./Components/Elements/About";
 import Topic from "./Components/Elements/Topic";
@@ -22,6 +23,7 @@ function App() {
               <div className="App">
                 <NavigationBar />
                 <main className="main-content">
+                  <ScrollToTop />
                  <Home/>
                  <About/>
                  <Topic/>
