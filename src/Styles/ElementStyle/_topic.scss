@@ -2,7 +2,7 @@
 @use "../shared" as *;
 @use "../animation" as *;
 #topic {
-
+  margin-top: 6rem;
   padding-block: 2.5rem;
   min-height: 100vh;
   background-color: $primary-text;
@@ -16,13 +16,13 @@
   }
   .custom-container {
     width: 90%;
-    margin: auto;
+    
     display: grid;
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem;
     grid-template-columns: repeat(3, 1fr);
-    grid-gap: 1rem;  // Moved before media queries
+    grid-gap: 1rem; // Moved before media queries
 
     // Tablet: 2 columns
     @media (max-width: 768px) {

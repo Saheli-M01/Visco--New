@@ -131,8 +131,8 @@ const About = () => {
   ];
 
   return (
-    <section id="about">
-
+    <section id="about" className="text-center">
+  
       <div className="container-fluid custom-container d-flex justify-content-center align-items-center">
         <div className="left d-grid justify-content-center align-items-center">
           <div className="feature d-grid justify-content-center align-items-center glass-background">
