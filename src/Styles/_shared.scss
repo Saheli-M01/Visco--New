@@ -1,13 +1,12 @@
 //text style
 @use "./variables" as *;
 %h1-style {
-  font-size: clamp(2.2rem, 6vw + 1rem, 6rem); 
+  font-size: clamp(2.2rem, 6vw + 1rem, 6rem);
 }
 
 %h1-span-style {
-  font-size: clamp(2.5rem, 6.5vw + 0.5rem, 6.5rem); 
+  font-size: clamp(2.5rem, 6.5vw + 0.5rem, 6.5rem);
 }
-
 
 %h2-style {
   font-size: clamp(2rem, 4vw + 1rem, 4rem);
@@ -17,14 +16,12 @@
   font-size: clamp(1.5rem, 1.5vw + 0.5rem, 2.5rem);
 }
 
- %h4-style {
+%h4-style {
   font-size: clamp(1.25rem, 1vw + 0.8rem, 2rem);
 }
 
-
-
 %h5-style {
-  font-size: clamp(1.2rem, 1.7vw + 0.6rem, 1.7rem);
+  font-size: clamp(1rem, 1.2vw + 0.3rem, 1.2rem);
 }
 %h6-style {
   font-size: clamp(0.6rem, calc(0.6vw + 0.9rem), 0.9rem);
@@ -33,15 +30,13 @@
 %p-style {
   font-size: clamp(0.7rem, calc(0.5vw + 0.8rem), 1rem);
 }
-%icon-style{
-  font-size: clamp(1.2rem, 1.2vw + 0.2rem, 1.8rem);
-
+%icon-style {
+  font-size: clamp(1.2rem, 1vw + 0.2rem, 1.8rem);
 }
-%glass-background{
+%glass-background {
   background: rgba($primary-text, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 2rem;
   box-shadow: rgba(46, 46, 48, 0.2) 0px 7px 29px 0px;
-
 }

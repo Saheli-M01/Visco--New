@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import SortingVisualizer from "./SortingVisualizer";
 import "../../../Styles/PageStyle/_topicStyle.scss";
 
 const sortingAlgorithms = [
@@ -80,12 +81,31 @@ const nonComparisonAlgorithms = [
 ];
 
 const Sort = () => {
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState(null);
+  const [showVisualizer, setShowVisualizer] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  const handleCardClick = (algorithmName) => {
+    setSelectedAlgorithm(algorithmName);
+    setShowVisualizer(true);
+  };
+
+  const handleCloseVisualizer = () => {
+    setShowVisualizer(false);
+    setSelectedAlgorithm(null);
+  };
+
   return (
     <section className="topic-section">
+      {showVisualizer && (
+        <SortingVisualizer
+          algorithm={selectedAlgorithm}
+          onClose={handleCloseVisualizer}
+        />
+      )}
       <div className="container">
         <nav aria-label="breadcrumb" className="mt-3">
           <ol className="breadcrumb">
@@ -98,19 +118,15 @@ const Sort = () => {
         <div className="row g-4">
           {sortingAlgorithms.map((algo, index) => (
             <div key={index} className="col-lg-3 col-md-4 col-sm-6">
-              <div className="topic-card">
+              <div className="topic-card" onClick={() => handleCardClick(algo.name)}>
                 <div className="card-content">
                   <h5 className="card-name">{algo.name}</h5>
                   <div className="complexity">
-                    <p>
-                      <strong>Time Complexity:</strong>
-                    </p>
+                    <p><strong>Time Complexity:</strong></p>
                     <p>Worst: {algo.timeComplexity.worst}</p>
                     <p>Average: {algo.timeComplexity.average}</p>
                     <p>Best: {algo.timeComplexity.best}</p>
-                    <p>
-                      <strong>Space Complexity:</strong> {algo.spaceComplexity}
-                    </p>
+                    <p><strong>Space Complexity:</strong> {algo.spaceComplexity}</p>
                   </div>
                 </div>
               </div>
@@ -122,19 +138,15 @@ const Sort = () => {
         <div className="row g-4">
           {nonComparisonAlgorithms.map((algo, index) => (
             <div key={index} className="col-lg-3 col-md-4 col-sm-6">
-              <div className="topic-card">
+              <div className="topic-card" onClick={() => handleCardClick(algo.name)}>
                 <div className="card-content">
                   <h5 className="card-name">{algo.name}</h5>
                   <div className="complexity">
-                    <p>
-                      <strong>Time Complexity:</strong>
-                    </p>
+                    <p><strong>Time Complexity:</strong></p>
                     <p>Worst: {algo.timeComplexity.worst}</p>
                     <p>Average: {algo.timeComplexity.average}</p>
                     <p>Best: {algo.timeComplexity.best}</p>
-                    <p>
-                      <strong>Space Complexity:</strong> {algo.spaceComplexity}
-                    </p>
+                    <p><strong>Space Complexity:</strong> {algo.spaceComplexity}</p>
                   </div>
                 </div>
               </div>
