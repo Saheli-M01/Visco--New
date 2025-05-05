@@ -102,7 +102,7 @@ const Sort = () => {
     <section className="topic-section">
       {showVisualizer && (
         <SortingVisualizer
-          algorithm={selectedAlgorithm}
+          algorithm={selectedAlgorithm} // This is now correctly passed
           onClose={handleCloseVisualizer}
         />
       )}

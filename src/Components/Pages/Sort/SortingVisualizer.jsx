@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BaseVisualizer from '../BaseVisualizer';
 import '../../../Styles/PageStyle/Visualizerstyle/_sortingVisualizer.scss';
 
@@ -15,11 +15,16 @@ const sortingAlgorithms = [
   { name: "Bucket Sort" }
 ];
 
-const SortingVisualizer = ({ initialAlgorithm, onClose }) => {
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState(initialAlgorithm);
+const SortingVisualizer = ({ algorithm, onClose }) => {
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState(algorithm);
   const [array, setArray] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [stepHistory, setStepHistory] = useState([]);
+
+  useEffect(() => {
+    setSelectedAlgorithm(algorithm);
+    generateRandomArray(); // Reset array when algorithm changes
+  }, [algorithm]);
 
   const handleAlgorithmChange = (algorithmName) => {
     setSelectedAlgorithm(algorithmName);
