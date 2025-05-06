@@ -15,12 +15,13 @@ const sortingAlgorithms = [
   { name: "Bucket Sort" }
 ];
 
-const SortingVisualizer = ({ algorithm, onClose }) => {
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState(algorithm);
+const SortingVisualizer = ({ algorithm, onClose }) => { // Changed from initialAlgorithm to algorithm
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState(algorithm); // Changed from initialAlgorithm to algorithm
   const [array, setArray] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [stepHistory, setStepHistory] = useState([]);
 
+  // Add useEffect to update selectedAlgorithm when algorithm prop changes
   useEffect(() => {
     setSelectedAlgorithm(algorithm);
     generateRandomArray(); // Reset array when algorithm changes

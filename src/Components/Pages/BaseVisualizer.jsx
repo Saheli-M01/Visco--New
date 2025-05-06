@@ -44,7 +44,9 @@ const CustomDropdown = ({ options, value, onChange, label }) => {
             {options.map((option) => (
               <div
                 key={option.name}
-                className={`select-option ${option.name === value ? "selected" : ""}`}
+                className={`select-option ${
+                  option.name === value ? "selected" : ""
+                }`}
                 onClick={() => {
                   onChange(option.name);
                   setIsOpen(false);
@@ -61,10 +63,16 @@ const CustomDropdown = ({ options, value, onChange, label }) => {
 };
 
 // Controls Component
-const Controls = ({ progress, speed, isPlaying, onSpeedChange, onControlClick }) => (
+const Controls = ({
+  progress,
+  speed,
+  isPlaying,
+  onSpeedChange,
+  onControlClick,
+}) => (
   <div className="controls">
     <div className="control-sections">
-      <div className="auto-controls">
+      <div className="auto-controls text-center">
         <h5>Automatic</h5>
         <div className="auto-control-speed">
           <div className="speed-control">
@@ -79,21 +87,21 @@ const Controls = ({ progress, speed, isPlaying, onSpeedChange, onControlClick })
             />
           </div>
           <button
-            className="control-button play-button"
-            onClick={() => onControlClick('playPause')}
+            className="play-button"
+            onClick={() => onControlClick("playPause")}
           >
             <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
-            <span>{isPlaying ? "Pause" : "Play"}</span>
+            <span>{isPlaying ? "" : ""}</span>
           </button>
         </div>
       </div>
 
-      <div className="manual-controls">
+      <div className="manual-controls text-center">
         <h5>Manual</h5>
         <div className="control-buttons">
           <button
             className="control-button"
-            onClick={() => onControlClick('first')}
+            onClick={() => onControlClick("first")}
             disabled={progress === 0}
           >
             <FontAwesomeIcon icon={faBackwardFast} />
@@ -101,22 +109,21 @@ const Controls = ({ progress, speed, isPlaying, onSpeedChange, onControlClick })
           </button>
           <button
             className="control-button"
-            onClick={() => onControlClick('prev')}
+            onClick={() => onControlClick("prev")}
             disabled={progress === 0}
           >
             <FontAwesomeIcon icon={faBackwardStep} />
             <span>Prev</span>
           </button>
-          <button 
-            className="control-button" 
-            onClick={() => onControlClick('start')}
+          <button
+            className="control-button"
+            onClick={() => onControlClick("start")}
           >
-            <FontAwesomeIcon icon={faPlay} />
             <span>Start</span>
           </button>
           <button
             className="control-button"
-            onClick={() => onControlClick('next')}
+            onClick={() => onControlClick("next")}
             disabled={progress === 100}
           >
             <FontAwesomeIcon icon={faForwardStep} />
@@ -124,7 +131,7 @@ const Controls = ({ progress, speed, isPlaying, onSpeedChange, onControlClick })
           </button>
           <button
             className="control-button"
-            onClick={() => onControlClick('last')}
+            onClick={() => onControlClick("last")}
             disabled={progress === 100}
           >
             <FontAwesomeIcon icon={faForwardFast} />
@@ -188,25 +195,25 @@ const BaseVisualizer = ({
   // Control handlers
   const handleControlClick = (action) => {
     switch (action) {
-      case 'first':
+      case "first":
         setProgress(0);
         setIsPlaying(false);
         break;
-      case 'prev':
+      case "prev":
         setProgress((prev) => Math.max(0, prev - 10));
         break;
-      case 'start':
+      case "start":
         setProgress(0);
         setIsPlaying(true);
         break;
-      case 'next':
+      case "next":
         setProgress((prev) => Math.min(100, prev + 10));
         break;
-      case 'last':
+      case "last":
         setProgress(100);
         setIsPlaying(false);
         break;
-      case 'playPause':
+      case "playPause":
         setIsPlaying(!isPlaying);
         break;
     }
@@ -256,7 +263,17 @@ const BaseVisualizer = ({
         codeSectionRef.current.style.width = `${newWidthRight}px`;
       }
     },
-    [isDragging, isDraggingHorizontal, startY, startX, startHeightCode, startHeightHistory, startWidthLeft, startWidthRight, isMobile]
+    [
+      isDragging,
+      isDraggingHorizontal,
+      startY,
+      startX,
+      startHeightCode,
+      startHeightHistory,
+      startWidthLeft,
+      startWidthRight,
+      isMobile,
+    ]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -279,19 +296,30 @@ const BaseVisualizer = ({
   return (
     <div
       ref={overlayRef}
-      className={`visualizer-overlay ${isDragging || isDraggingHorizontal ? "dragging" : ""}`}
+      className={`visualizer-overlay ${
+        isDragging || isDraggingHorizontal ? "dragging" : ""
+      }`}
     >
       <div className="visualizer-container">
         <div className="header">
-          <button className="refresh-button" onClick={() => {
-            setProgress(0);
-            setIsPlaying(false);
-          }}>
+          <button
+            className="refresh-button"
+            onClick={() => {
+              setProgress(0);
+              setIsPlaying(false);
+            }}
+          >
             <i className="fa-solid fa-rotate-right" />
           </button>
           <div className="title-section">
-            <h3>{title}</h3>
+            <h3>{title}-</h3>{" "}
+            <CustomDropdown
+              options={algorithms.map((algo) => ({ name: algo.name }))}
+              value={selectedAlgorithm}
+              onChange={onAlgorithmChange}
+            />
           </div>
+
           <button className="close-button" onClick={onClose}>
             <i className="fa-solid fa-xmark" />
           </button>
@@ -299,14 +327,17 @@ const BaseVisualizer = ({
 
         <div className="content" ref={contentRef}>
           {/* Left Section - Visualization */}
-          <div className="visualization-section left-section" ref={visualizationSectionRef}>
+          <div
+            className="visualization-section left-section"
+            ref={visualizationSectionRef}
+          >
+            <div className="enter-array"><ArrayInput
+                onSubmit={(array) => {
+                  console.log("New array:", array);
+                }}
+              /></div>
             <div className="handels-upper">
-              <CustomDropdown
-                options={algorithms.map((algo) => ({ name: algo.name }))}
-                value={selectedAlgorithm}
-                onChange={onAlgorithmChange}
-                label="Select Algorithm"
-              />
+              
               <Controls
                 progress={progress}
                 speed={speed}
@@ -337,7 +368,9 @@ const BaseVisualizer = ({
             />
 
             <div className="code-display" ref={codeDisplayRef}>
-              <div className="code-content">{renderCode?.(selectedLanguage)}</div>
+              <div className="code-content">
+                {renderCode?.(selectedLanguage)}
+              </div>
             </div>
 
             <div
@@ -360,3 +393,83 @@ const BaseVisualizer = ({
 };
 
 export default BaseVisualizer;
+
+// ArrayInput Component
+const ArrayInput = ({ onSubmit }) => {
+  const [input, setInput] = useState('');
+  const [error, setError] = useState('');
+  const [isValid, setIsValid] = useState(true);
+
+  const validateInput = (value) => {
+    // Clear previous error
+    setError('');
+    setIsValid(true);
+
+    if (!value.trim()) {
+      return false;
+    }
+
+    const numbers = value.split(',').map(num => num.trim());
+
+    // Check array length
+    if (numbers.length > 10) {
+      setError('Maximum 10 items allowed');
+      setIsValid(false);
+      return false;
+    }
+
+    // Validate each number
+    const isValidArray = numbers.every(num => {
+      const parsed = parseFloat(num);
+      return !isNaN(parsed) && isFinite(parsed);
+    });
+
+    if (!isValidArray) {
+      setError('Only numbers (integers or decimals) are allowed');
+      setIsValid(false);
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setInput(value);
+    validateInput(value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (validateInput(input)) {
+      const array = input.split(',').map(num => parseFloat(num.trim()));
+      onSubmit(array);
+      setInput('');
+      setError('');
+      setIsValid(true);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="array-input">
+      <div className="input-group">
+        <input
+          type="text"
+          value={input}
+          onChange={handleInputChange}
+          placeholder="Enter numbers separated by commas"
+          className={`array-input-field ${!isValid ? 'error' : ''}`}
+        />
+        <button 
+          type="submit" 
+          className="array-submit-btn"
+          disabled={!isValid || !input.trim()}
+        >
+          Generate
+        </button>
+      </div>
+      {error && <div className={`error-message ${error ? 'show' : ''}`}>{error}</div>}
+    </form>
+  );
+};
