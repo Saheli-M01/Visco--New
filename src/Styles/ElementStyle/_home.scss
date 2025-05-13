@@ -3,90 +3,229 @@
 @use "../animation" as *;
 
 #home {
-  height: 100vh ;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
- 
-  .container {
-    opacity: 0;
-    animation: slideInFromBottom 0.8s ease forwards;
-    h1,
-    h2 {
-      font-family: $primary-font;
-      font-weight: 600;
-    }
-
-    h1 {
-      @extend %h1-style;
-      color: $primary-text;
-      opacity: 0;
-      animation: slideInFromBottom 0.8s ease forwards;
-      animation-delay: 0.3s;
-      span {
-        @extend %h1-span-style;
-        color: $light-accent;
-       
+  background-color: #1e1e1e; // Dark background like VS Code
+  position: relative;
+  overflow: hidden;
+  
+  // Add subtle grid pattern to background
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      linear-gradient(rgba(30, 30, 30, 0.6) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30, 30, 30, 0.6) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.2;
+    z-index: 1;
+  }
+  
+  // Add subtle space-like stars
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.8) 1px, transparent 1px);
+    background-size: 100px 100px;
+    opacity: 0.1;
+    z-index: 1;
+  }
+  
+  .editor-container {
+    width: 90%;
+    max-width: 1200px;
+    height: 80vh;
+    background-color: #252526; // Slightly lighter than the background
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    .editor-header {
+      height: 40px;
+      background-color: #323233;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      
+      .window-controls {
+        display: flex;
+        gap: 8px;
+        margin-right: 20px;
+        
+        .control-dot {
+          font-size: 12px;
+          
+          &.close { color: #ff5f56; }
+          &.minimize { color: #ffbd2e; }
+          &.maximize { color: #27c93f; }
+        }
+      }
+      
+      .file-info {
+        color: #d4d4d4;
+        font-size: 14px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        
+        .file-name {
+          font-weight: 500;
+        }
       }
     }
-
-    h2 {
-      @extend %h2-style;
-      color: $secondary-text;
-      line-height: 1.7;
-      opacity: 0;
-      animation: slideInFromBottom 0.8s ease forwards;
-      animation-delay: 0.6s;
-      span {
-        color: $dark-accent;
+    
+    .editor-content {
+      flex: 1;
+      display: flex;
+      overflow: auto;
+      
+      .line-numbers {
+        width: 60px;
+        background-color: #1e1e1e;
+        padding: 15px 0;
+        text-align: right;
+        user-select: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        
+        .line-number {
+          color: #858585;
+          font-size: 14px;
+          font-family: 'Consolas', 'Monaco', monospace;
+          padding: 0 10px;
+          height: 24px;
+          line-height: 24px;
+        }
       }
-    }
-    .button {
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      animation: fadeIn 0.8s ease forwards;
-      font-family: $primary-font;
-      font-weight: 600;
-      font-size: clamp(1.4rem, 1.5vw + 0.5rem, 2.2rem);
-      color: $primary-background;
-      background-color: $dark-accent;
-      border-radius: 0;
-      padding: clamp(0.4rem, 1vw, 0.8rem) clamp(1.2rem, 3vw, 2.5rem);
-      border: 3px solid transparent;
-      opacity: 0;
-      animation: slideInFromBottom 0.8s ease forwards;
-      animation-delay: 0.9s;
+      
+      .code-area {
+        flex: 1;
+        padding: 15px 20px;
+        position: relative;
+        
+      
+        
+        .container {
+          opacity: 0;
+          animation: slideInFromBottom 0.8s ease forwards;
+          margin-top: 4rem;
+          position: relative;
+          z-index: 2;
+          
+          h1, h2 {
+            font-family: $primary-font;
+            font-weight: 600;
+          }
 
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          120deg,
-          transparent,
-          rgba(255, 255, 255, 0.433),
-          transparent
-        );
-        transition: all 0.5s ease;
-      }
-      i {
-         @extend %icon-style;
-       }
-      &:hover {
-        color: $primary-background;
-        background-color: transparent;
-        border: 3px solid $dark-accent;
-        color:$secondary-text;
+          h1 {
+            @extend %h1-style;
+            color: $primary-text;
+            opacity: 0;
+            animation: slideInFromBottom 0.8s ease forwards;
+            animation-delay: 0.3s;
+            
+            span {
+              @extend %h1-span-style;
+              color: $dark-accent;
+              font-family: $secondary-font;
+              font-weight: 400;
+            }
+          }
 
-        &::before {
-          left: 100%;
+          h2 {
+            @extend %h2-style;
+            color: $secondary-text;
+            line-height: 1.7;
+            opacity: 0;
+            animation: slideInFromBottom 0.8s ease forwards;
+            animation-delay: 0.6s;
+            
+            span {
+              color: #4ec9b0; // Teal color for syntax highlighting
+              
+              &.type-animation {
+                color: #ce9178; // Orange color for strings
+              }
+            }
+          }
+          
+          .button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.8s ease forwards;
+            font-family: $primary-font;
+            font-weight: 600;
+            font-size: clamp(1.4rem, 1.5vw + 0.5rem, 2.2rem);
+            color: $primary-background;
+            background-color: $dark-accent;
+            border-radius: 4px;
+            padding: clamp(0.4rem, 1vw, 0.8rem) clamp(1.2rem, 3vw, 2.5rem);
+            border: 3px solid transparent;
+            opacity: 0;
+            animation: slideInFromBottom 0.8s ease forwards;
+            animation-delay: 0.9s;
+
+            &::before {
+              content: "";
+              position: absolute;
+              top: 0;
+              left: -100%;
+              width: 100%;
+              height: 100%;
+              background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.433),
+                transparent
+              );
+              transition: all 0.5s ease;
+            }
+            
+            i {
+              @extend %icon-style;
+            }
+            
+            &:hover {
+              color: $primary-background;
+              background-color: transparent;
+              border: 3px solid $dark-accent;
+              color: $secondary-text;
+
+              &::before {
+                left: 100%;
+              }
+            }
+          }
         }
       }
     }
   }
- 
 }
+
+// Add blinking cursor animation
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.keyword { color: #569cd6; } // blue
+.string { color: #ce9178; }  // orange
+.comment { color: #6a9955; }  // green
+.function { color: #dcdcaa; } // yellow
+.variable { color: #9cdcfe; } // light blue
+.number { color: #b5cea8; }   // light green
+.operator { color: #d4d4d4; } // white
+.type { color: #4ec9b0; }     // teal

@@ -9,7 +9,11 @@ import {
   faPause,
   faForwardStep,
   faForwardFast,
+  faInfoCircle,
+  faKeyboard,
 } from "@fortawesome/free-solid-svg-icons";
+import Tooltip from "../Common/Tooltip";
+
 
 // Custom Dropdown Component
 const CustomDropdown = ({ options, value, onChange, label }) => {
@@ -73,7 +77,12 @@ const Controls = ({
   <div className="controls">
     <div className="control-sections">
       <div className="auto-controls text-center">
-        <h5>Automatic</h5>
+        <div className="section-header">
+          <h5>Automatic</h5>
+          <Tooltip content="Control the visualization speed and playback">
+            <FontAwesomeIcon icon={faInfoCircle} className="info-icon" />
+          </Tooltip>
+        </div>
         <div className="auto-control-speed">
           <div className="speed-control">
             <span>Speed: {speed}x</span>
@@ -84,59 +93,82 @@ const Controls = ({
               value={speed}
               onChange={(e) => onSpeedChange(Number(e.target.value))}
               className="speed-slider"
+              aria-label="Adjust visualization speed"
             />
           </div>
-          <button
-            className="play-button"
-            onClick={() => onControlClick("playPause")}
-          >
-            <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
-            <span>{isPlaying ? "" : ""}</span>
-          </button>
+          <Tooltip content={isPlaying ? "Pause (Space)" : "Play (Space)"}>
+            <button
+              className="play-button"
+              onClick={() => onControlClick("playPause")}
+              aria-label={isPlaying ? "Pause" : "Play"}
+            >
+              <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+            </button>
+          </Tooltip>
         </div>
       </div>
 
       <div className="manual-controls text-center">
-        <h5>Manual</h5>
+        <div className="section-header">
+          <h5>Manual</h5>
+          <Tooltip content="Step through the visualization manually">
+            <FontAwesomeIcon icon={faInfoCircle} className="info-icon" />
+          </Tooltip>
+        </div>
         <div className="control-buttons">
-          <button
-            className="control-button"
-            onClick={() => onControlClick("first")}
-            disabled={progress === 0}
-          >
-            <FontAwesomeIcon icon={faBackwardFast} />
-            <span>First</span>
-          </button>
-          <button
-            className="control-button"
-            onClick={() => onControlClick("prev")}
-            disabled={progress === 0}
-          >
-            <FontAwesomeIcon icon={faBackwardStep} />
-            <span>Prev</span>
-          </button>
-          <button
-            className="control-button"
-            onClick={() => onControlClick("start")}
-          >
-            <span>Start</span>
-          </button>
-          <button
-            className="control-button"
-            onClick={() => onControlClick("next")}
-            disabled={progress === 100}
-          >
-            <FontAwesomeIcon icon={faForwardStep} />
-            <span>Next</span>
-          </button>
-          <button
-            className="control-button"
-            onClick={() => onControlClick("last")}
-            disabled={progress === 100}
-          >
-            <FontAwesomeIcon icon={faForwardFast} />
-            <span>Last</span>
-          </button>
+          <Tooltip content="First Step (Home)">
+            <button
+              className="control-button"
+              onClick={() => onControlClick("first")}
+              disabled={progress === 0}
+              aria-label="Go to first step"
+            >
+              <FontAwesomeIcon icon={faBackwardFast} />
+              <span>First</span>
+            </button>
+          </Tooltip>
+          <Tooltip content="Previous Step (←)">
+            <button
+              className="control-button"
+              onClick={() => onControlClick("prev")}
+              disabled={progress === 0}
+              aria-label="Go to previous step"
+            >
+              <FontAwesomeIcon icon={faBackwardStep} />
+              <span>Prev</span>
+            </button>
+          </Tooltip>
+          <Tooltip content="Start Over (R)">
+            <button
+              className="control-button"
+              onClick={() => onControlClick("start")}
+              aria-label="Start over"
+            >
+              <span>Start</span>
+            </button>
+          </Tooltip>
+          <Tooltip content="Next Step (→)">
+            <button
+              className="control-button"
+              onClick={() => onControlClick("next")}
+              disabled={progress === 100}
+              aria-label="Go to next step"
+            >
+              <FontAwesomeIcon icon={faForwardStep} />
+              <span>Next</span>
+            </button>
+          </Tooltip>
+          <Tooltip content="Last Step (End)">
+            <button
+              className="control-button"
+              onClick={() => onControlClick("last")}
+              disabled={progress === 100}
+              aria-label="Go to last step"
+            >
+              <FontAwesomeIcon icon={faForwardFast} />
+              <span>Last</span>
+            </button>
+          </Tooltip>
         </div>
       </div>
     </div>
@@ -157,6 +189,7 @@ const BaseVisualizer = ({
   selectedAlgorithm,
   onAlgorithmChange,
   languages = ["Python", "C++", "Java", "JavaScript", "C"],
+  onArraySubmit
 }) => {
   // State management
   const [selectedLanguage, setSelectedLanguage] = useState("Python");
@@ -293,6 +326,55 @@ const BaseVisualizer = ({
     }
   }, [isDragging, isDraggingHorizontal, handleMouseMove, handleMouseUp]);
 
+  // Keyboard shortcuts handler
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.target.tagName === "INPUT") return; // Don't trigger shortcuts when typing
+
+      switch (e.key) {
+        case " ":
+          e.preventDefault();
+          setIsPlaying(!isPlaying);
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          if (progress > 0) {
+            setProgress((prev) => Math.max(0, prev - 10));
+          }
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          if (progress < 100) {
+            setProgress((prev) => Math.min(100, prev + 10));
+          }
+          break;
+        case "Home":
+          e.preventDefault();
+          setProgress(0);
+          setIsPlaying(false);
+          break;
+        case "End":
+          e.preventDefault();
+          setProgress(100);
+          setIsPlaying(false);
+          break;
+        case "r":
+        case "R":
+          e.preventDefault();
+          setProgress(0);
+          setIsPlaying(true);
+          break;
+        case "Escape":
+          e.preventDefault();
+          onClose();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [isPlaying, progress, onClose]);
+
   return (
     <div
       ref={overlayRef}
@@ -302,27 +384,31 @@ const BaseVisualizer = ({
     >
       <div className="visualizer-container">
         <div className="header">
-          <button
-            className="refresh-button"
-            onClick={() => {
-              setProgress(0);
-              setIsPlaying(false);
-            }}
-          >
-            <i className="fa-solid fa-rotate-right" />
-          </button>
+          <Tooltip content="Reset Visualization (R)">
+            <button
+              className="refresh-button"
+              onClick={() => {
+                setProgress(0);
+                setIsPlaying(false);
+              }}
+              aria-label="Reset visualization"
+            >
+              <i className="fa-solid fa-rotate-right" />
+            </button>
+          </Tooltip>
           <div className="title-section">
-            <h3>{title}-</h3>{" "}
+            <h3>{title}</h3>
             <CustomDropdown
               options={algorithms.map((algo) => ({ name: algo.name }))}
               value={selectedAlgorithm}
               onChange={onAlgorithmChange}
             />
           </div>
-
-          <button className="close-button" onClick={onClose}>
-            <i className="fa-solid fa-xmark" />
-          </button>
+          <Tooltip content="Close (Esc)">
+            <button className="close-button" onClick={onClose} aria-label="Close visualizer">
+              <i className="fa-solid fa-xmark" />
+            </button>
+          </Tooltip>
         </div>
 
         <div className="content" ref={contentRef}>
@@ -331,21 +417,21 @@ const BaseVisualizer = ({
             className="visualization-section left-section"
             ref={visualizationSectionRef}
           >
-            <div className="enter-array"><ArrayInput
-                onSubmit={(array) => {
-                  console.log("New array:", array);
-                }}
-              /></div>
-            <div className="handels-upper">
-              
-              <Controls
-                progress={progress}
-                speed={speed}
-                isPlaying={isPlaying}
-                onSpeedChange={setSpeed}
-                onControlClick={handleControlClick}
-              />
+            <div className="upper-left">
+              <div className="enter-array">
+                <ArrayInput onSubmit={onArraySubmit} />
+              </div>
+              <div className="handels-upper">
+                <Controls
+                  progress={progress}
+                  speed={speed}
+                  isPlaying={isPlaying}
+                  onSpeedChange={setSpeed}
+                  onControlClick={handleControlClick}
+                />
+              </div>
             </div>
+
             <div className="visualization-area">{renderVisualization?.()}</div>
           </div>
 
@@ -360,15 +446,33 @@ const BaseVisualizer = ({
 
           {/* Right Section - Code Display */}
           <div className="code-section right-section" ref={codeSectionRef}>
-            <CustomDropdown
-              options={languages.map((lang) => ({ name: lang }))}
-              value={selectedLanguage}
-              onChange={setSelectedLanguage}
-              label="Select Language"
-            />
-
             <div className="code-display" ref={codeDisplayRef}>
+              <div className="code-header">
+                <CustomDropdown
+                  options={languages.map((lang) => ({ name: lang }))}
+                  value={selectedLanguage}
+                  onChange={setSelectedLanguage}
+                  label="Select Language"
+                />
+                <Tooltip content="Keyboard Shortcuts">
+                  <button className="keyboard-shortcuts-btn" aria-label="View keyboard shortcuts">
+                    <FontAwesomeIcon icon={faKeyboard} />
+                  </button>
+                </Tooltip>
+              </div>
               <div className="code-content">
+                <div className="code-container-header">
+                  <div className="window-controls">
+                    <div className="control-dot close" />
+                    <div className="control-dot minimize" />
+                    <div className="control-dot maximize" />
+                  </div>
+                  <div className="file-info">
+                    <span className="file-icon">📄</span>
+                    <span className="file-name">{selectedAlgorithm}</span>
+                    <span className="file-path">.{selectedLanguage.toLowerCase()}</span>
+                  </div>
+                </div>
                 {renderCode?.(selectedLanguage)}
               </div>
             </div>
@@ -382,7 +486,12 @@ const BaseVisualizer = ({
             </div>
 
             <div className="step-history" ref={stepHistoryRef}>
-              <h5>Step History:</h5>
+              <div className="section-header">
+                <h5>Step History</h5>
+                <Tooltip content="View the sequence of steps in the algorithm">
+                  <FontAwesomeIcon icon={faInfoCircle} className="info-icon" />
+                </Tooltip>
+              </div>
               <div className="history-content">{renderStepHistory?.()}</div>
             </div>
           </div>
@@ -396,36 +505,38 @@ export default BaseVisualizer;
 
 // ArrayInput Component
 const ArrayInput = ({ onSubmit }) => {
-  const [input, setInput] = useState('');
-  const [error, setError] = useState('');
+  const [input, setInput] = useState("");
+  const [error, setError] = useState("");
   const [isValid, setIsValid] = useState(true);
 
   const validateInput = (value) => {
     // Clear previous error
-    setError('');
+    setError("");
     setIsValid(true);
 
     if (!value.trim()) {
+      setError("Please enter numbers");
+      setIsValid(false);
       return false;
     }
 
-    const numbers = value.split(',').map(num => num.trim());
+    const numbers = value.split(",").map((num) => num.trim());
 
     // Check array length
     if (numbers.length > 10) {
-      setError('Maximum 10 items allowed');
+      setError("Maximum 10 items allowed");
       setIsValid(false);
       return false;
     }
 
     // Validate each number
-    const isValidArray = numbers.every(num => {
+    const isValidArray = numbers.every((num) => {
       const parsed = parseFloat(num);
-      return !isNaN(parsed) && isFinite(parsed);
+      return !isNaN(parsed) && isFinite(parsed) && parsed > 0 && parsed <= 100;
     });
 
     if (!isValidArray) {
-      setError('Only numbers (integers or decimals) are allowed');
+      setError("Please enter valid numbers between 1 and 100");
       setIsValid(false);
       return false;
     }
@@ -441,12 +552,14 @@ const ArrayInput = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    console.log("Submit clicked"); // Debug log
+
     if (validateInput(input)) {
-      const array = input.split(',').map(num => parseFloat(num.trim()));
+      const array = input.split(",").map((num) => parseFloat(num.trim()));
+      console.log("Submitting array:", array); // Debug log
       onSubmit(array);
-      setInput('');
-      setError('');
+      setInput("");
+      setError("");
       setIsValid(true);
     }
   };
@@ -458,18 +571,20 @@ const ArrayInput = ({ onSubmit }) => {
           type="text"
           value={input}
           onChange={handleInputChange}
-          placeholder="Enter numbers separated by commas"
-          className={`array-input-field ${!isValid ? 'error' : ''}`}
+          placeholder="Enter numbers (1-100) separated by commas"
+          className={`array-input-field ${!isValid ? "error" : ""}`}
         />
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="array-submit-btn"
           disabled={!isValid || !input.trim()}
         >
           Generate
         </button>
       </div>
-      {error && <div className={`error-message ${error ? 'show' : ''}`}>{error}</div>}
+      {error && (
+        <div className={`error-message ${error ? "show" : ""}`}>{error}</div>
+      )}
     </form>
   );
 };

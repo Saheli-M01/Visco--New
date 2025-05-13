@@ -69,7 +69,7 @@ function NavigationBar() {
       className={`custom-navbar ${isScrolled ? 'scrolled' : ''}`}
       fixed="top"
     >
-      <Container>
+      <Container className="navbar-container">
         <Navbar.Brand 
           onClick={() => handleNavigation('home')}
           style={{ cursor: 'pointer' }}

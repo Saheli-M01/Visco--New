@@ -1,0 +1,82 @@
+.array-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  min-height: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow-x: auto;
+  flex-wrap: wrap;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  .array-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    border-radius: 6px;
+    min-width: 40px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+ 
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .block-value {
+      color: white;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    &.comparing {
+      background: linear-gradient(135deg, #ffd700, #ffa500);
+    }
+
+    &.sorted {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+
+    &.pivot {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+  }
+}
+
+// Animation classes for sorting
+@keyframes swap {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(100px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.swapping {
+  animation: swap 0.5s ease-in-out;
+}
