@@ -1,9 +1,414 @@
-#about{
-    margin-top: 4rem;
-    height:calc(100vh - 4rem - 10px);
+@use "../variables" as *;
+@use "../animation" as *;
+@use "../shared" as *;
 
-    border:1px solid yellowgreen;
-    h1{
-        color: coral;
-       }
+#about {
+  margin-top: 7rem;
+  min-height: calc(100vh - 4rem - 10px);
+  max-height: 100%;
+  background: linear-gradient(145deg, #f0f0f0, #d6d6d6);
+
+  .custom-container {
+    height: 100%;
+    padding: 2rem 3rem;
+    position: relative;
+    z-index: 1;
+    
+    @media (max-width: 992px) {
+      flex-direction: column;
+      padding: 1rem;
+    }
+  }
+  
+  .left, .right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem;
+    
+    @media (max-width: 992px) {
+      width: 100%;
+      padding: 0.5rem;
+    }
+  }
+  
+  .glass-background {
+    background: #f5f5f7;
+    border-radius: 20px;
+    box-shadow: 
+      8px 8px 16px rgba(0, 0, 0, 0.1),
+      -8px -8px 16px rgba(255, 255, 255, 0.8),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.8),
+      inset -1px -1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 
+        12px 12px 24px rgba(0, 0, 0, 0.12),
+        -12px -12px 24px rgba(255, 255, 255, 0.9),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+        inset -2px -2px 4px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+  }
+  
+  .feature { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 1.5rem; 
+    border-radius: 20px; 
+    aspect-ratio: 1; 
+    padding: 2rem; 
+    width: 100%; 
+    max-width: 600px; 
+    margin: 0 auto; 
+    grid-auto-flow: row; 
+    grid-auto-rows: 1fr; 
+
+    @media (max-width: 768px) { 
+      max-width: 400px; 
+    } 
+
+    @media (max-width: 576px) { 
+      grid-template-columns: 1fr; 
+      aspect-ratio: auto; 
+      padding: 1rem; 
+      gap: 1rem; 
+    } 
+
+    .feature-item { 
+      background: #f5f5f7;
+      border-radius: 16px;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      aspect-ratio: 1;
+      position: relative;
+      padding: 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 0;
+      min-width: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 
+        6px 6px 12px rgba(0, 0, 0, 0.08),
+        -6px -6px 12px rgba(255, 255, 255, 0.8),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.8),
+        inset -1px -1px 2px rgba(0, 0, 0, 0.05);
+        &::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          transition: 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+          z-index: 0;
+          background: $blue;
+          opacity: 0.4;
+        }
+
+        // First card - bottom right
+        &:nth-child(1)::before {
+          bottom: 0;
+          right: 0;
+          clip-path: circle(calc(1rem + 7.5vw) at 100% 100%);
+        }
+
+        // Second card - bottom left
+        &:nth-child(2)::before {
+          bottom: 0;
+          left: 0;
+          clip-path: circle(calc(1rem + 7.5vw) at 0% 100%);
+        }
+
+        // Third card - top right
+        &:nth-child(3)::before {
+          top: 0;
+          right: 0;
+          clip-path: circle(calc(1rem + 7.5vw) at 100% 0%);
+        }
+
+        // Fourth card - top left
+        &:nth-child(4)::before {
+          top: 0;
+          left: 0;
+          clip-path: circle(calc(1rem + 7.5vw) at 0% 0%);
+        }
+      &:hover {
+        &::before {
+          opacity: 0.3;
+          clip-path: circle(150% at var(--x, 100%) var(--y, 100%));
+        }
+        box-shadow: 
+          8px 8px 16px rgba(0, 0, 0, 0.12),
+          -8px -8px 16px rgba(255, 255, 255, 0.9),
+          inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+          inset -2px -2px 4px rgba(0, 0, 0, 0.08);
+        transform: translateY(-3px) scale(1.02);
+      }
+
+      svg { 
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: $black;
+        transition: all 0.3s ease;
+        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+      }
+
+      h4 { 
+        color: $blue;
+        @extend %h4-style;
+        font-family: $primary-font;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      p { 
+        @extend %p-style;
+        font-family: $secondary-font;
+        color: $black;
+        line-height: 1.4;
+        font-weight: 500;
+        opacity: 0.8;
+        transition: all 0.3s ease;
+
+        @media (max-width: 768px) { 
+          display: none; 
+        }
+      }
+
+      &:hover {
+        svg {
+          color:$white;
+          transform: scale(1.1);
+          filter: drop-shadow(3px 3px 6px rgba(0, 0, 0, 0.15));
+        }
+
+        h4 {
+          transform: translateY(-2px);
+        }
+
+        p {
+          opacity: 1;
+        }
+      }
+    }
+  }
+  
+  .mission {
+    padding: 1rem 2.5rem;
+    border-radius: 20px;
+    background: #f5f5f7;
+    box-shadow: 
+      8px 8px 16px rgba(0, 0, 0, 0.1),
+      -8px -8px 16px rgba(255, 255, 255, 0.8),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.8),
+      inset -1px -1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background:  $blue;
+      opacity: 0.5;
+    }
+
+    &:hover {
+      box-shadow: 
+        12px 12px 24px rgba(0, 0, 0, 0.12),
+        -12px -12px 24px rgba(255, 255, 255, 0.9),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+        inset -2px -2px 4px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+    
+    h3 {
+      color: $blue;
+   
+      font-weight: 600;
+      font-family: $primary-font;
+      @extend %h3-style;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      display: inline-block;
+
+    }
+    
+    p {
+      color: $black;
+      line-height: 1.8;
+      font-family: $secondary-font;
+      @extend %p-style;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+    }
+  }
+  
+  .tech-stack {
+    padding: 2.5rem;
+    position: relative;
+    
+    h3 {
+      color: $blue;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      font-family: $primary-font;
+      @extend %h3-style;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      display: inline-block;
+
+    }
+    
+    .tech-boxes {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      position: relative;
+      min-height: 350px;
+      
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+      
+      .tech-box {
+        background: #1e1e1e;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 
+          8px 8px 16px rgba(0, 0, 0, 0.2),
+          -4px -4px 8px rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: absolute;
+        width: calc(50% - 1rem);
+        max-width: 320px;
+        
+        @media (max-width: 768px) {
+          width: calc(100% - 1rem);
+          position: relative;
+          margin-bottom: 1.5rem;
+        }
+        
+        // Haphazard positioning for each box
+        &:nth-child(1) {
+          top: 0;
+          left: 60px;
+          z-index: 4;
+          
+        }
+        
+        &:nth-child(2) {
+          top: 30px;
+          right: 0;
+          z-index: 3;
+   
+        }
+        
+        &:nth-child(3) {
+          top: 120px;
+          left: 5px;
+          z-index: 2;
+        
+        }
+        
+        &:nth-child(4) {
+          top: 150px;
+          right: 20px;
+          z-index: 5;
+
+        }
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: linear-gradient(90deg, $blue, transparent);
+          opacity: 0.5;
+        }
+
+        &:hover {
+          transform: translateY(-3px) scale(1.02) rotate(0deg);
+          z-index: 10;
+          box-shadow: 
+            12px 12px 24px rgba(0, 0, 0, 0.25),
+            -6px -6px 12px rgba(255, 255, 255, 0.08);
+        }
+
+        .window-header {
+          height: 48px;
+          background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+          display: flex;
+          align-items: center;
+          padding: 0 20px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          position: relative;
+          
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          }
+          
+          svg {
+            color: $white;
+            font-size: 1.5rem;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.2));
+            transition: all 0.3s ease;
+          }
+        }
+        
+        .code-content {
+          padding: 1.5rem;
+          height: 140px;
+          overflow: hidden;
+          background: #1e1e1e;
+          position: relative;
+          text-align: left;
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, 
+              rgba(255, 255, 255, 0.05) 0%,
+              transparent 20%,
+              transparent 80%,
+              rgba(0, 0, 0, 0.1) 100%
+            );
+            pointer-events: none;
+          }
+          
+          
+        }
+
+        &:hover {
+          .window-header svg {
+            transform: scale(1.1);
+            filter: drop-shadow(3px 3px 6px rgba(0, 0, 0, 0.3));
+          }
+        }
+      }
+    }
+  }
 }

@@ -27,4 +27,14 @@
     60% {
       transform: translateY(-10px) translateX(-50%);
     }
+  }//used in about
+  @keyframes typing {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
