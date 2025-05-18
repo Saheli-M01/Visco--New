@@ -4,6 +4,7 @@ import NavigationBar from "./Components/Common/Navbar";
 import Home from "./Components/Elements/Home";
 import About from "./Components/Elements/About";
 import Topic from "./Components/Elements/Topic";
+import ScrollToTop from "./Components/Common/ScrollToTop";
 import Footer from "./Components/Common/Footer";
 // import TopicLayout from './Components/TopicLayout/TopicLayout';
 // import SortingPage from "./Components/Pages/Sort/Sort";
@@ -21,7 +22,7 @@ function App() {
             <div className="App">
               <NavigationBar />
               <main className="main-content">
-            
+            <ScrollToTop />
                 <Home/>
                 <About/>
                 <Topic/>
