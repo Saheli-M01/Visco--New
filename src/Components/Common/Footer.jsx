@@ -4,7 +4,7 @@ const Footer= ()   =>{
     <footer> 
         <div className="container">
         <div className="row">
-            <h3>Pair chhuo</h3>
+            <h3>Footer</h3>
         </div>
         </div>
     </footer> 

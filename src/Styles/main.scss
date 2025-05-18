@@ -23,7 +23,7 @@
 }
 
 html {
-  scroll-padding-top: 4rem; 
+  scroll-padding-top: calc(4rem + 10px); 
   scroll-behavior: smooth;
   //base style
   body {

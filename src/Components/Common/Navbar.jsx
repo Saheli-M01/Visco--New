@@ -16,6 +16,11 @@ function NavigationBar() {
   const handleToggle = () => {
     setExpanded(!expanded);
   };
+  
+  // Close navbar when a link is clicked
+  const closeNavbar = () => {
+    setExpanded(false);
+  };
 
   return (
     <Navbar 
@@ -25,7 +30,7 @@ function NavigationBar() {
       expanded={expanded} // Control expanded state
     >
       <Container>
-        <Navbar.Brand href="#home">
+        <Navbar.Brand href="#home" onClick={closeNavbar}>
           <img src={Logo} alt="Visco" width="55px" />
         </Navbar.Brand>
         <Navbar.Toggle 
@@ -37,13 +42,14 @@ function NavigationBar() {
         </Navbar.Toggle>
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="primary-links">
-            <Nav.Link href="#about">About</Nav.Link>
-            <Nav.Link href="#topic">Topic</Nav.Link>
+            <Nav.Link href="#about" onClick={closeNavbar}>About</Nav.Link>
+            <Nav.Link href="#topic" onClick={closeNavbar}>Topic</Nav.Link>
           </Nav>
           <Nav className="contacts">
           <Nav.Link 
               href="mailto:your.email@example.com" 
               className="contact-icon"
+              onClick={closeNavbar}
             >
               <FontAwesomeIcon icon={faAt} />
               <span>Email</span>
@@ -54,6 +60,7 @@ function NavigationBar() {
               className="contact-icon"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={closeNavbar}
             >
               <FontAwesomeIcon icon={faLinkedin} />
               <span>LinkedIn</span>
