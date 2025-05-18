@@ -1,8 +1,40 @@
-Footer{
- 
-    color: #ffffff;
-    padding: 20px;
-    text-align: center;
-    border:2px solid hotpink;
-    position: relative;
-}
+@use "../animation" as *;
+@use "../variables" as *;
+@use "../shared" as *;
+.footer {
+    width: 100%;
+    background-color: rgba($black, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem 0;
+    z-index: 10;
+    border-top: 1px solid rgba($blue, 0.2);
+    .footer-container {
+      .footer-content {
+        width:80%;
+        margin: 0 auto;
+    
+        h6 {  
+          color: $white;
+          font-family: $secondary-font;
+          @extend %h6-style;  
+          margin: 0;
+          .creator-name a {
+            color: $blue;
+            font-weight: 600;
+            position: relative;
+            text-decoration: none;
+          }
+          .site-name {
+            color: $blue;
+            font-weight: 600;
+          }
+          .heart-icon {
+            color: $red;
+            display: inline-block;
+            animation: heartbeat 1.5s infinite;
+          }
+        }
+      }
+    }
+  }
+  
