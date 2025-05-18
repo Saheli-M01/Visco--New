@@ -28,6 +28,13 @@
     position: relative;
     left: 4rem;
     flex: 1;
+    
+    &.active-brand {
+      // Add subtle highlight effect for the logo when home is active
+      img {
+        filter: drop-shadow(0 0 5px rgba($blue, 0.9));
+      }
+    }
   }
   .navbar-toggler {
     display: none;

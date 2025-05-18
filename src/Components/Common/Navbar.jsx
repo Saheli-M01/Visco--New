@@ -28,8 +28,11 @@ function NavigationBar() {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       
-      // Get all sections
-      const sections = ['about', 'topic'];
+      // Get all sections - add 'home' to the array
+      const sections = ['home', 'about', 'topic'];
+      
+      // Set initial value to empty or 'home' depending on scroll position
+      let currentActive = '';
       
       // Find which section is currently in view
       for (const section of sections) {
@@ -43,11 +46,14 @@ function NavigationBar() {
             scrollPosition >= offsetTop - 100 && 
             scrollPosition < offsetTop + offsetHeight - 100
           ) {
-            setActiveSection(section);
+            currentActive = section;
             break;
           }
         }
       }
+      
+      // Update active section
+      setActiveSection(currentActive);
     };
     
     // Add scroll event listener
@@ -70,7 +76,12 @@ function NavigationBar() {
       expanded={expanded} // Control expanded state
     >
       <Container>
-        <Navbar.Brand href="#home" onClick={closeNavbar}>
+     
+        <Navbar.Brand 
+          href="#home" 
+          onClick={closeNavbar}
+          className={activeSection === 'home' ? 'active-brand' : ''}
+        >
           <img src={Logo} alt="Visco" width="55px" />
         </Navbar.Brand>
         <Navbar.Toggle 

@@ -1,5 +1,166 @@
-#home{
-    border:2px solid yellow;
-    height:calc(100vh - 4rem - 10px);
+@use "../variables" as *;
+@use "../animation" as *;
+@use "../shared" as *;
+#home {
+  height: calc(100vh - 4rem - 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #1e1e1e 85%, transparent 100%);
 
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  position: relative;
+  overflow: hidden;
+  // dotted grid background with white dots
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.8) 1px,
+      transparent 1px
+    );
+    background-size: 100px 100px;
+    opacity: 0.3;
+  }
+  .editor-container {
+    position: relative;
+    width: 80%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    .editor-header {
+      height: 40px;
+      background-color: #323233;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+      .window-controls {
+        display: flex;
+        gap: 8px;
+        margin-right: 20px;
+
+        .control-dot {
+          font-size: 12px;
+
+          &.close {
+            color: #ff5f56;
+          }
+          &.minimize {
+            color: #ffbd2e;
+          }
+          &.maximize {
+            color: #27c93f;
+          }
+        }
+      }
+
+      .file-info {
+        color: $white;
+        font-size: 14px;
+        font-family: "Consolas", "Monaco", monospace;
+
+        .file-name {
+          font-weight: 500;
+        }
+      }
+    }
+    .editor-content {
+      flex: 1;
+      display: flex;
+      overflow: auto;
+      .code-area {
+        flex: 1;
+        padding: 15px 20px;
+        position: relative;
+
+        .container {
+          font-family: $primary-font;
+          padding-block: 2rem;
+
+          h1,
+          h2 {
+            font-family: $white;
+            font-weight: 600;
+          }
+
+          h1 {
+            @extend %h1-style;
+            color: $white;
+
+            span {
+              @extend %h1-style;
+              color: $blue;
+              font-family: $secondary-font;
+              font-weight: 400;
+            }
+          }
+
+          h2 {
+            @extend %h2-style;
+            color: $white;
+            line-height: 1.7;
+
+            span {
+              color: #4ec9b0; // Teal color for syntax highlighting
+
+              &.type-animation {
+                color: #ce9178; // Orange color for strings
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .scrollToTopicIcon {
+    cursor: pointer;
+    color: $white;
+    @extend %icon-style;
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+
+    // Updated styling with bubbly neumorphic effect
+    background-color: #212529;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5),
+      -6px -6px 12px rgba(255, 255, 255, 0.1),
+      inset 1px 1px 3px rgba(255, 255, 255, 0.3),
+      inset -1px -1px 3px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+
+    &:hover {
+      animation: bounce 2s infinite;
+      box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5),
+        -4px -4px 8px rgba(255, 255, 255, 0.1),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.3),
+        inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    &:active {
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5),
+        -2px -2px 4px rgba(255, 255, 255, 0.1),
+        inset 4px 4px 8px rgba(0, 0, 0, 0.5),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.1);
+      transform: translateX(-50%) scale(0.95);
+    }
+  }
 }

@@ -24,3 +24,6 @@
 %p-style {
   font-size: clamp(0.7rem, calc(0.5vw + 0.8rem), 1rem);
 }
+%icon-style {
+  font-size: clamp(1.5rem, 2vw + 0.6rem, 2rem);
+}

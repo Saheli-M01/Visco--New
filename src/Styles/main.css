@@ -17,7 +17,7 @@
 }
 
 html {
-  scroll-padding-top: 4rem;
+  scroll-padding-top: calc(4rem + 10px);
   scroll-behavior: smooth;
 }
 html body {
@@ -35,7 +35,7 @@ html body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
+  background: linear-gradient(180deg, #1e1e1e, rgba(30, 30, 30, 0.3607843137));
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(5px);
   z-index: 0;
