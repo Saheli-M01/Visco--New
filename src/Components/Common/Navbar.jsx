@@ -5,12 +5,13 @@ import Navbar from "react-bootstrap/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { faAt, faBars, faTimes } from "@fortawesome/free-solid-svg-icons"; // Added faTimes
-import { useState } from "react"; // Import useState
+import { useState, useEffect } from "react"; // Add useEffect
 import "../../Styles/CommonStyle/_navbar.scss";
 import Logo from "../../Assets/logo_dark.png";
 
 function NavigationBar() {
   const [expanded, setExpanded] = useState(false); // Track navbar expanded state
+  const [activeSection, setActiveSection] = useState(''); // Track active section
   
   // Toggle handler
   const handleToggle = () => {
@@ -21,6 +22,45 @@ function NavigationBar() {
   const closeNavbar = () => {
     setExpanded(false);
   };
+
+  // Add scroll spy effect
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      
+      // Get all sections
+      const sections = ['about', 'topic'];
+      
+      // Find which section is currently in view
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const offsetTop = element.offsetTop;
+          const offsetHeight = element.offsetHeight;
+          
+          // Add some buffer to make the highlighting more natural
+          if (
+            scrollPosition >= offsetTop - 100 && 
+            scrollPosition < offsetTop + offsetHeight - 100
+          ) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+    
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Initial check on mount
+    handleScroll();
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <Navbar 
@@ -38,12 +78,24 @@ function NavigationBar() {
           onClick={handleToggle}
           className={expanded ? "is-active" : ""}
         >
-          <FontAwesomeIcon icon={expanded ? faTimes : faBars} /> {/* Toggle between icons */}
+          <FontAwesomeIcon icon={expanded ? faTimes : faBars} />
         </Navbar.Toggle>
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="primary-links">
-            <Nav.Link href="#about" onClick={closeNavbar}>About</Nav.Link>
-            <Nav.Link href="#topic" onClick={closeNavbar}>Topic</Nav.Link>
+            <Nav.Link 
+              href="#about" 
+              onClick={closeNavbar}
+              className={activeSection === 'about' ? 'active' : ''}
+            >
+              About
+            </Nav.Link>
+            <Nav.Link 
+              href="#topic" 
+              onClick={closeNavbar}
+              className={activeSection === 'topic' ? 'active' : ''}
+            >
+              Topic
+            </Nav.Link>
           </Nav>
           <Nav className="contacts">
           <Nav.Link 
