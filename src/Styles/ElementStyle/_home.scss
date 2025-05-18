@@ -7,13 +7,11 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(to bottom, #1e1e1e 85%, transparent 100%);
-
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  position: relative;
-  overflow: hidden;
-  // dotted grid background with white dots
+  margin:auto;
 
+  // dotted grid background with white dots
   &::after {
     content: "";
     position: absolute;
@@ -30,7 +28,6 @@
     opacity: 0.3;
   }
   .editor-container {
-    position: relative;
     width: 80%;
     max-width: 1200px;
     display: flex;
@@ -40,6 +37,7 @@
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     z-index: 10;
+
     .editor-header {
       height: 40px;
       background-color: #323233;
@@ -72,7 +70,6 @@
         color: $white;
         font-size: 14px;
         font-family: "Consolas", "Monaco", monospace;
-
         .file-name {
           font-weight: 500;
         }
@@ -86,17 +83,14 @@
         flex: 1;
         padding: 15px 20px;
         position: relative;
-
         .container {
           font-family: $primary-font;
           padding-block: 2rem;
-
           h1,
           h2 {
             font-family: $white;
             font-weight: 600;
           }
-
           h1 {
             @extend %h1-style;
             color: $white;

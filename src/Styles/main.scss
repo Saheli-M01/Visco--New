@@ -59,6 +59,7 @@ html {
   z-index: 10;
 }
 .main-content {
+  padding-top: calc(4rem + 10px);
   z-index: 1;
   position: relative;
 }

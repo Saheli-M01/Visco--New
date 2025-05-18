@@ -47,6 +47,7 @@ html body::before {
 }
 
 .main-content {
+  padding-top: calc(4rem + 10px);
   z-index: 1;
   position: relative;
 }/*# sourceMappingURL=main.css.map */
