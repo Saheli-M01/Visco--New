@@ -47,7 +47,7 @@ function NavigationBar() {
           </Nav>
           <Nav className="contacts">
           <Nav.Link 
-              href="mailto:your.email@example.com" 
+              href="mailto:visualizecode.official@gmail.com" 
               className="contact-icon"
               onClick={closeNavbar}
             >
@@ -56,7 +56,7 @@ function NavigationBar() {
             </Nav.Link>
 
             <Nav.Link 
-              href="https://linkedin.com/in/your-profile" 
+              href="https://www.linkedin.com/company/107360237/admin/dashboard/" 
               className="contact-icon"
               target="_blank"
               rel="noopener noreferrer"
