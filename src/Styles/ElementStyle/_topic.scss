@@ -1,8 +1,159 @@
-#topic{
-   height:calc(100vh - 4rem - 10px);
+@use "../variables" as *;
+@use "../shared" as *;
+#topic {
+  min-height: calc(100vh - 4rem - 10px);
+  padding: 4rem 0;
+  background-color: $white;
+  margin-top: 6rem;
+  h2 {
+    color: $black;
+    margin-bottom: 2rem;
+    position: relative;
+    font-family: $primary-font;
+    font-weight: 600;
+    @extend %h2-style;
+    text-shadow: 6px 6px 2px rgba(160, 160, 160, 0.5);
+  }
 
-   border:1px solid greenyellow; 
-   h1{
-    color:royalblue;
-   }
+  .custom-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .topic-card {
+    background: $white;
+    border-radius: 16px;
+    padding: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    // Neumorphic effect
+    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.05),
+      -8px -8px 16px rgba(255, 255, 255, 0.8);
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 12px 12px 20px rgba(0, 0, 0, 0.1),
+        -12px -12px 20px rgba(255, 255, 255, 0.8);
+
+      .card-icon {
+        background: linear-gradient(145deg, $blue, rgba($blue, 0.5));
+        transform: scale(1.05);
+        box-shadow: 
+          inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+          inset -4px -4px 8px rgba(255, 255, 255, 0.1),
+          0 0 15px rgba($blue, 0.4);
+        
+        &::before {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        svg {
+          transform: scale(1.1);
+          color: rgba($black,0.8);
+          filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.6));
+        }
+      }
+
+      h3 {
+        color: $blue;
+      }
+    }
+
+    .card-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba($blue, 0.7), $blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        6px 6px 12px rgba(0, 0, 0, 0.1),
+        -6px -6px 12px rgba(255, 255, 255, 0.1);
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%);
+        opacity: 0;
+        transform: scale(0.5);
+        transition: all 0.4s ease-out;
+      }
+
+      svg {
+        font-size: 2rem;
+        color: $white;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 2;
+      }
+    }
+
+    .card-content {
+      h3 {
+        font-family: $primary-font;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: $black;
+        transition: color 0.3s ease;
+        @extend %h3-style;
+      }
+
+      p {
+        font-family: $secondary-font;
+        color: rgba($black, 0.8);
+        line-height: 1.5;
+        margin-bottom: 0;
+        font-weight: 500;
+        @extend %p-style;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 3rem 0;
+
+    .custom-container {
+      grid-template-columns: 1fr;
+      max-width: 500px;
+    }
+
+    .topic-card {
+      padding: 1.5rem;
+
+      .card-icon {
+        width: 70px;
+        height: 70px;
+
+        svg {
+          font-size: 1.7rem;
+        }
+      }
+
+      .card-content {
+        h3 {
+          font-size: 1.3rem;
+        }
+      }
+    }
+  }
 }
