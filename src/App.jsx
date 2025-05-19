@@ -6,12 +6,12 @@ import About from "./Components/Elements/About";
 import Topic from "./Components/Elements/Topic";
 import ScrollToTop from "./Components/Common/ScrollToTop";
 import Footer from "./Components/Common/Footer";
-// import TopicLayout from './Components/TopicLayout/TopicLayout';
-// import SortingPage from "./Components/Pages/Sort/Sort";
-// import TreePage from "./Components/Pages/Tree/Tree";
-// import GraphPage from "./Components/Pages/Graph/Graph";
-// import ArrayPage from "./Components/Pages/Array/Array";
-// import LinkedListPage from "./Components/Pages/LinkedList/LinkedList";
+import TopicLayout from './Components/TopicLayout/TopicLayout';
+import SortingPage from "./Components/Pages/Sort/Sort";
+import TreePage from "./Components/Pages/Tree/Tree";
+import GraphPage from "./Components/Pages/Graph/Graph";
+import ArrayPage from "./Components/Pages/Array/Array";
+import LinkedListPage from "./Components/Pages/LinkedList/LinkedList";
 function App() {
   return (
     <Router>
@@ -31,13 +31,13 @@ function App() {
             </div>
           }
         />
-        {/* <Route element={<TopicLayout />}>
+         <Route element={<TopicLayout />}>
           <Route path="/sort" element={<SortingPage />} />
           <Route path="/tree" element={<TreePage />} />
           <Route path="/graph" element={<GraphPage />} />
           <Route path="/array" element={<ArrayPage />} />
           <Route path="/linked-list" element={<LinkedListPage />} />
-        </Route> */}
+        </Route> 
       </Routes>
     </Router>
   );

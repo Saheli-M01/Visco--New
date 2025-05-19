@@ -41,6 +41,10 @@ html body::before {
   z-index: 0;
 }
 
+.topic-page {
+  z-index: 1;
+}
+
 .app {
   min-height: 100vh;
   z-index: 10;
