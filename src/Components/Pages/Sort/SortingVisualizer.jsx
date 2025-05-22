@@ -44,10 +44,6 @@ const SortingVisualizer = ({ algorithm, onClose }) => {
           <div 
             key={idx} 
             className="array-block"
-            style={{ 
-              width: `${value * 3}px`,
-              height: '40px'
-            }}
           >
             <span className="block-value">{value}</span>
           </div>

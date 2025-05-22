@@ -1,0 +1,27 @@
+@use "../../variables" as *;
+
+.array-container {
+  display: flex;
+  justify-content: center;
+
+  gap: 0.4rem;
+
+  .array-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $blue;
+    border-radius: 6px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.3s ease;
+
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.5);
+
+    .block-value {
+      color: $white;
+    }
+  }
+}

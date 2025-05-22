@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
 import "../../Styles/PageStyle/_baseVisualizerStyle.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,8 +14,6 @@ import {
   faKeyboard,
   faFileCode,
 } from "@fortawesome/free-solid-svg-icons";
-
-
 
 // Custom Dropdown Component
 const CustomDropdown = ({ options, value, onChange, label }) => {
@@ -81,9 +79,6 @@ const Controls = ({
       <div className="auto-controls text-center">
         <div className="section-header">
           <h5>Automatic</h5>
-          <div content="Control the visualization speed and playback">
-            <FontAwesomeIcon icon={faInfoCircle} className="info-icon" />
-          </div>
         </div>
         <div className="auto-control-speed">
           <div className="speed-control">
@@ -113,9 +108,6 @@ const Controls = ({
       <div className="manual-controls text-center">
         <div className="section-header">
           <h5>Manual</h5>
-          <div content="Step through the visualization manually">
-            <FontAwesomeIcon icon={faInfoCircle} className="info-icon" />
-          </div>
         </div>
         <div className="control-buttons">
           <div content="First Step (Home)">
@@ -140,7 +132,7 @@ const Controls = ({
               <span>Prev</span>
             </button>
           </div>
-          
+
           <div content="Next Step (→)">
             <button
               className="control-button"
@@ -166,9 +158,6 @@ const Controls = ({
         </div>
       </div>
     </div>
-    <div className="progress-container">
-      <div className="progress-bar" style={{ width: `${progress}%` }} />
-    </div>
   </div>
 );
 
@@ -183,24 +172,13 @@ const BaseVisualizer = ({
   selectedAlgorithm,
   onAlgorithmChange,
   languages = ["Python", "C++", "Java", "JavaScript", "C"],
-  onArraySubmit
+  onArraySubmit,
 }) => {
   // State management
   const [selectedLanguage, setSelectedLanguage] = useState("Python");
   const [speed, setSpeed] = useState(1);
   const [progress, setProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  // Resize state
-  const [isDragging, setIsDragging] = useState(false);
-  const [isDraggingHorizontal, setIsDraggingHorizontal] = useState(false);
-  const [startY, setStartY] = useState(0);
-  const [startX, setStartX] = useState(0);
-  const [startHeightCode, setStartHeightCode] = useState(0);
-  const [startHeightHistory, setStartHeightHistory] = useState(0);
-  const [startWidthLeft, setStartWidthLeft] = useState(0);
-  const [startWidthRight, setStartWidthRight] = useState(0);
 
   // Refs
   const codeDisplayRef = useRef(null);
@@ -208,16 +186,8 @@ const BaseVisualizer = ({
   const visualizationSectionRef = useRef(null);
   const codeSectionRef = useRef(null);
   const overlayRef = useRef(null);
-  const verticalResizeHandleRef = useRef(null);
-  const contentRef = useRef(null);
-  const horizontalResizeHandleRef = useRef(null);
 
-  // Window resize handler
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const contentRef = useRef(null);
 
   // Control handlers
   const handleControlClick = (action) => {
@@ -245,80 +215,6 @@ const BaseVisualizer = ({
         break;
     }
   };
-
-  // Resize handlers
-  const handleVerticalMouseDown = useCallback((e) => {
-    e.preventDefault();
-    if (codeDisplayRef.current && stepHistoryRef.current) {
-      setStartY(e.clientY);
-      setStartHeightCode(codeDisplayRef.current.offsetHeight);
-      setStartHeightHistory(stepHistoryRef.current.offsetHeight);
-      setIsDragging(true);
-    }
-  }, []);
-
-  const handleHorizontalMouseDown = useCallback((e) => {
-    e.preventDefault();
-    if (visualizationSectionRef.current && codeSectionRef.current) {
-      setStartX(e.clientX);
-      setStartWidthLeft(visualizationSectionRef.current.offsetWidth);
-      setStartWidthRight(codeSectionRef.current.offsetWidth);
-      setIsDraggingHorizontal(true);
-    }
-  }, []);
-
-  const handleMouseMove = useCallback(
-    (e) => {
-      if (isDragging && codeDisplayRef.current && stepHistoryRef.current) {
-        const diff = e.clientY - startY;
-        const newHeightCode = Math.max(100, startHeightCode + diff);
-        const newHeightHistory = Math.max(100, startHeightHistory - diff);
-        codeDisplayRef.current.style.height = `${newHeightCode}px`;
-        stepHistoryRef.current.style.height = `${newHeightHistory}px`;
-      }
-
-      if (
-        isDraggingHorizontal &&
-        visualizationSectionRef.current &&
-        codeSectionRef.current &&
-        !isMobile
-      ) {
-        const diff = e.clientX - startX;
-        const newWidthLeft = Math.max(300, startWidthLeft + diff);
-        const newWidthRight = Math.max(300, startWidthRight - diff);
-        visualizationSectionRef.current.style.width = `${newWidthLeft}px`;
-        codeSectionRef.current.style.width = `${newWidthRight}px`;
-      }
-    },
-    [
-      isDragging,
-      isDraggingHorizontal,
-      startY,
-      startX,
-      startHeightCode,
-      startHeightHistory,
-      startWidthLeft,
-      startWidthRight,
-      isMobile,
-    ]
-  );
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-    setIsDraggingHorizontal(false);
-  }, []);
-
-  // Mouse move and up event listeners
-  useEffect(() => {
-    if (isDragging || isDraggingHorizontal) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      return () => {
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
-      };
-    }
-  }, [isDragging, isDraggingHorizontal, handleMouseMove, handleMouseUp]);
 
   // Keyboard shortcuts handler
   useEffect(() => {
@@ -373,12 +269,7 @@ const BaseVisualizer = ({
 
   // Render the visualizer content using Portal
   return ReactDOM.createPortal(
-    <div
-      ref={overlayRef}
-      className={`visualizer-overlay ${
-        isDragging || isDraggingHorizontal ? "dragging" : ""
-      }`}
-    >
+    <div ref={overlayRef} className="visualizer-overlay">
       <div className="visualizer-container">
         <div className="header">
           <div content="Reset Visualization (R)">
@@ -402,7 +293,11 @@ const BaseVisualizer = ({
             />
           </div>
           <div content="Close (Esc)">
-            <button className="close-button" onClick={onClose} aria-label="Close visualizer">
+            <button
+              className="close-button"
+              onClick={onClose}
+              aria-label="Close visualizer"
+            >
               <i className="fa-solid fa-xmark" />
             </button>
           </div>
@@ -413,12 +308,13 @@ const BaseVisualizer = ({
           <div
             className="visualization-section left-section"
             ref={visualizationSectionRef}
+            style={{ width: "40%" }}
           >
             <div className="upper-left">
               <div className="enter-array">
                 <ArrayInput onSubmit={onArraySubmit} />
               </div>
-              <div className="handels-upper">
+              <div className="controllers">
                 <Controls
                   progress={progress}
                   speed={speed}
@@ -427,22 +323,22 @@ const BaseVisualizer = ({
                   onControlClick={handleControlClick}
                 />
               </div>
+              <div className="progress-container">
+                <div
+                  className="progress-bar"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
             </div>
-
-            <div className="visualization-area">{renderVisualization?.()}</div>
-          </div>
-
-          {/* Horizontal Resize Handle */}
-          <div
-            className="horizontal-resize-handle"
-            ref={horizontalResizeHandleRef}
-            onMouseDown={handleHorizontalMouseDown}
-          >
-            <div className="handle-bar" />
+            <div className="lower-left display"> {renderVisualization?.()}</div>
           </div>
 
           {/* Right Section - Code Display */}
-          <div className="code-section right-section" ref={codeSectionRef}>
+          <div
+            className="code-section right-section"
+            ref={codeSectionRef}
+            style={{ width: "60%" }}
+          >
             <div className="code-display" ref={codeDisplayRef}>
               <div className="code-header">
                 <CustomDropdown
@@ -452,7 +348,10 @@ const BaseVisualizer = ({
                   label="Select Language"
                 />
                 <div content="Keyboard Shortcuts">
-                  <button className="keyboard-shortcuts-btn" aria-label="View keyboard shortcuts">
+                  <button
+                    className="keyboard-shortcuts-btn"
+                    aria-label="View keyboard shortcuts"
+                  >
                     <FontAwesomeIcon icon={faKeyboard} />
                   </button>
                 </div>
@@ -465,21 +364,17 @@ const BaseVisualizer = ({
                     <div className="control-dot maximize" />
                   </div>
                   <div className="file-info">
-                    <span className="file-icon"><FontAwesomeIcon icon={faFileCode} /></span>
+                    <span className="file-icon">
+                      <FontAwesomeIcon icon={faFileCode} />
+                    </span>
                     <span className="file-name">{selectedAlgorithm}</span>
-                    <span className="file-path">.{selectedLanguage.toLowerCase()}</span>
+                    <span className="file-path">
+                      .{selectedLanguage.toLowerCase()}
+                    </span>
                   </div>
                 </div>
                 {renderCode?.(selectedLanguage)}
               </div>
-            </div>
-
-            <div
-              className="resize-handle"
-              ref={verticalResizeHandleRef}
-              onMouseDown={handleVerticalMouseDown}
-            >
-              <div className="handle-bar" />
             </div>
 
             <div className="step-history" ref={stepHistoryRef}>
