@@ -44,7 +44,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
- 
 
   .visualizer-container {
     width: 100vw;
@@ -56,7 +55,6 @@
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-
 
     //for both the selectors
     .selector {
@@ -233,92 +231,165 @@
       overflow: hidden;
       position: relative;
       justify-content: space-between;
-    }
 
-    .left-section {
-      min-width: 60%;
-      transition: width 0.3s ease;
-      padding: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      .left-section {
+        min-width: 60%;
+        transition: width 0.3s ease;
+        padding: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
-      .upper-left {
-        margin-bottom: 1rem;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        padding: 1rem;
-        border-radius: 10px;
-
-        // array input
-        .array-input {
+        .upper-left {
           margin-bottom: 1rem;
-          width: 100%;
-          position: relative;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          padding: 1rem;
+          border-radius: 10px;
 
-          .input-group {
-            display: flex;
-            align-items: stretch;
+          // array input
+          .array-input {
+            margin-bottom: 1rem;
+            width: 100%;
+            position: relative;
 
-            .array-input-field {
-              padding: 1rem 0.5rem;
-              font-size: 1rem;
-              border-radius: 8px 0 0 8px;
-              transition: all 0.3s ease;
+            .input-group {
               display: flex;
-              flex: 1;
-              &:focus {
-                box-shadow: 0 0 0 3px rgba($blue, 0.2);
+              align-items: stretch;
+
+              .array-input-field {
+                padding: 1rem 0.5rem;
+                font-size: 1rem;
+                border-radius: 8px 0 0 8px;
+                transition: all 0.3s ease;
+                display: flex;
+                flex: 1;
+                &:focus {
+                  box-shadow: 0 0 0 3px rgba($blue, 0.2);
+                }
+              }
+
+              .array-submit-btn {
+                @include modern-button;
+                border-radius: 0 8px 8px 0;
+               
               }
             }
 
-            .array-submit-btn {
-              @include modern-button;
+            .error-message {
+              background: rgba($red, 0.1);
+              color: $red;
+              padding: 0.8rem 1.2rem;
               border-radius: 8px;
-              margin-left: 1rem;
+              margin-top: 0.8rem;
+              font-size: 0.9rem;
+              border-left: 4px solid $red;
             }
           }
 
-          .error-message {
-            background: rgba($red, 0.1);
-            color: $red;
-            padding: 0.8rem 1.2rem;
-            border-radius: 8px;
-            margin-top: 0.8rem;
-            font-size: 0.9rem;
-            border-left: 4px solid $red;
-          }
-        }
+          //control-buttons
+          .controls {
+            h5 {
+              color: $black;
+              font-family: $secondary-font;
+              @extend %h5-style;
+              margin: 0;
+            }
 
-        //control-buttons
-        .controls {
-          h5 {
-            color: $black;
-            font-family: $secondary-font;
-            @extend %h5-style;
-            margin: 0;
-          }
-
-          display: flex;
-          justify-content: center;
-          align-items: center;
-
-          .control-sections {
             display: flex;
-            gap: 20px;
+            justify-content: center;
+            align-items: center;
 
-            .auto-controls {
+            .control-sections {
               display: flex;
-              gap: 1rem;
-              .auto-control-speed {
+              gap: 20px;
+
+              .auto-controls {
                 display: flex;
                 gap: 1rem;
-                .play-button {
+                .auto-control-speed {
+                  display: flex;
+                  gap: 1rem;
+                  .play-button {
+                    background: $blue;
+                    border: none;
+                    color: $white;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2),
+                      -3px -3px 6px rgba(255, 255, 255, 0.7);
+                    transition: all 0.3s ease;
+
+                    &:hover:not(:disabled) {
+                      transform: scale(1.05);
+                    }
+
+                    &:active:not(:disabled) {
+                      transform: scale(0.95);
+                      box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.3),
+                        inset -3px -3px 6px rgba(255, 255, 255, 0.5);
+                    }
+                    &:disabled {
+                      opacity: 0.6;
+                      cursor: not-allowed;
+                      box-shadow: none;
+                    }
+                  }
+                  .speed-control {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+
+                    span {
+                      color: $blue;
+                      font-family: $secondary-font;
+                      font-size: 0.8rem;
+                      font-weight: 500;
+                    }
+                    .speed-slider {
+                      -webkit-appearance: none;
+                      width: 100%;
+                      height: 6px;
+                      background: rgba($blue, 0.2);
+                      border-radius: 3px;
+                      outline: none;
+
+                      &::-webkit-slider-thumb {
+                        -webkit-appearance: none;
+                        width: 18px;
+                        height: 18px;
+                        background: $blue;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        box-shadow: 0 2px 6px rgba($blue, 0.3);
+
+                        &:hover {
+                          transform: scale(1.2);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              .manual-controls {
+                .control-buttons {
+                  display: flex;
+                  gap: 1rem;
+                  margin-left: 1rem;
+                }
+                .control-button {
                   background: $blue;
                   border: none;
                   color: $white;
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 50%;
+                  padding: 0.5rem 1.2rem;
+                  border-radius: 25px;
+                  font-family: $secondary-font;
+                  font-weight: 500;
                   display: flex;
                   align-items: center;
                   justify-content: center;
@@ -328,11 +399,11 @@
                   transition: all 0.3s ease;
 
                   &:hover:not(:disabled) {
-                    transform: scale(1.05);
+                    transform: translateY(-2px);
                   }
 
                   &:active:not(:disabled) {
-                    transform: scale(0.95);
+                    transform: translateY(0);
                     box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.3),
                       inset -3px -3px 6px rgba(255, 255, 255, 0.5);
                   }
@@ -341,151 +412,77 @@
                     cursor: not-allowed;
                     box-shadow: none;
                   }
-                }
-                .speed-control {
-                  display: flex;
-                  justify-content: space-around;
-                  align-items: center;
 
                   span {
-                    color: $blue;
-                    font-family: $secondary-font;
-                    font-size: 0.8rem;
-                    font-weight: 500;
-                  }
-                  .speed-slider {
-                    -webkit-appearance: none;
-                    width: 100%;
-                    height: 6px;
-                    background: rgba($blue, 0.2);
-                    border-radius: 3px;
-                    outline: none;
-
-                    &::-webkit-slider-thumb {
-                      -webkit-appearance: none;
-                      width: 18px;
-                      height: 18px;
-                      background: $blue;
-                      border-radius: 50%;
-                      cursor: pointer;
-                      transition: all 0.2s ease;
-                      box-shadow: 0 2px 6px rgba($blue, 0.3);
-
-                      &:hover {
-                        transform: scale(1.2);
-                      }
-                    }
+                    margin-left: 5px;
                   }
                 }
               }
-            }
-            .manual-controls {
-              .control-buttons {
+              .control-buttons,
+              .auto-control-speed,
+              .auto-controls,
+              .manual-controls {
                 display: flex;
-                gap: 1rem;
-                margin-left: 1rem;
-              }
-              .control-button {
-                background: $blue;
-                border: none;
-                color: $white;
-                padding: 0.5rem 1.2rem;
-                border-radius: 25px;
-                font-family: $secondary-font;
-                font-weight: 500;
-                display: flex;
-                align-items: center;
                 justify-content: center;
-                cursor: pointer;
-                box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2),
-                  -3px -3px 6px rgba(255, 255, 255, 0.7);
-                transition: all 0.3s ease;
-
-                &:hover:not(:disabled) {
-                  transform: translateY(-2px);
-                }
-
-                &:active:not(:disabled) {
-                  transform: translateY(0);
-                  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.3),
-                    inset -3px -3px 6px rgba(255, 255, 255, 0.5);
-                }
-                &:disabled {
-                  opacity: 0.6;
-                  cursor: not-allowed;
-                  box-shadow: none;
-                }
-
-                span {
-                  margin-left: 5px;
-                }
+                align-items: center;
               }
             }
-            .control-buttons,
-            .auto-control-speed,
-            .auto-controls,
-            .manual-controls {
-              display: flex;
-              justify-content: center;
-              align-items: center;
+          }
+
+          //progress-container
+          .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba($blue, 0.2);
+            border-radius: 3px;
+            margin-top: 1rem;
+            overflow: hidden;
+
+            .progress-bar {
+              height: 100%;
+              background: rgba($blue, 0.8);
+              border-radius: 4px;
+              transition: width 0.3s ease;
             }
           }
         }
 
-        //progress-container
-        .progress-container {
-          width: 100%;
-          height: 6px;
-          background: rgba($blue, 0.2);
-          border-radius: 3px;
-          margin-top: 1rem;
-          overflow: hidden;
+        .lower-left {
+          display: flex;
+          justify-content: center;
+          align-items: center;
 
-          .progress-bar {
-            height: 100%;
-            background: rgba($blue, 0.8);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-          }
+          border-radius: 15px;
+          min-height: 70%;
+          box-shadow: inset 5px 5px 9px rgba(94, 104, 121, 0.5),
+            inset -5px -5px 9px rgba(94, 104, 121, 0.5);
         }
       }
 
-
-      .lower-left {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        border-radius: 15px;
-        min-height: 70%;
-        box-shadow: inset 5px 5px 9px rgba(94, 104, 121, 0.5),
-          inset -5px -5px 9px rgba(94, 104, 121, 0.5);
-      }
-    }
-
-    .right-section {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-width: 300px;
-
-      max-width: 40%;
-      transition: width 0.3s ease;
-      border: 1px solid red;
-      .code-display {
-        flex: 1;
-        min-height: 200px;
-        overflow: hidden;
+      .right-section {
         display: flex;
         flex-direction: column;
-        border: 2px solid slateblue;
-      }
+        overflow: hidden;
+        min-width: 300px;
 
-      .step-history {
-        min-height: 350px;
-        max-height: 30%;
-        overflow: auto;
-        border: 2px solid salmon;
+        max-width: 40%;
+        transition: width 0.3s ease;
+        border: 1px solid red;
+        .code-display {
+          flex: 1;
+          min-height: 200px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          border: 2px solid slateblue;
+        }
+
+        .step-history {
+          min-height: 350px;
+          max-height: 30%;
+          overflow: auto;
+          border: 2px solid salmon;
+        }
       }
     }
   }
