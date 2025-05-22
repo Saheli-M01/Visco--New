@@ -107,17 +107,6 @@ const Sort = () => {
         />
       )}
       <div className="container">
-        <nav aria-label="breadcrumb" className="mt-3">
-          <ol className="breadcrumb">
-            <li className="breadcrumb-item">
-              <Link to="/">Home</Link>
-            </li>
-            <li className="breadcrumb-item active" aria-current="page">
-              Sorting Algorithms
-            </li>
-          </ol>
-        </nav>
-
         <h4 className="algorithm-category">Comparison-Based Algorithms</h4>
         <div className="row g-4">
           {sortingAlgorithms.map((algo, index) => (

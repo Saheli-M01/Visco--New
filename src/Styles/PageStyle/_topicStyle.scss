@@ -1,51 +1,32 @@
 @use "../variables" as *;
-.topic-page{
-    z-index: 100;
-    position: relative;
-} 
+@use "../shared" as *;
+.topic-page {
+  z-index: 100;
+  position: relative;
+}
 .topic-section {
   padding: 4rem 0 2rem;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: $white;
 
   .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  .breadcrumb {
-    background-color: transparent;
-    padding: 0.5rem 0;
-    margin-bottom: 2rem;
-
-    .breadcrumb-item {
-      a {
-        color: #007bff;
-        text-decoration: none;
-        transition: color 0.3s ease;
-
-        &:hover {
-          color: #0056b3;
-        }
-      }
-
-      &.active {
-        color: #6c757d;
-      }
-    }
+    padding: 2rem 1rem;
   }
 
   .algorithm-category {
-    color: #2c3e50;
+    color: $black;
     font-weight: 600;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 1px solid rgba($black, 0.1);
+    font-family: $primary-font;
+    @extend %h4-style;
   }
 
   .topic-card {
-    background: white;
+    background: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -62,22 +43,22 @@
       padding: 1.5rem;
 
       .card-name {
-        color: #2c3e50;
+        color:$gray;
         font-size: 1.25rem;
         font-weight: 600;
         margin-bottom: 1rem;
         text-align: center;
+        font-family: $secondary-font;
+        @extend %h5-style;
       }
 
       .complexity {
         p {
           margin: 0.5rem 0;
-          color: #495057;
+          color: $gray;
           font-size: 0.9rem;
-
-          strong {
-            color: #2c3e50;
-          }
+          font-family: $secondary-font;
+         @extend %p-style;
         }
       }
     }
