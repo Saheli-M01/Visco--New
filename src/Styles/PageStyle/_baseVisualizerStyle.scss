@@ -93,7 +93,7 @@
           }
 
           &:hover {
-            background: $white;
+            background: #fff;
             color: $black;
             .arrow-icon {
               color: $black;
@@ -155,7 +155,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 0.5rem 1.5rem;
-      border-bottom: 1px solid rgba($black, 0.3);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
       //for title section
       .title-section {
@@ -271,7 +271,6 @@
               .array-submit-btn {
                 @include modern-button;
                 border-radius: 0 8px 8px 0;
-               
               }
             }
 
@@ -464,24 +463,197 @@
         flex-direction: column;
         overflow: hidden;
         min-width: 300px;
-
         max-width: 40%;
         transition: width 0.3s ease;
-        border: 1px solid red;
-        .code-display {
-          flex: 1;
-          min-height: 200px;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          border: 2px solid slateblue;
-        }
+        .upper-right {
+          border-radius: 10px;
+          margin: 0.5rem;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          .code-display {
+            flex: 1;
+            min-height: 60%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 0.5rem 1.5rem;
+            border-radius: 12px;
+            .code-header {
+              width: 70%;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
 
-        .step-history {
-          min-height: 350px;
-          max-height: 30%;
-          overflow: auto;
-          border: 2px solid salmon;
+              h5 {
+                margin: 0;
+                font-family: $secondary-font;
+                @extend %h5-style;
+              }
+            }
+            .code-content {
+              margin-top: 0.5rem;
+              border-radius: 12px;
+              overflow: hidden;
+              background-color: #1e1e1e;
+
+              min-height: 400px;
+
+              .code-container-header {
+                background: #202735; // Slightly lighter than content
+                border-bottom: 1px solid #333333;
+                display: flex;
+                justify-content: space-between;
+                padding-inline: 1rem;
+                min-height: 35px;
+
+                //window-control
+                .window-controls {
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  .control-dot {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    transition: all 0.2s ease;
+                    &.close {
+                      background-color: #ff5f56;
+                    }
+                    &.minimize {
+                      background-color: #ffbd2e;
+                    }
+                    &.maximize {
+                      background-color: #27c93f;
+                    }
+                    &:hover {
+                      transform: scale(1.2);
+                    }
+                  }
+                }
+
+                //file-info
+                .file-info {
+                  display: flex;
+                  align-items: center;
+                  color: #ddd;
+                  font-size: 0.85rem;
+
+                  .file-icon {
+                    margin-right: 8px;
+                    color: $white;
+                  }
+
+                  .file-name {
+                    font-weight: 500;
+                    font-family: "Consolas", "Monaco", "Courier New", monospace;
+                  }
+
+                  .file-path {
+                    margin-left: 8px;
+                    opacity: 0.6;
+                    font-size: 0.8rem;
+                  }
+                }
+              }
+              //for code showing in the code-display
+              pre {
+                margin: 0;
+                padding: 0.5rem 0 0 3.5rem; // Space for line numbers
+                overflow-x: auto;
+                position: relative;
+                color: #d4d4d4;
+                font-family: "Consolas", "Monaco", "Courier New", monospace;
+              }
+            }
+          }
+        }
+        .lower-right {
+          border-radius: 10px;
+          margin: 0.5rem;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          .step-history {
+            min-height: 300px;
+            max-height: 30%;
+            overflow: auto;
+
+            border-radius: 12px;
+            padding: 1rem;
+            background: #fdfeff;
+            margin-top: 1rem;
+
+            .section-header {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 1rem;
+              padding-bottom: 0.5rem;
+              border-bottom: 2px solid rgba($blue, 0.2);
+
+              h5 {
+                margin: 0;
+                font-family: $secondary-font;
+                @extend %h5-style;
+                color: $black;
+              }
+            }
+
+            .history-content {
+              display: flex;
+              flex-direction: column;
+              gap: 0.8rem;
+
+              .step-item {
+                padding: 0.8rem;
+                background: white;
+                border-radius: 8px;
+                border: 1px solid rgba($blue, 0.2);
+                transition: all 0.3s ease;
+                cursor: pointer;
+
+                &:hover {
+                  transform: translateX(5px);
+                  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+                  border-color: $blue;
+                }
+
+                &.active {
+                  background: rgba($blue, 0.1);
+                  border-color: $blue;
+                  font-weight: 500;
+                }
+
+                .step-number {
+                  color: $blue;
+                  font-weight: 600;
+                  margin-right: 0.5rem;
+                }
+
+                .step-description {
+                  color: $black;
+                  font-size: 0.9rem;
+                  line-height: 1.4;
+                }
+              }
+            }
+
+            /* Custom Scrollbar */
+            &::-webkit-scrollbar {
+              width: 8px;
+            }
+
+            &::-webkit-scrollbar-track {
+              background: rgba($blue, 0.1);
+              border-radius: 4px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+              background: rgba($blue, 0.3);
+              border-radius: 4px;
+
+              &:hover {
+                background: rgba($blue, 0.5);
+              }
+            }
+          }
         }
       }
     }

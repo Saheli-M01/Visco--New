@@ -10,13 +10,11 @@ import {
   faPause,
   faForwardStep,
   faForwardFast,
-  faInfoCircle,
-  faKeyboard,
   faFileCode,
 } from "@fortawesome/free-solid-svg-icons";
 
 // Custom Dropdown Component
-const CustomDropdown = ({ options, value, onChange, label }) => {
+const CustomDropdown = ({ options, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -33,7 +31,6 @@ const CustomDropdown = ({ options, value, onChange, label }) => {
 
   return (
     <div className="selector" ref={dropdownRef}>
-      <h5>{label}</h5>
       <div className="custom-select">
         <button
           className={`select-button ${isOpen ? "open" : ""}`}
@@ -339,52 +336,46 @@ const BaseVisualizer = ({
             ref={codeSectionRef}
             style={{ width: "60%" }}
           >
-            <div className="code-display" ref={codeDisplayRef}>
-              <div className="code-header">
-                <CustomDropdown
-                  options={languages.map((lang) => ({ name: lang }))}
-                  value={selectedLanguage}
-                  onChange={setSelectedLanguage}
-                  label="Select Language"
-                />
-                <div content="Keyboard Shortcuts">
-                  <button
-                    className="keyboard-shortcuts-btn"
-                    aria-label="View keyboard shortcuts"
-                  >
-                    <FontAwesomeIcon icon={faKeyboard} />
-                  </button>
+            <div className="upper-right">
+              <div className="code-display" ref={codeDisplayRef}>
+                <div className="code-header">
+                  <h5>Select language</h5>
+                  <CustomDropdown
+                    options={languages.map((lang) => ({ name: lang }))}
+                    value={selectedLanguage}
+                    onChange={setSelectedLanguage}
+                    label="Select Language"
+                  />
                 </div>
-              </div>
-              <div className="code-content">
-                <div className="code-container-header">
-                  <div className="window-controls">
-                    <div className="control-dot close" />
-                    <div className="control-dot minimize" />
-                    <div className="control-dot maximize" />
+                <div className="code-content">
+                  <div className="code-container-header">
+                    <div className="window-controls">
+                      <div className="control-dot close" />
+                      <div className="control-dot minimize" />
+                      <div className="control-dot maximize" />
+                    </div>
+                    <div className="file-info">
+                      <span className="file-icon">
+                        <FontAwesomeIcon icon={faFileCode} />
+                      </span>
+                      <span className="file-name">{selectedAlgorithm}</span>
+                      <span className="file-path">
+                        .{selectedLanguage.toLowerCase()}
+                      </span>
+                    </div>
                   </div>
-                  <div className="file-info">
-                    <span className="file-icon">
-                      <FontAwesomeIcon icon={faFileCode} />
-                    </span>
-                    <span className="file-name">{selectedAlgorithm}</span>
-                    <span className="file-path">
-                      .{selectedLanguage.toLowerCase()}
-                    </span>
-                  </div>
+                  {renderCode?.(selectedLanguage)}
                 </div>
-                {renderCode?.(selectedLanguage)}
               </div>
             </div>
 
-            <div className="step-history" ref={stepHistoryRef}>
-              <div className="section-header">
-                <h5>Step History</h5>
-                <div content="View the sequence of steps in the algorithm">
-                  <FontAwesomeIcon icon={faInfoCircle} className="info-icon" />
+            <div className="lower-right">
+              <div className="step-history" ref={stepHistoryRef}>
+                <div className="section-header">
+                  <h5>Step History</h5>
                 </div>
+                <div className="history-content">{renderStepHistory?.()}</div>
               </div>
-              <div className="history-content">{renderStepHistory?.()}</div>
             </div>
           </div>
         </div>
