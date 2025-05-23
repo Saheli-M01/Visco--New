@@ -12,14 +12,14 @@ __✨ Features__
 
 🎨 Clean UI with React Bootstrap & Sass
 
-
+<hr>
 **🚀 Getting Started**  
 
 Prerequisites
 Node.js (>= 16)
 
 npm or yarn
-
+<hr>
 **Installation**  
 
 git clone https://github.com/Saheli-M01/Visco--New.git  
