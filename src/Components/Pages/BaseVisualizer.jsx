@@ -65,11 +65,12 @@ const CustomDropdown = ({ options, value, onChange }) => {
 
 // Controls Component
 const Controls = ({
-  progress,
   speed,
   isPlaying,
   onSpeedChange,
   onControlClick,
+  currentStep = 0,
+  totalSteps = 0,
 }) => (
   <div className="controls">
     <div className="control-sections">
@@ -95,6 +96,7 @@ const Controls = ({
               className="play-button"
               onClick={() => onControlClick("playPause")}
               aria-label={isPlaying ? "Pause" : "Play"}
+              disabled={totalSteps === 0}
             >
               <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
             </button>
@@ -111,7 +113,7 @@ const Controls = ({
             <button
               className="control-button"
               onClick={() => onControlClick("first")}
-              disabled={progress === 0}
+              disabled={currentStep === 0 || totalSteps === 0}
               aria-label="Go to first step"
             >
               <FontAwesomeIcon icon={faBackwardFast} />
@@ -122,7 +124,7 @@ const Controls = ({
             <button
               className="control-button"
               onClick={() => onControlClick("prev")}
-              disabled={progress === 0}
+              disabled={currentStep === 0 || totalSteps === 0}
               aria-label="Go to previous step"
             >
               <FontAwesomeIcon icon={faBackwardStep} />
@@ -134,7 +136,7 @@ const Controls = ({
             <button
               className="control-button"
               onClick={() => onControlClick("next")}
-              disabled={progress === 100}
+              disabled={currentStep >= totalSteps - 1 || totalSteps === 0}
               aria-label="Go to next step"
             >
               <FontAwesomeIcon icon={faForwardStep} />
@@ -145,7 +147,7 @@ const Controls = ({
             <button
               className="control-button"
               onClick={() => onControlClick("last")}
-              disabled={progress === 100}
+              disabled={currentStep >= totalSteps - 1 || totalSteps === 0}
               aria-label="Go to last step"
             >
               <FontAwesomeIcon icon={faForwardFast} />
@@ -170,6 +172,9 @@ const BaseVisualizer = ({
   onAlgorithmChange,
   languages = ["Python", "C++", "Java", "JavaScript", "C"],
   onArraySubmit,
+  onProgressChange,
+  totalSteps = 0,
+  currentStep = 0,
 }) => {
   // State management
   const [selectedLanguage, setSelectedLanguage] = useState("Python");
@@ -183,35 +188,72 @@ const BaseVisualizer = ({
   const visualizationSectionRef = useRef(null);
   const codeSectionRef = useRef(null);
   const overlayRef = useRef(null);
-
   const contentRef = useRef(null);
+
+  // Update progress based on current step from parent
+  useEffect(() => {
+    if (totalSteps > 0) {
+      const newProgress = (currentStep / (totalSteps - 1)) * 100;
+      setProgress(isNaN(newProgress) ? 0 : newProgress);
+    }
+  }, [currentStep, totalSteps]);
 
   // Control handlers
   const handleControlClick = (action) => {
+    if (totalSteps === 0) return; // No steps available
+    
     switch (action) {
-      case "first":
-        setProgress(0);
+      case "first": {
+        if (onProgressChange) onProgressChange(0);
         setIsPlaying(false);
         break;
-      case "prev":
-        setProgress((prev) => Math.max(0, prev - 10));
+      }
+      case "prev": {
+        const prevProgress = Math.max(0, (currentStep - 1) / (totalSteps - 1) * 100);
+        if (onProgressChange) onProgressChange(prevProgress);
         break;
-      case "start":
-        setProgress(0);
+      }
+      case "start": {
+        if (onProgressChange) onProgressChange(0);
         setIsPlaying(true);
         break;
-      case "next":
-        setProgress((prev) => Math.min(100, prev + 10));
+      }
+      case "next": {
+        const nextProgress = Math.min(100, (currentStep + 1) / (totalSteps - 1) * 100);
+        if (onProgressChange) onProgressChange(nextProgress);
         break;
-      case "last":
-        setProgress(100);
+      }
+      case "last": {
+        if (onProgressChange) onProgressChange(100);
         setIsPlaying(false);
         break;
-      case "playPause":
+      }
+      case "playPause": {
         setIsPlaying(!isPlaying);
         break;
+      }
     }
   };
+
+  // Auto-play functionality
+  useEffect(() => {
+    let interval;
+    if (isPlaying && totalSteps > 0 && currentStep < totalSteps - 1) {
+      interval = setInterval(() => {
+        const nextProgress = Math.min(100, (currentStep + 1) / (totalSteps - 1) * 100);
+        if (onProgressChange) {
+          onProgressChange(nextProgress);
+        }
+        if (currentStep >= totalSteps - 1) {
+          setIsPlaying(false);
+        }
+      }, 1000 / speed);
+    } else if (currentStep >= totalSteps - 1) {
+      setIsPlaying(false);
+    }
+    
+    return () => clearInterval(interval);
+  }, [isPlaying, currentStep, totalSteps, speed, onProgressChange]);
 
   // Keyboard shortcuts handler
   useEffect(() => {
@@ -225,30 +267,32 @@ const BaseVisualizer = ({
           break;
         case "ArrowLeft":
           e.preventDefault();
-          if (progress > 0) {
-            setProgress((prev) => Math.max(0, prev - 10));
+          if (totalSteps > 0 && currentStep > 0) {
+            const prevProgress = Math.max(0, (currentStep - 1) / (totalSteps - 1) * 100);
+            if (onProgressChange) onProgressChange(prevProgress);
           }
           break;
         case "ArrowRight":
           e.preventDefault();
-          if (progress < 100) {
-            setProgress((prev) => Math.min(100, prev + 10));
+          if (totalSteps > 0 && currentStep < totalSteps - 1) {
+            const nextProgress = Math.min(100, (currentStep + 1) / (totalSteps - 1) * 100);
+            if (onProgressChange) onProgressChange(nextProgress);
           }
           break;
         case "Home":
           e.preventDefault();
-          setProgress(0);
+          if (onProgressChange) onProgressChange(0);
           setIsPlaying(false);
           break;
         case "End":
           e.preventDefault();
-          setProgress(100);
+          if (onProgressChange) onProgressChange(100);
           setIsPlaying(false);
           break;
         case "r":
         case "R":
           e.preventDefault();
-          setProgress(0);
+          if (onProgressChange) onProgressChange(0);
           setIsPlaying(true);
           break;
         case "Escape":
@@ -262,7 +306,7 @@ const BaseVisualizer = ({
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isPlaying, progress, onClose]);
+  }, [isPlaying, currentStep, totalSteps, onClose, onProgressChange]);
 
   // Render the visualizer content using Portal
   return ReactDOM.createPortal(
@@ -313,11 +357,12 @@ const BaseVisualizer = ({
               </div>
               <div className="controllers">
                 <Controls
-                  progress={progress}
                   speed={speed}
                   isPlaying={isPlaying}
                   onSpeedChange={setSpeed}
                   onControlClick={handleControlClick}
+                  currentStep={currentStep}
+                  totalSteps={totalSteps}
                 />
               </div>
               <div className="progress-container">
@@ -407,20 +452,20 @@ const ArrayInput = ({ onSubmit }) => {
     const numbers = value.split(",").map((num) => num.trim());
 
     // Check array length
-    if (numbers.length > 10) {
-      setError("Maximum 10 items allowed");
+    if (numbers.length > 15) {
+      setError("Maximum 15 items allowed");
       setIsValid(false);
       return false;
     }
 
     // Validate each number
     const isValidArray = numbers.every((num) => {
-      const parsed = parseFloat(num);
-      return !isNaN(parsed) && isFinite(parsed) && parsed > 0 && parsed <= 100;
+      const parsed = parseInt(num.trim(), 10);
+      return !isNaN(parsed) && isFinite(parsed) && parsed >= 0 && parsed <= 1000;
     });
 
     if (!isValidArray) {
-      setError("Please enter valid numbers between 1 and 100");
+      setError("Please enter valid integers between 0 and 1000");
       setIsValid(false);
       return false;
     }
@@ -439,7 +484,7 @@ const ArrayInput = ({ onSubmit }) => {
     console.log("Submit clicked"); // Debug log
 
     if (validateInput(input)) {
-      const array = input.split(",").map((num) => parseFloat(num.trim()));
+      const array = input.split(",").map((num) => parseInt(num.trim(), 10));
       console.log("Submitting array:", array); // Debug log
       onSubmit(array);
       setInput("");
@@ -455,7 +500,7 @@ const ArrayInput = ({ onSubmit }) => {
           type="text"
           value={input}
           onChange={handleInputChange}
-          placeholder="Enter numbers (1-100) separated by commas"
+          placeholder="Enter numbers (0-1000) separated by commas"
           className={`array-input-field ${!isValid ? "error" : ""}`}
         />
         <button
