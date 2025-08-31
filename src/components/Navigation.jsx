@@ -1,12 +1,24 @@
-import { motion } from "framer-motion";
-import { Menu, X, Github, Twitter } from "lucide-react";
-import { useState } from "react";
 import { Button } from "./ui/button";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Github, Twitter, Menu, X } from "lucide-react";
+
+function toggleTheme() {
+  const root = document.documentElement;
+  if (root.classList.contains('dark')) {
+    root.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  } else {
+    root.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  }
+}
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navLinks = [
+  
+    const navLinks = [
     { name: "Home", href: "#home" },
     { name: "About", href: "#about" },
     { name: "Topics", href: "#topics" },
@@ -44,7 +56,14 @@ export const Navigation = () => {
                 {link.name}
               </motion.a>
             ))}
-            
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="ml-4 px-3 py-2 rounded-lg border border-border bg-muted text-muted-foreground hover:bg-background hover:text-foreground transition-colors"
+              aria-label="Toggle theme"
+            >
+              🌓
+            </button>
             {/* Social Links */}
             <div className="flex items-center space-x-3 ml-6 pl-6 border-l border-border">
               <motion.a
@@ -66,7 +85,6 @@ export const Navigation = () => {
                 <Twitter className="h-4 w-4" />
               </motion.a>
             </div>
-
             {/* Get Started Button */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}

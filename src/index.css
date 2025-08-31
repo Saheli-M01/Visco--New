@@ -172,10 +172,10 @@
   .card-topic {
     @apply bg-gradient-to-br from-card to-muted/50;
     @apply border border-border/50 rounded-2xl p-6;
-    @apply shadow-card hover:shadow-card-hover;
+  @apply shadow-card hover:shadow-lg;
     @apply transform transition-all duration-300;
     @apply hover:scale-105 hover:-translate-y-2;
-    @apply cursor-pointer group;
+  @apply cursor-pointer;
   }
 
   .card-algorithm {

@@ -83,9 +83,9 @@ const topics = [
 ];
 
 export const Topics = () => {
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState(null);
 
-  const getDifficultyColor = (difficulty: string) => {
+  const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case "Easy": return "text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30";
       case "Medium": return "text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30";
