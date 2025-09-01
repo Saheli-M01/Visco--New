@@ -7,17 +7,17 @@ import { Footer } from "@/components/Footer";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      {/* <Navigation /> */}
+      <Navigation />
       <main>
         <section id="home">
           <Hero />
         </section>
-        {/* <section id="about">
+        <section id="about">
           <About />
         </section>
         <section id="topics">
           <Topics />
-        </section> */}
+        </section>
       </main>
       {/* <Footer /> */}
     </div>

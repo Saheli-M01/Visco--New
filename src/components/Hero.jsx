@@ -1,105 +1,111 @@
 import { TypeAnimation } from "react-type-animation";
 import { motion as m, useScroll, useTransform } from "framer-motion";
-import { Circle, ChevronDown } from "lucide-react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export const Hero = () => {
   const { scrollY } = useScroll();
-  // Transform scroll position to rotation values with perspective effect
-  const rotateX = useTransform(scrollY, [0, 500], [0, 25]);
-  const rotateY = useTransform(scrollY, [0, 500], [0, -5]);
-  const scale = useTransform(scrollY, [0, 500], [1, 0.85]);
-  const y = useTransform(scrollY, [0, 500], [0, 50]);
-
-  const scrollToTopic = () => {
-    const topicSection = document.getElementById("topic");
-    if (topicSection) {
-      topicSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        when: "beforeChildren",
-        staggerChildren: 0.3,
-      },
-    },
-  };
+  const parallaxY = useTransform(scrollY, [0, 400], [0, 40]);
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.5 },
-    },
-  };
-
-  const editorVariants = {
-    hidden: { scale: 0.9, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 15,
-        duration: 0.8,
-      },
-    },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-100 to-blue-100 px-4 py-8">
+    <section
+      id="home"
+      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 px-4 py-16"
+    >
+      {/* Parallax gradient blobs */}
       <m.div
-        className="w-full max-w-3xl mx-auto rounded-2xl shadow-2xl border border-gray-200 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 relative overflow-hidden flex flex-col"
-        variants={editorVariants}
+        style={{ y: parallaxY }}
+        className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-br from-indigo-400/30 to-purple-400/30 blur-3xl"
+      />
+      <m.div
+        style={{ y: parallaxY }}
+        className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-blue-400/30 to-indigo-400/30 blur-3xl"
+      />
+
+      <m.div
+        className="w-full max-w-5xl mx-auto rounded-3xl relative overflow-hidden flex flex-col items-center border border-gray-200/70 bg-white/80 backdrop-blur shadow-2xl"
         initial="hidden"
         animate="visible"
-        style={{ rotateX, rotateY, scale, y, transformPerspective: 1500, transformOrigin: "center top", willChange: "transform" }}
       >
-        {/* Editor top bar */}
-        <div className="flex items-center gap-2 px-4 py-2 bg-gray-200 border-b border-gray-300 rounded-t-2xl">
-          <Circle className="w-4 h-4 text-red-400" />
-          <Circle className="w-4 h-4 text-yellow-400" />
-          <Circle className="w-4 h-4 text-green-400" />
-          <span className="ml-4 text-xs text-gray-500 font-mono">visco.jsx</span>
+        {/* Decorative Lottie (desktop) */}
+        <div className="pointer-events-none absolute -right-6 -top-6 hidden md:block opacity-90">
+          <DotLottieReact
+            src="https://lottie.host/bfbb3828-78cf-4c15-a7f0-b16ecb6bfa26/rgU8VhZ6De.lottie"
+            loop
+            autoplay
+            style={{ width: 220, height: 220 }}
+          />
         </div>
-        {/* Editor content area */}
-        <div className="flex flex-col items-center justify-center px-8 py-12 bg-white/80 rounded-b-2xl">
-          <m.div className="w-full text-center" variants={containerVariants} initial="hidden" animate="visible">
-            <m.h1 variants={itemVariants} className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight text-gray-900">
-              Welcome to <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">Visco</span>
-            </m.h1>
-            <m.h2 variants={itemVariants} className="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto">
-              Understanding when a complexity turns into <span className="font-bold text-blue-600">O(1)</span> - even it starts as <br />
-              <TypeAnimation
-                sequence={["O(n²)", 1500, "O(n¹⁰⁰)", 1500, "O(log n)", 1500]}
-                speed={250}
-                wrapper="span"
-                className="type-animation font-mono text-purple-600"
-                repeat={Infinity}
-              />
-            </m.h2>
-          </m.div>
-        </div>
-      </m.div>
-      <m.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5, duration: 0.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <ChevronDown
-          onClick={scrollToTopic}
-          className="w-10 h-10 text-blue-500 cursor-pointer animate-bounce"
+
+        {/* Spotlight hover overlay */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(99,102,241,0.12), transparent 40%)",
+          }}
         />
+
+        <m.div
+          className="w-full text-center px-6 pb-10"
+          initial="hidden"
+          animate="visible"
+        >
+          <m.h1
+            variants={itemVariants}
+            className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight text-gray-900 font-sans"
+          >
+            Welcome to
+            <span className="block mt-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Visco
+            </span>
+          </m.h1>
+
+          <m.p
+            variants={itemVariants}
+            className="text-lg md:text-xl text-gray-700 mb-6 max-w-3xl mx-auto"
+          >
+            Understanding when a complexity turns into{" "}
+            <span className="font-semibold text-blue-600">O(1)</span> — even if
+            it starts as
+            <br />
+            <TypeAnimation
+              sequence={["O(n²)", 1500, "O(n³)", 1500, "O(n log n)", 1500]}
+              speed={250}
+              wrapper="span"
+              className="font-mono text-purple-600"
+              repeat={Infinity}
+            />
+          </m.p>
+
+          {/* Animated code preview */}
+          <m.pre
+            variants={itemVariants}
+            
+            className="mx-auto w-full max-w-3xl text-left rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white p-4 font-mono text-sm text-gray-800 shadow-sm"
+          >
+            {`function algorithmSteps() {
+  return ["confusion", "dry run", "visualize", "understood "];
+}
+
+console.log(algorithmSteps());`}
+          </m.pre>
+
+          {/* Mobile Lottie below CTAs */}
+          <div className="mt-6 md:hidden">
+            <DotLottieReact
+              src="https://lottie.host/bfbb3828-78cf-4c15-a7f0-b16ecb6bfa26/rgU8VhZ6De.lottie"
+              loop
+              autoplay
+              style={{ width: 180, height: 180 }}
+            />
+          </div>
+        </m.div>
       </m.div>
     </section>
   );
 };
-

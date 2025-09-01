@@ -1,12 +1,14 @@
 import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
 	content: [
-		"./pages/**/*.{ts,tsx}",
-		"./components/**/*.{ts,tsx}",
-		"./app/**/*.{ts,tsx}",
-		"./src/**/*.{ts,tsx}",
+		"./index.html",
+		"./src/**/*.{js,jsx,ts,tsx}",
+		"./components/**/*.{js,jsx,ts,tsx}",
+		"./pages/**/*.{js,jsx,ts,tsx}",
+		"./app/**/*.{js,jsx,ts,tsx}",
 	],
 	prefix: "",
 	theme: {
@@ -19,9 +21,9 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Inter', 'system-ui', 'sans-serif'],
+				sans: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
 				mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-				display: ['Inter', 'system-ui', 'sans-serif'],
+				display: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -101,5 +103,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [animate],
 } satisfies Config;

@@ -1,160 +1,83 @@
-import { Button } from "./ui/button";
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Github, Twitter, Menu, X } from "lucide-react";
-
-function toggleTheme() {
-  const root = document.documentElement;
-  if (root.classList.contains('dark')) {
-    root.classList.remove('dark');
-    localStorage.setItem('theme', 'light');
-  } else {
-    root.classList.add('dark');
-    localStorage.setItem('theme', 'dark');
-  }
-}
+import { Menu, X } from "lucide-react";
 
 export const Navigation = () => {
-  const [isOpen, setIsOpen] = useState(false);
+	const [open, setOpen] = useState(false);
 
-  
-    const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Topics", href: "#topics" },
-    { name: "Visualizer", href: "/visualizer" },
-  ];
+	const navItems = [
+		{ href: "#home", label: "Home" },
+		{ href: "#about", label: "About" },
+		{ href: "#topics", label: "Topics" },
+	];
 
-  return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex items-center space-x-2"
-          >
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">V</span>
-            </div>
-            <span className="font-display font-bold text-xl">Visco</span>
-          </motion.div>
+	const closeMenu = () => setOpen(false);
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link, index) => (
-              <motion.a
-                key={link.name}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                href={link.href}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium"
-              >
-                {link.name}
-              </motion.a>
-            ))}
-            {/* Theme Toggle Button */}
-            <button
-              onClick={toggleTheme}
-              className="ml-4 px-3 py-2 rounded-lg border border-border bg-muted text-muted-foreground hover:bg-background hover:text-foreground transition-colors"
-              aria-label="Toggle theme"
-            >
-              🌓
-            </button>
-            {/* Social Links */}
-            <div className="flex items-center space-x-3 ml-6 pl-6 border-l border-border">
-              <motion.a
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                href="#"
-                className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted"
-              >
-                <Github className="h-4 w-4" />
-              </motion.a>
-              <motion.a
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                href="#"
-                className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted"
-              >
-                <Twitter className="h-4 w-4" />
-              </motion.a>
-            </div>
-            {/* Get Started Button */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
-              <Button variant="default" size="sm" className="ml-4">
-                Get Started
-              </Button>
-            </motion.div>
-          </div>
+	return (
+		<header className="sticky top-0 z-50 w-full border-b border-border/50 bg-white/70 dark:bg-gray-900/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-gray-900/60">
+			<div className="mx-auto max-w-6xl px-4">
+				<div className="flex h-16 items-center justify-between">
+					{/* Logo */}
+					<a href="#home" className="text-xl font-extrabold tracking-tight">
+						<span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">Visco</span>
+					</a>
 
-          {/* Mobile menu button */}
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="md:hidden p-2 text-foreground"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </motion.button>
-        </div>
+					{/* Desktop nav */}
+					<nav className="hidden md:flex items-center gap-6 text-sm">
+						{navItems.map((item) => (
+							<a
+								key={item.href}
+								href={item.href}
+								className="text-foreground/80 hover:text-foreground transition-colors"
+							>
+								{item.label}
+							</a>
+						))}
+					</nav>
 
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden py-4 border-t border-border/50"
-          >
-            <div className="flex flex-col space-y-4">
-              {navLinks.map((link, index) => (
-                <motion.a
-                  key={link.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                  href={link.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium py-2"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.name}
-                </motion.a>
-              ))}
-              
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.4 }}
-                className="flex items-center space-x-4 pt-4"
-              >
-                <Button variant="default" size="sm" className="flex-1">
-                  Get Started
-                </Button>
-                <div className="flex space-x-2">
-                  <a href="#" className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted">
-                    <Github className="h-4 w-4" />
-                  </a>
-                  <a href="#" className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted">
-                    <Twitter className="h-4 w-4" />
-                  </a>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </div>
-    </nav>
-  );
+					{/* Right actions */}
+					<div className="flex items-center gap-3">
+						<a
+							href="#topics"
+							className="hidden md:inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow hover:shadow-md transition-shadow"
+						>
+							Get Started
+						</a>
+						<button
+							className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border/60 hover:bg-muted"
+							aria-label="Toggle menu"
+							onClick={() => setOpen((v) => !v)}
+						>
+							{open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+						</button>
+					</div>
+				</div>
+			</div>
+
+			{/* Mobile menu */}
+			{open && (
+				<div className="md:hidden border-t border-border/50 bg-white/90 dark:bg-gray-900/90 backdrop-blur">
+					<div className="mx-auto max-w-6xl px-4 py-3 flex flex-col gap-2">
+						{navItems.map((item) => (
+							<a
+								key={item.href}
+								href={item.href}
+								onClick={closeMenu}
+								className="py-2 text-foreground/90 hover:text-foreground"
+							>
+								{item.label}
+							</a>
+						))}
+						<a
+							href="#topics"
+							onClick={closeMenu}
+							className="mt-2 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow hover:shadow-md"
+						>
+							Get Started
+						</a>
+					</div>
+				</div>
+			)}
+		</header>
+	);
 };
+
