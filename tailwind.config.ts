@@ -24,6 +24,8 @@ export default {
 				sans: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
 				mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
 				display: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+				outfit: ['Outfit', 'system-ui', 'sans-serif'],
+				zalando: ['"Zalando Sans SemiExpanded"', 'system-ui', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
