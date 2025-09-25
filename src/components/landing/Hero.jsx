@@ -88,7 +88,7 @@ const ArrayElement = ({ delay, index, value }) => {
       style={{
         left: `60%`, 
         marginLeft: `${index * 100}px`, 
-        top: `8%`,
+        top: `5%`,
         transform: isVisible ? "scale(1)" : "scale(0.3)",
       }}
     >
