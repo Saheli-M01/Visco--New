@@ -9,16 +9,17 @@ import {
   BarChart3
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAlgorithmCounts } from "../../hooks/useAlgorithmCounts.js";
 
-const topics = [
+// Static topic configuration (UI-related data)
+const topicConfigs = [
   {
     id: "sorting",
     title: "Sorting Algorithms",
     icon: ArrowUpDown,
     color: "from-blue-500 to-blue-600",
     description: "Visualize how data gets organized",
-    path: "/sorting",
-    algorithmCount: 6
+    path: "/sorting"
   },
   {
     id: "array",
@@ -26,8 +27,7 @@ const topics = [
     icon: List,
     color: "from-green-500 to-green-600",
     description: "Master array manipulation techniques",
-    path: "/array",
-    algorithmCount: 8
+    path: "/array"
   },
   {
     id: "graph",
@@ -35,8 +35,7 @@ const topics = [
     icon: Network,
     color: "from-purple-500 to-purple-600", 
     description: "Navigate complex network structures",
-    path: "/graph",
-    algorithmCount: 7
+    path: "/graph"
   },
   {
     id: "tree",
@@ -44,8 +43,7 @@ const topics = [
     icon: GitBranch,
     color: "from-orange-500 to-orange-600",
     description: "Explore hierarchical data structures", 
-    path: "/tree",
-    algorithmCount: 6
+    path: "/tree"
   },
   {
     id: "linked-list",
@@ -53,13 +51,19 @@ const topics = [
     icon: Link,
     color: "from-red-500 to-red-600",
     description: "Connect and manipulate node structures",
-    path: "/linked-list", 
-    algorithmCount: 5
+    path: "/linked-list"
   }
 ];
 
 export const Topics = () => {
   const navigate = useNavigate();
+  const algorithmCounts = useAlgorithmCounts();
+
+  // Generate topics with dynamic algorithm counts
+  const topics = topicConfigs.map(config => ({
+    ...config,
+    algorithmCount: algorithmCounts[config.id] || 0
+  }));
 
   const handleTopicClick = (topic) => {
     navigate(topic.path);

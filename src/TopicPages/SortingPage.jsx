@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import CategoryLayout from "@/components/CategoryLayout";
+import { CategoryLayout } from "@/components/layout";
 import { categories } from "@/data/categories";
 
 const SortingPage = () => {

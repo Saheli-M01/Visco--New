@@ -11,6 +11,20 @@ export const categories = {
           "Simple comparison-based algorithm that repeatedly swaps adjacent elements.",
       },
       {
+        name: "Selection Sort",
+        complexity: "O(n²)",
+        difficulty: "Easy",
+        shortDescription:
+          "Repeatedly finds minimum element and places it at the beginning.",
+      },
+      {
+        name: "Insertion Sort",
+        complexity: "O(n²)",
+        difficulty: "Easy",
+        shortDescription:
+          "Builds sorted array one item at a time, good for small datasets.",
+      },
+      {
         name: "Merge Sort",
         complexity: "O(n log n)",
         difficulty: "Medium",
@@ -25,25 +39,39 @@ export const categories = {
           "Efficient in-place sorting using partitioning around a pivot element.",
       },
       {
-        name: "Insertion Sort",
-        complexity: "O(n²)",
-        difficulty: "Easy",
-        shortDescription:
-          "Builds sorted array one item at a time, good for small datasets.",
-      },
-      {
-        name: "Selection Sort",
-        complexity: "O(n²)",
-        difficulty: "Easy",
-        shortDescription:
-          "Repeatedly finds minimum element and places it at the beginning.",
-      },
-      {
         name: "Heap Sort",
         complexity: "O(n log n)",
         difficulty: "Hard",
         shortDescription:
           "Uses binary heap data structure for efficient in-place sorting.",
+      },
+      {
+        name: "Shell Sort",
+        complexity: "O(n^1.25)",
+        difficulty: "Medium",
+        shortDescription:
+          "Generalized insertion sort that allows exchanges of far apart elements.",
+      },
+      {
+        name: "Counting Sort",
+        complexity: "O(n + k)",
+        difficulty: "Medium",
+        shortDescription:
+          "Non-comparison sort for integers with limited range using counting array.",
+      },
+      {
+        name: "Radix Sort",
+        complexity: "O(nk)",
+        difficulty: "Hard",
+        shortDescription:
+          "Non-comparison sort that processes digits from least to most significant.",
+      },
+      {
+        name: "Bucket Sort",
+        complexity: "O(n + k)",
+        difficulty: "Medium",
+        shortDescription:
+          "Distributes elements into buckets then sorts individual buckets.",
       },
     ],
   },

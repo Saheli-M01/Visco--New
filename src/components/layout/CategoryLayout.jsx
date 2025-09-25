@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Navigation } from "@/components/Navigation";
+import { Navigation } from "@/components/landing";
 import { Clock, ChevronRight, ArrowLeft } from "lucide-react";
-import Modal from "@/components/ui/Modal";
-import AlgorithmDetails from "@/components/AlgorithmDetails";
+import { FullScreenModal, AlgorithmDetails } from "@/components/algorithm-visualizer-details";
 
 const CategoryLayout = ({ category, children }) => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState(null);
@@ -127,19 +126,13 @@ const CategoryLayout = ({ category, children }) => {
         </div>
       </main>
 
-      {/* Algorithm Details Modal */}
-      <Modal
+      {/* Algorithm Full-Screen Modal */}
+      <FullScreenModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={selectedAlgorithm?.algorithm?.name || "Algorithm Details"}
-      >
-        {selectedAlgorithm && (
-          <AlgorithmDetails
-            algorithm={selectedAlgorithm.algorithm}
-            topic={selectedAlgorithm.topic}
-          />
-        )}
-      </Modal>
+        algorithm={selectedAlgorithm?.algorithm}
+        topic={selectedAlgorithm?.topic}
+      />
     </div>
   );
 };

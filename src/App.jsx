@@ -3,13 +3,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import SortingPage from "./pages/SortingPage";
-import ArrayPage from "./pages/ArrayPage";
-import GraphPage from "./pages/GraphPage";
-import TreePage from "./pages/TreePage";
-import LinkedListPage from "./pages/LinkedListPage";
+import Index from "./TopicPages/Index";
+import NotFound from "./TopicPages/NotFound";
+import SortingPage from "./TopicPages/SortingPage";
+import ArrayPage from "./TopicPages/ArrayPage";
+import GraphPage from "./TopicPages/GraphPage";
+import TreePage from "./TopicPages/TreePage";
+import LinkedListPage from "./TopicPages/LinkedListPage";
 
 const queryClient = new QueryClient();
 

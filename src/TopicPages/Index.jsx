@@ -1,8 +1,4 @@
-import { Navigation } from "@/components/Navigation";
-import Hero from "@/components/Hero";
-import { About } from "@/components/About";
-import { Topics } from "@/components/Topics";
-import { Footer } from "@/components/Footer";
+import { Navigation, Hero, About, Topics, Footer } from "@/components/landing";
 
 const Index = () => {
   return (
@@ -19,7 +15,7 @@ const Index = () => {
           <Topics />
         </section>
       </main>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };
