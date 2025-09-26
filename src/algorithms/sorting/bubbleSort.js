@@ -3,7 +3,8 @@ export const bubbleSort = {
   name: "Bubble Sort",
   
   // Generate step-by-step visualization data with code line tracking
-  generateSteps: (arr) => {
+  // Accept optional language param so we can produce steps that match multi-line swaps in C/Java
+  generateSteps: (arr, language = 'javascript') => {
     const steps = [];
     const sortedArray = [...arr];
     const n = sortedArray.length;
@@ -65,20 +66,60 @@ export const bubbleSort = {
         });
 
         if (sortedArray[j] > sortedArray[j + 1]) {
-          // Swap step
+          // Swap step - produce steps that reflect the language's swap implementation
           const temp1 = sortedArray[j];
           const temp2 = sortedArray[j + 1];
-          [sortedArray[j], sortedArray[j + 1]] = [sortedArray[j + 1], sortedArray[j]];
           swappedInThisPass = true;
-          
-          steps.push({
-            array: [...sortedArray],
-            comparing: [j, j + 1],
-            swapped: [j, j + 1],
-            description: `Swapping: ${temp1} ↔ ${temp2}`,
-            codeLine: 4, // swap operation
-            phase: "swap"
-          });
+
+          if (language === 'c' || language === 'java') {
+            // C/Java: three-line swap using a temp variable
+            // 1) temp = arr[j]; (no array change)
+            steps.push({
+              array: [...sortedArray],
+              comparing: [j, j + 1],
+              swapped: [],
+              description: `temp = ${temp1}`,
+              temp: { value: temp1, index: j },
+              codeLine: 4, // int temp = arr[j];
+              phase: "swap_step"
+            });
+
+            // 2) arr[j] = arr[j + 1]; (arr[j] changes)
+            sortedArray[j] = temp2;
+            steps.push({
+              array: [...sortedArray],
+              comparing: [j, j + 1],
+              swapped: [j, j + 1],
+              description: `arr[${j}] = ${temp2}`,
+              temp: { value: temp1, index: j },
+              codeLine: 5, // arr[j] = arr[j + 1];
+              phase: "swap_step"
+            });
+
+            // 3) arr[j + 1] = temp; (arr[j+1] changes)
+            sortedArray[j + 1] = temp1;
+            // Keep the temp object present so the UI can continue to show its value
+            steps.push({
+              array: [...sortedArray],
+              comparing: [j, j + 1],
+              swapped: [j, j + 1],
+              description: `arr[${j + 1}] = ${temp1}`,
+              temp: { value: temp1, index: j },
+              codeLine: 6, // arr[j + 1] = temp;
+              phase: "swap"
+            });
+          } else {
+            // JS/Python/JS-like single-line swap
+            [sortedArray[j], sortedArray[j + 1]] = [sortedArray[j + 1], sortedArray[j]];
+            steps.push({
+              array: [...sortedArray],
+              comparing: [j, j + 1],
+              swapped: [j, j + 1],
+              description: `Swapping: ${temp1} ↔ ${temp2}`,
+              codeLine: 4, // swap operation (single-line)
+              phase: "swap"
+            });
+          }
         } else {
           steps.push({
             array: [...sortedArray],
@@ -105,6 +146,30 @@ export const bubbleSort = {
       }
     }
     
+    // For languages that use a temp variable (C/Java), ensure the temp value
+    // persists across subsequent steps once it's created. This mirrors the
+    // behavior where the temp variable remains in scope until overwritten.
+    const languageUsesTemp = language === 'c' || language === 'java';
+    if (languageUsesTemp) {
+      let lastTemp = null;
+      for (let k = 0; k < steps.length; k++) {
+        if (steps[k].hasOwnProperty('temp')) {
+          // If step explicitly sets temp (may be object or null), update lastTemp
+          if (steps[k].temp) {
+            lastTemp = steps[k].temp;
+          } else {
+            // If explicitly set to null, keep lastTemp (do not remove) per UX request
+            // so we won't clear lastTemp here.
+          }
+        } else {
+          // No explicit temp on this step - propagate lastTemp if available
+          if (lastTemp) {
+            steps[k].temp = lastTemp;
+          }
+        }
+      }
+    }
+
     return steps;
   },
 

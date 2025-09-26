@@ -1,31 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
-import {
-  X,
-  Eye,
-  Info,
-  Play,
-  Pause,
-  SkipBack,
-  SkipForward,
-  ChevronLeft,
-  ChevronRight,
-  RotateCcw,
-  RefreshCw,
-} from "lucide-react";
-import {
-  FormControl,
-  Select,
-  MenuItem,
-  Tabs,
-  Tab,
-  Slider,
-  IconButton,
-} from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AlgorithmDetails from "./AlgorithmDetails";
 import { categories } from "../../data/categories";
 import { getAlgorithm, parseArray } from "../../algorithms/algorithmFactory";
+import VisualizerHeader from "./VisualizerHeader";
+import CodePreview from "./CodePreview";
+import StepHistory from "./StepHistory";
+import ArrayDisplay from "./ArrayDisplay";
+import ControlsPanel from "./ControlsPanel";
+import ArrayInputCard from "./ArrayInputCard";
 
 // Custom MUI theme for glassmorphic design
 const theme = createTheme({
@@ -50,7 +34,7 @@ const theme = createTheme({
         },
         select: {
           padding: "12px 16px",
-          fontSize: "1.125rem",
+          fontSize: "1.125em",
           fontWeight: 600,
         },
         icon: {
@@ -108,7 +92,7 @@ const theme = createTheme({
           borderRadius: "8px",
           color: "#6b7280",
           fontWeight: 500,
-          fontSize: "0.875rem",
+          fontSize: "0.875em",
           textTransform: "none",
           minHeight: "40px",
           transition: "all 0.2s ease-in-out",
@@ -134,21 +118,18 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
 
   // Visualization state
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+  const [showLanguageChangeConfirm, setShowLanguageChangeConfirm] =
+    useState(false);
+  const [pendingLanguage, setPendingLanguage] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1.0); // Speed multiplier: 0.5x to 2x
   const [currentStep, setCurrentStep] = useState(0);
-  const [totalSteps, setTotalSteps] = useState(10); // Example total steps
-  const [arrayInput, setArrayInput] = useState("64, 34, 25, 12, 22, 11, 90");
-  const [isAutomatic, setIsAutomatic] = useState(true);
+  const [totalSteps, setTotalSteps] = useState(0); // total steps (0 when no steps)
+  const [arrayInput, setArrayInput] = useState("");
+  const [isAutomatic, setIsAutomatic] = useState(false);
   const [validationError, setValidationError] = useState("");
   const [showValidationPopup, setShowValidationPopup] = useState(false);
-  const [stepHistory, setStepHistory] = useState([
-    {
-      step: 0,
-      description: "",
-      array: [64, 34, 25, 12, 22, 11, 90],
-    },
-  ]);
+  const [stepHistory, setStepHistory] = useState([]);
 
   // Array visualization state
   const [currentArray, setCurrentArray] = useState([]);
@@ -165,22 +146,20 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
   const stepHistoryRef = useRef(null);
   const currentStepRef = useRef(null);
 
+  // Pause execution while confirm modal is shown
+  useEffect(() => {
+    if (showLanguageChangeConfirm) {
+      // Pause everything
+      handlePause();
+    }
+  }, [showLanguageChangeConfirm]);
+
   // Get all sorting algorithms from categories
   const sortingAlgorithms = categories.sorting?.algorithms || [];
 
-  const languages = [
-    { value: "c", label: "C" },
-    { value: "cpp", label: "C++" },
-    { value: "java", label: "Java" },
-    { value: "javascript", label: "JavaScript" },
-    { value: "python", label: "Python" },
-  ];
+ 
 
-  // Code will be loaded dynamically based on selected algorithm with line highlighting
-  const getCodeForLanguage = (language, algorithmName) => {
-    const algorithm = getAlgorithm(algorithmName);
-    return algorithm.getCode(language);
-  };
+
 
   // Get code lines for highlighting
   const getCodeLines = (language, algorithmName) => {
@@ -194,7 +173,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
   // Control functions
   const handlePlay = () => {
     if (!isVisualizationActive || sortingSteps.length === 0) return;
-    
+
     setIsExecuting(true);
     setIsPlaying(true);
     // The useEffect will handle creating the interval with the correct speed
@@ -303,6 +282,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
     setCurrentCodeLine(-1);
     setIsExecuting(false);
     setStepHistory([]);
+    setTotalSteps(0);
   };
 
   // Real-time input validation - only allow digits, commas, spaces, and decimal points
@@ -480,7 +460,9 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
           if (step) {
             setCurrentArray([...step.array]);
             setComparingIndices(step.comparing || []);
-            setCurrentCodeLine(step.codeLine !== undefined ? step.codeLine : -1);
+            setCurrentCodeLine(
+              step.codeLine !== undefined ? step.codeLine : -1
+            );
             setCurrentStep(nextIndex);
           }
           return nextIndex;
@@ -521,7 +503,8 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
 
     // Get the appropriate algorithm implementation
     const algorithm = getAlgorithm(selectedAlgorithm?.name);
-    const steps = algorithm.generateSteps(parsedArray);
+    // Pass the currently selected language so step generation matches displayed code
+    const steps = algorithm.generateSteps(parsedArray, selectedLanguage);
 
     setSortingSteps(steps);
     setCurrentStepIndex(0);
@@ -548,6 +531,65 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
         phase: step.phase,
       }))
     );
+  };
+
+  // Called by CodePreview when user attempts to change language while a visualization exists
+  const requestLanguageChange = (newLang) => {
+    // Only prompt when a visualization is active AND we've progressed beyond the first step
+    if (
+      !isVisualizationActive ||
+      sortingSteps.length === 0 ||
+      currentStepIndex <= 0
+    ) {
+      setSelectedLanguage(newLang);
+      return;
+    }
+
+    // Otherwise prompt for confirmation and pause
+    setPendingLanguage(newLang);
+    setShowLanguageChangeConfirm(true);
+  };
+
+  const confirmLanguageChange = () => {
+    if (pendingLanguage) {
+      // regenerate steps for the pending language using the original array
+      setSelectedLanguage(pendingLanguage);
+      // If we have originalArray, regenerate steps automatically
+      if (originalArray && originalArray.length > 0) {
+        const algorithm = getAlgorithm(selectedAlgorithm?.name);
+        const steps = algorithm.generateSteps(
+          [...originalArray],
+          pendingLanguage
+        );
+        setSortingSteps(steps);
+        setTotalSteps(steps.length);
+        setStepHistory(
+          steps.map((step, index) => ({
+            step: index,
+            description: step.description,
+            array: step.array,
+            phase: step.phase,
+          }))
+        );
+        setCurrentStepIndex(0);
+        setCurrentStep(0);
+        if (steps.length > 0) {
+          const firstStep = steps[0];
+          setCurrentArray([...firstStep.array]);
+          setComparingIndices(firstStep.comparing || []);
+          setCurrentCodeLine(
+            firstStep.codeLine !== undefined ? firstStep.codeLine : -1
+          );
+        }
+      }
+    }
+    setPendingLanguage(null);
+    setShowLanguageChangeConfirm(false);
+  };
+
+  const cancelLanguageChange = () => {
+    setPendingLanguage(null);
+    setShowLanguageChangeConfirm(false);
   };
 
   const handleTabChange = (event, newValue) => {
@@ -577,116 +619,15 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
           {/* Full-screen modal content */}
           <div className="relative h-full w-full backdrop-blur-sm bg-white/20 flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-3 border-b border-white/20 backdrop-blur-md bg-white/10 shadow-lg">
-              <div className="flex items-center gap-6">
-                {/* Algorithm Dropdown */}
-                <FormControl
-                  variant="outlined"
-                  size="small"
-                  sx={{ minWidth: 200 }}
-                >
-                  <Select
-                    value={selectedAlgorithm?.name || ""}
-                    onChange={handleAlgorithmChange}
-                    displayEmpty
-                    sx={{
-                      backgroundColor: "rgba(255, 255, 255, 0.3)",
-                      borderRadius: "12px",
-                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-                      border: "1px solid rgba(255, 255, 255, 0.4)",
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        border: "none",
-                      },
-                      "& .MuiSelect-select": {
-                        padding: "10px 16px",
-                        fontSize: "0.875rem",
-                        fontWeight: "600",
-                        color: "#1f2937",
-                      },
-                      "&:hover": {
-                        backgroundColor: "rgba(255, 255, 255, 0.4)",
-                        boxShadow: "0 6px 16px rgba(0, 0, 0, 0.2)",
-                      },
-                    }}
-                  >
-                    {sortingAlgorithms.map((algo) => (
-                      <MenuItem key={algo.name} value={algo.name}>
-                        {algo.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {/* Tabs */}
-                <Tabs
-                  value={activeTab}
-                  onChange={handleTabChange}
-                  sx={{
-                    minHeight: "48px",
-                    "& .MuiTabs-flexContainer": {
-                      gap: "8px",
-                    },
-                    "& .MuiTab-root": {
-                      minHeight: "auto",
-                      padding: "10px 20px",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      color: "#6b7280",
-                      backgroundColor: "rgba(255, 255, 255, 0.2)",
-                      border: "1px solid rgba(85, 84, 84, 0.4)",
-                      borderRadius: "10px",
-                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                      textTransform: "none",
-                      transition: "all 0.3s ease",
-                      "&.Mui-selected": {
-                        color: "#ffffff",
-                        backgroundColor: "#374151",
-                        border: "1px solid #4b5563",
-                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-                      },
-                      "&:hover": {
-                        color: "#ffffff",
-                        backgroundColor: "#222933ff",
-                        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.15)",
-                      },
-                    },
-                    "& .MuiTabs-indicator": {
-                      display: "none",
-                    },
-                  }}
-                >
-                  <Tab
-                    icon={<Eye className="h-4 w-4" />}
-                    label="Visualization"
-                    iconPosition="start"
-                    sx={{ gap: 1 }}
-                  />
-                  <Tab
-                    icon={<Info className="h-4 w-4" />}
-                    label="Details"
-                    iconPosition="start"
-                    sx={{ gap: 1 }}
-                  />
-                </Tabs>
-
-                {/* Refresh Button */}
-                <button
-                  onClick={handleRefresh}
-                  className="p-2 rounded-xl backdrop-blur-sm bg-white/20 border border-white/30 hover:bg-white/30 transition-all text-gray-900 hover:text-gray-700"
-                  title="Refresh and Reset"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                </button>
-              </div>
-
-              <button
-                onClick={onClose}
-                className="p-2 rounded-xl backdrop-blur-sm bg-white/20 border border-white/30 hover:bg-white/30 transition-all text-gray-900 hover:text-gray-700"
-                aria-label="Close modal"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
+            <VisualizerHeader
+              sortingAlgorithms={sortingAlgorithms}
+              selectedAlgorithm={selectedAlgorithm}
+              handleAlgorithmChange={handleAlgorithmChange}
+              activeTab={activeTab}
+              handleTabChange={handleTabChange}
+              handleRefresh={handleRefresh}
+              onClose={onClose}
+            />
 
             {/* Tab Content */}
             <div className="flex-1 overflow-hidden">
@@ -700,468 +641,102 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
                       <div className="lg:col-span-4 space-y-3">
                         {/* First Row - Code Preview and Step History */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                          {/* Code Preview - Left */}
-                          <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl py-2 px-4 shadow-lg">
-                            <div className="flex items-center justify-between mb-1">
-                              <h3 className="text-lg font-semibold text-gray-900">
-                                Code Preview
-                              </h3>
-                              <FormControl size="small" sx={{ minWidth: 120 }}>
-                                <Select
-                                  value={selectedLanguage}
-                                  onChange={(e) =>
-                                    setSelectedLanguage(e.target.value)
-                                  }
-                                  sx={{
-                                    backgroundColor: "rgba(255, 255, 255, 0.4)",
-                                    borderRadius: "8px",
-                                    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
-                                    border: "1px solid rgba(56, 56, 56, 0.4)",
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                      border: "none",
-                                    },
-                                    "& .MuiSelect-select": {
-                                      padding: "6px 12px",
-                                      fontSize: "0.75rem",
-                                      fontWeight: "500",
-                                    },
-                                  }}
-                                >
-                                  {languages.map((lang) => (
-                                    <MenuItem
-                                      key={lang.value}
-                                      value={lang.value}
-                                    >
-                                      {lang.label}
-                                    </MenuItem>
-                                  ))}
-                                </Select>
-                              </FormControl>
-                            </div>
-                            <pre className="bg-gray-900 text-green-400 p-3 rounded-lg text-sm overflow-x-auto custom-scrollbar h-48 shadow-inner border border-gray-700">
-                              <code>
-                                {getCodeLines(
-                                  selectedLanguage,
-                                  selectedAlgorithm?.name
-                                ).map((line, index) => (
-                                  <div
-                                    key={index}
-                                    className={`${
-                                      currentCodeLine === index
-                                        ? "bg-blue-300/70 text-yellow-100 border-l-4 border-blue-600 pl-2"
-                                        : ""
-                                    } ${
-                                      currentCodeLine !== -1 &&
-                                      currentCodeLine !== index
-                                        ? "text-gray-500"
-                                        : "text-green-400"
-                                    }`}
-                                  >
-                                    {line}
-                                  </div>
-                                ))}
-                              </code>
-                            </pre>
-                          </div>
+                          <CodePreview
+                            selectedLanguage={selectedLanguage}
+                            requestLanguageChange={requestLanguageChange}
+                            getCodeLines={getCodeLines}
+                            selectedAlgorithm={selectedAlgorithm}
+                            currentCodeLine={currentCodeLine}
+                          />
 
-                          {/* Step History - Right */}
-                          <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl  py-2 px-4 shadow-lg">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                              Step History
-                            </h3>
-                            <div
-                              ref={stepHistoryRef}
-                              className="space-y-2 h-48 overflow-y-auto custom-scrollbar"
-                            >
-                              {stepHistory.length === 0 ? (
-                                <div className="flex items-center justify-center h-full">
-                                  <p className="text-gray-500 text-sm text-center">
-                                    No steps yet.<br />
-                                    Click "Start Visualization" to begin.
-                                  </p>
-                                </div>
-                              ) : (
-                                stepHistory.map((step, index) => (
-                                <div
-                                  key={index}
-                                  ref={
-                                    currentStepIndex === step.step
-                                      ? currentStepRef
-                                      : null
-                                  }
-                                  className={`p-3 rounded-lg transition-all cursor-pointer shadow-md border ${
-                                    currentStepIndex === step.step
-                                      ? "bg-gray-800 text-white border-gray-600 shadow-lg ring-2 ring-blue-400/50"
-                                      : "bg-white/30 border-white/40 hover:bg-white/40 text-gray-900 hover:shadow-lg"
-                                  }`}
-                                  onClick={() => {
-                                    if (
-                                      isVisualizationActive &&
-                                      sortingSteps[step.step]
-                                    ) {
-                                      handlePause();
-                                      setCurrentStepIndex(step.step);
-                                      setCurrentStep(step.step);
-                                      const targetStep =
-                                        sortingSteps[step.step];
-                                      setCurrentArray([...targetStep.array]);
-                                      setComparingIndices(
-                                        targetStep.comparing || []
-                                      );
-                                      setCurrentCodeLine(
-                                        targetStep.codeLine !== undefined
-                                          ? targetStep.codeLine
-                                          : -1
-                                      );
-                                    }
-                                  }}
-                                >
-                                  <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm font-semibold">
-                                      Step {step.step + 1}
-                                    </span>
-                                    {step.phase && (
-                                      <span
-                                        className={`text-xs px-2 py-1 rounded-full ${
-                                          step.phase === "comparison"
-                                            ? "bg-blue-100 text-blue-800"
-                                            : step.phase === "swap"
-                                            ? "bg-red-100 text-red-800"
-                                            : step.phase === "completed"
-                                            ? "bg-green-100 text-green-800"
-                                            : "bg-gray-100 text-gray-800"
-                                        }`}
-                                      >
-                                        {step.phase}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="flex gap-1 flex-wrap mb-2">
-                                    {step.array.map((num, i) => (
-                                      <span
-                                        key={i}
-                                        className={`px-2 py-1 rounded text-xs font-medium shadow-sm ${
-                                          currentStepIndex === step.step
-                                            ? "bg-gray-600 text-white"
-                                            : "bg-white/50 text-gray-800 border border-white/30"
-                                        }`}
-                                      >
-                                        {num}
-                                      </span>
-                                    ))}
-                                  </div>
-                                  <p
-                                    className={`text-xs ${
-                                      currentStepIndex === step.step
-                                        ? "text-gray-300"
-                                        : "text-gray-700"
-                                    }`}
-                                  >
-                                    {step.description}
-                                  </p>
-                                </div>
-                                ))
-                              )}
-                            </div>
-                          </div>
+                          <StepHistory
+                            stepHistory={stepHistory}
+                            currentStepIndex={currentStepIndex}
+                            isVisualizationActive={isVisualizationActive}
+                            sortingSteps={sortingSteps}
+                            setCurrentStepIndex={setCurrentStepIndex}
+                            setCurrentStep={setCurrentStep}
+                            setCurrentArray={setCurrentArray}
+                            setComparingIndices={setComparingIndices}
+                            setCurrentCodeLine={setCurrentCodeLine}
+                            currentStepRef={currentStepRef}
+                            stepHistoryRef={stepHistoryRef}
+                          />
                         </div>
 
                         {/* Second Row - Output (Full Width) */}
                         <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg">
                           {!isVisualizationActive ? (
-                            // Initial state - show terminal style
                             <div className="bg-gray-900 text-white p-4 rounded-lg text-sm font-mono min-h-[200px] overflow-y-auto custom-scrollbar shadow-inner border border-gray-700">
                               <div className="text-green-400">
-                                $ Ready to run {selectedAlgorithm?.name}...
+                                Ready to run {selectedAlgorithm?.name}...
                               </div>
                               <div className="text-gray-300 mt-2">
-                                Enter array values and click "Go" to start
-                                visualization
+                                Enter array values and click{" "}
+                                <span className="text-blue-400">Go</span> to
+                                begin the visualization.
                               </div>
                               <div className="text-blue-400 mt-1">
-                                Example: 64, 34, 25, 12, 22, 11, 90
+                                Use the Manual or Automatic controls to manage
+                                the process.
+                              </div>
+                              <div className="text-gray-300 mt-2">
+                                Review each step in the step history panel.
+                              </div>
+                              <div className="text-blue-400 mt-2">
+                                Follow the progress bar to track sorting
+                                progress.
                               </div>
                             </div>
                           ) : (
-                            // Array visualization
-                            <div className="space-y-4">
-                              {/* Array Visualization Header */}
-                              <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-semibold text-gray-800">
-                                  Array Visualization
-                                </h3>
-                                <div className="text-sm text-gray-600">
-                                  Step {currentStepIndex + 1} of{" "}
-                                  {sortingSteps.length}
-                                </div>
-                              </div>
-
-                              {/* Array Display */}
-                              <div className="bg-gray-900 rounded-lg p-8 min-h-[250px] flex items-center justify-center">
-                                <div className="flex flex-col items-center">
-                                  {/* Array Elements */}
-                                  <div className="flex justify-center gap-4 mb-4">
-                                    {currentArray.map((value, index) => {
-                                      const isComparing =
-                                        comparingIndices.includes(index);
-                                      const isSwapped =
-                                        sortingSteps[
-                                          currentStepIndex
-                                        ]?.swapped?.includes(index);
-
-                                      return (
-                                        <div
-                                          key={`${index}-${value}`}
-                                          className="flex flex-col items-center"
-                                        >
-                                          {/* Status indicator */}
-                                          {isComparing && (
-                                            <div className="mb-2">
-                                              <div className="bg-blue-400 text-white text-xs px-3 py-1 rounded-full font-semibold animate-pulse">
-                                                Comparing
-                                              </div>
-                                            </div>
-                                          )}
-
-                                          {/* Array element box */}
-                                          <div
-                                            className={`
-                                              flex items-center justify-center
-                                              h-16 px-4 rounded-lg font-bold text-lg
-                                              transition-all duration-500 ease-in-out
-                                              transform shadow-lg border-2 min-w-[60px]
-                                              ${
-                                                isComparing
-                                                  ? "bg-blue-500 text-white border-blue-400 scale-110 animate-pulse"
-                                                  : isSwapped
-                                                  ? "bg-green-500 text-white border-green-400 scale-105"
-                                                  : "bg-gray-700 text-white border-gray-600"
-                                              }
-                                            `}
-                                          >
-                                            <span className="drop-shadow-lg">
-                                              {value}
-                                            </span>
-                                          </div>
-
-                                          {/* Array index */}
-                                          <div className="mt-2">
-                                            <span className="text-gray-400 text-sm font-mono">
-                                              {index}
-                                            </span>
-                                          </div>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-
-                                  {/* Swapped indicator */}
-                                  {sortingSteps[currentStepIndex]?.swapped
-                                    ?.length > 0 && (
-                                    <div className="mt-4">
-                                      <div className="bg-green-500 text-white text-sm px-4 py-2 rounded-full font-semibold">
-                                        Elements Swapped!
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
+                            <ArrayDisplay
+                              currentArray={currentArray}
+                              comparingIndices={comparingIndices}
+                              sortingSteps={sortingSteps}
+                              currentStepIndex={currentStepIndex}
+                              currentCodeLine={currentCodeLine}
+                              selectedLanguage={selectedLanguage}
+                              tempLineIndex={getCodeLines(
+                                selectedLanguage,
+                                selectedAlgorithm?.name
+                              ).findIndex((line) => /temp/.test(line))}
+                              languageHasTemp={getCodeLines(
+                                selectedLanguage,
+                                selectedAlgorithm?.name
+                              ).some((line) => /temp/.test(line))}
+                            />
                           )}
                         </div>
                       </div>
 
                       {/* Right Column - 1/5 width */}
                       <div className="lg:col-span-1 space-y-3">
-                        {/* Array Input Card - 1st Row */}
-                        <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg">
-                          <h3 className="text-md font-semibold text-gray-900 mb-3">
-                            Array Input
-                          </h3>
-                          <div className="space-y-3">
-                            <div className="relative">
-                              <textarea
-                                value={arrayInput}
-                                onChange={handleArrayInputChange}
-                                placeholder="Enter comma-separated numbers: 64, 34, 25, 12, 22, 11, 90"
-                                className="w-full h-20 p-3 rounded-lg backdrop-blur-sm bg-white/30 border-2 border-gray-500/50 text-gray-900 placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500/50 shadow-inner text-sm hover:border-white/60 transition-all duration-200"
-                              />
-                              {/* Validation Popup */}
-                              {showValidationPopup && (
-                                <div className="absolute top-full left-0 right-0 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg shadow-lg z-50">
-                                  <div className="flex items-start gap-2">
-                                    <div className="text-red-700 text-sm">
-                                      {validationError}
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                            <button
-                              onClick={handleGo}
-                              className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all shadow-md text-sm font-medium border border-gray-600"
-                            >
-                              Go
-                            </button>
-                          </div>
-                        </div>
+                        <ArrayInputCard
+                          arrayInput={arrayInput}
+                          handleArrayInputChange={handleArrayInputChange}
+                          showValidationPopup={showValidationPopup}
+                          validationError={validationError}
+                          handleGo={handleGo}
+                        />
 
-                        {/* Controls Card - 2nd Row */}
-                        <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg">
-                          <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-md font-semibold text-gray-900">
-                              Controls
-                            </h3>
-                          </div>
-
-                          {/* Compact Manual/Automatic Toggle Tabs */}
-                          <div className="flex bg-white/20 rounded-lg p-1 mb-4 border border-white/30 shadow-inner w-full">
-                            <button
-                              onClick={() => setIsAutomatic(false)}
-                              className={`flex-1 py-1 rounded-md text-sm font-medium transition-all ${
-                                !isAutomatic
-                                  ? "bg-gray-800 text-white shadow-md"
-                                  : "text-gray-700 hover:bg-white/20"
-                              }`}
-                            >
-                              Manual
-                            </button>
-                            <button
-                              onClick={() => setIsAutomatic(true)}
-                              className={`flex-1 py-1 rounded-md text-sm font-medium transition-all ${
-                                isAutomatic
-                                  ? "bg-gray-800 text-white shadow-md"
-                                  : "text-gray-700 hover:bg-white/20"
-                              }`}
-                            >
-                              Automatic
-                            </button>
-                          </div>
-
-                          {/* Control Content */}
-                          {isAutomatic ? (
-                            /* Automatic Controls */
-                            <div className="space-y-3">
-                              <div className="flex items-center justify-center gap-2">
-                                <button
-                                  onClick={handleReset}
-                                  className="p-2 rounded-lg backdrop-blur-sm bg-white/30 border border-white/40 hover:bg-white/40 transition-all text-gray-900 shadow-md"
-                                >
-                                  <RotateCcw className="h-4 w-4" />
-                                </button>
-                                <button
-                                  onClick={isPlaying ? handlePause : handlePlay}
-                                  className="p-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition-all shadow-lg border border-gray-600"
-                                >
-                                  {isPlaying ? (
-                                    <Pause className="h-4 w-4" />
-                                  ) : (
-                                    <Play className="h-4 w-4" />
-                                  )}
-                                </button>
-                              </div>
-
-                              <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-sm font-medium text-gray-700">
-                                    Speed
-                                  </span>
-                                  <span className="text-sm text-gray-600">
-                                    {speed}x
-                                  </span>
-                                </div>
-                                <Slider
-                                  value={speed}
-                                  onChange={(_, newValue) => setSpeed(newValue)}
-                                  min={0.5}
-                                  max={1.5}
-                                  step={0.1}
-                                  marks={[
-                                    { value: 0.5, label: '0.5x' },
-                                    { value: 1.0, label: '1x' },
-                                    { value: 1.5, label: '1.5x' }
-                                  ]}
-                                  size="small"
-                                  sx={{
-                                    color: "#374151",
-                                    "& .MuiSlider-thumb": {
-                                      backgroundColor: "#374151",
-                                      width: 16,
-                                      height: 16,
-                                      "&:hover": {
-                                        boxShadow:
-                                          "0 0 0 8px rgba(55, 65, 81, 0.16)",
-                                      },
-                                    },
-                                    "& .MuiSlider-track": {
-                                      backgroundColor: "#374151",
-                                      height: 4,
-                                    },
-                                    "& .MuiSlider-rail": {
-                                      backgroundColor:
-                                        "rgba(156, 163, 175, 0.5)",
-                                      height: 4,
-                                    },
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          ) : (
-                            /* Manual Controls */
-                            <div className="space-y-2">
-                              <div className="grid grid-cols-2 gap-2">
-                                <button
-                                  onClick={handleFirstStep}
-                                  disabled={
-                                    !isVisualizationActive ||
-                                    currentStepIndex === 0
-                                  }
-                                  className="flex items-center justify-center gap-1 p-2 rounded-lg backdrop-blur-sm bg-white/30 border border-white/40 hover:bg-white/40 transition-all text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed shadow-md text-xs font-medium"
-                                >
-                                  <SkipBack className="h-3 w-3" />
-                                  First
-                                </button>
-                                <button
-                                  onClick={handleLastStep}
-                                  disabled={
-                                    !isVisualizationActive ||
-                                    currentStepIndex >= sortingSteps.length - 1
-                                  }
-                                  className="flex items-center justify-center gap-1 p-2 rounded-lg backdrop-blur-sm bg-white/30 border border-white/40 hover:bg-white/40 transition-all text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed shadow-md text-xs font-medium"
-                                >
-                                  <SkipForward className="h-3 w-3" />
-                                  Last
-                                </button>
-                              </div>
-                              
-                              <div className="grid grid-cols-2 gap-2">
-                                <button
-                                  onClick={handleStepBackward}
-                                  disabled={
-                                    !isVisualizationActive ||
-                                    currentStepIndex === 0
-                                  }
-                                  className="flex items-center justify-center gap-1 p-2 rounded-lg backdrop-blur-sm bg-white/30 border border-white/40 hover:bg-white/40 transition-all text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed shadow-md text-xs font-medium"
-                                >
-                                  <ChevronLeft className="h-3 w-3" />
-                                  Prev
-                                </button>
-                               
-                                <button
-                                  onClick={handleStepForward}
-                                  disabled={
-                                    !isVisualizationActive ||
-                                    currentStepIndex >= sortingSteps.length - 1
-                                  }
-                                  className="flex items-center justify-center gap-1 p-2 rounded-lg backdrop-blur-sm bg-white/30 border border-white/40 hover:bg-white/40 transition-all text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed shadow-md text-xs font-medium"
-                                >
-                                  <ChevronRight className="h-3 w-3" />
-                                  Next
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                        <ControlsPanel
+                          isAutomatic={isAutomatic}
+                          setIsAutomatic={setIsAutomatic}
+                          isPlaying={isPlaying}
+                          handlePlay={handlePlay}
+                          handlePause={handlePause}
+                          handleReset={handleReset}
+                          speed={speed}
+                          setSpeed={setSpeed}
+                          isVisualizationActive={isVisualizationActive}
+                          currentStepIndex={currentStepIndex}
+                          sortingSteps={sortingSteps}
+                          handleFirstStep={handleFirstStep}
+                          handleLastStep={handleLastStep}
+                          handleStepBackward={handleStepBackward}
+                          handleStepForward={handleStepForward}
+                          isExecuting={isExecuting}
+                        />
 
                         {/* Progress Bar - 3rd Row */}
                         <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg">
@@ -1170,8 +745,9 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
                               Progress
                             </span>
                             <span className="text-sm font-medium text-gray-700">
-                              {currentStepIndex + 1} /{" "}
-                              {sortingSteps.length || totalSteps}
+                              {sortingSteps.length > 0
+                                ? `${currentStepIndex + 1} / ${sortingSteps.length}`
+                                : `0 / 0`}
                             </span>
                           </div>
                           <div className="w-full bg-gray-300 rounded-full h-2 shadow-inner mb-2">
@@ -1180,14 +756,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
                               style={{ width: `${progress}%` }}
                             />
                           </div>
-                          <div className="text-center text-xs text-gray-600 mt-2">
-                            {sortingSteps.length > 0 &&
-                            currentStepIndex === sortingSteps.length - 1
-                              ? "Complete"
-                              : isExecuting
-                              ? "Executing..."
-                              : "Ready"}
-                          </div>
+                        
                         </div>
                       </div>
                     </div>
@@ -1211,6 +780,41 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
           </div>
         </div>
       </AnimatePresence>
+      {/* Language change confirmation modal */}
+      {showLanguageChangeConfirm && (
+        <div
+          className="fixed inset-0 flex items-center justify-center"
+          style={{ zIndex: 9999 }}
+        >
+          <div className="absolute inset-0 bg-black/70" />
+          <div
+            className="relative bg-white rounded-lg p-6 shadow-lg w-96"
+            style={{ zIndex: 10000 }}
+          >
+            <h3 className="text-lg font-semibold mb-2">
+              Change language and regenerate?
+            </h3>
+            <p className="text-sm text-gray-700 mb-4">
+              Changing the language now will regenerate the visualization steps
+              and reset progress. Do you want to continue?
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-3 py-1 rounded bg-gray-200"
+                onClick={cancelLanguageChange}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-3 py-1 rounded bg-red-500 text-white"
+                onClick={confirmLanguageChange}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </ThemeProvider>
   );
 };

@@ -8,6 +8,10 @@
 /* Smooth Scrolling for Navigation */
 html {
   scroll-behavior: smooth;
+  /* Make the base font size larger using em so rem/em-based utilities scale up
+     This increases font sizes uniformly across all screen sizes (1.125em ≈ 18px)
+     Adjust this value if you want a different overall scale. */
+  font-size: 1.125em;
 }
 
 /* Add scroll margin to sections to account for sticky navbar */
