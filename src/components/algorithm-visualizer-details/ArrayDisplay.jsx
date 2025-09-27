@@ -1,6 +1,6 @@
 import React from "react";
 
-const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps = [], currentStepIndex = 0, currentCodeLine = -1, selectedLanguage = 'javascript', tempLineIndex = -1, languageHasTemp = false }) => {
+const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps = [], currentStepIndex = 0, currentCodeLine = -1, selectedLanguage = 'javascript' || 'c', tempLineIndex = -1, languageHasTemp = false }) => {
   const currentStep = sortingSteps[currentStepIndex] || {};
   // Use structured temp field when available (preferred)
   let tempObj = currentStep && currentStep.temp ? currentStep.temp : null; // { value, index }

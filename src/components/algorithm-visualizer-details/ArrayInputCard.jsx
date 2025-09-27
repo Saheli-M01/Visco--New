@@ -12,6 +12,7 @@ const ArrayInputCard = ({ arrayInput, handleArrayInputChange, showValidationPopu
             placeholder="Enter comma-separated numbers, e.g. 5, 3, 8"
             className="w-full h-20 p-3 rounded-lg backdrop-blur-sm bg-white/30 border-2 border-gray-500/50 text-gray-900 placeholder-gray-600 resize-none focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:border-gray-500/50 shadow-inner text-sm hover:border-white/60 transition-all duration-200"
           />
+          <div className="mt-2 text-xs text-gray-500">Maximum 10 numbers (comma-separated)</div>
           {showValidationPopup && (
             <div className="absolute top-full left-0 right-0 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg shadow-lg z-50">
               <div className="flex items-start gap-2"><div className="text-red-700 text-sm">{validationError}</div></div>

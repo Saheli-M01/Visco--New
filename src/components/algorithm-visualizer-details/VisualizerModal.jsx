@@ -324,6 +324,11 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
 
     const values = input.split(",").map((val) => val.trim());
 
+    // Maximum allowed numbers check
+    if (values.length > 10) {
+      return "Please enter no more than 10 numbers. The visualizer supports up to 10 elements.";
+    }
+
     // Check for empty values between commas
     for (let i = 0; i < values.length; i++) {
       if (values[i] === "") {
@@ -381,6 +386,19 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
         setShowValidationPopup(false);
       }, 3000);
       return; // Don't update the input
+    }
+
+    // Live limit: prevent more than 10 numbers being entered
+    const potentialValues = value.split(",").map((v) => v.trim()).filter((v) => v !== "");
+    if (potentialValues.length > 10) {
+      setValidationError(
+        "Maximum 10 numbers allowed. The visualizer supports up to 10 elements."
+      );
+      setShowValidationPopup(true);
+      setTimeout(() => {
+        setShowValidationPopup(false);
+      }, 3000);
+      return; // Don't update the input - block the 11th entry
     }
 
     setArrayInput(value);

@@ -43,7 +43,7 @@ const CodePreview = ({ selectedLanguage, requestLanguageChange, getCodeLines, se
               key={index}
               className={`${
                 currentCodeLine === index ? "bg-blue-300/70 text-yellow-100 border-l-4 border-blue-600 pl-2" : ""
-              } ${currentCodeLine !== -1 && currentCodeLine !== index ? "text-gray-500" : "text-green-400"}`}
+              } ${currentCodeLine !== -1 && currentCodeLine !== index ? "text-gray-500" : "text-blue-400"}`}
             >
               {line}
             </div>
