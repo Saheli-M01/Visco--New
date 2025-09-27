@@ -7,11 +7,33 @@ import { FullScreenModal, AlgorithmDetails } from "@/components/algorithm-visual
 const CategoryLayout = ({ category, children }) => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      const q = e?.detail?.query || "";
+      setSearchQuery(q.toLowerCase());
+    };
+    window.addEventListener('algorithmSearch', handler);
+    return () => window.removeEventListener('algorithmSearch', handler);
+  }, []);
+
+  // Listen for requests to open a specific algorithm (e.g., Enter in navbar)
+  useEffect(() => {
+    const openHandler = (e) => {
+      const name = e?.detail?.name;
+      if (!name) return;
+      const match = category.algorithms.find(a => a.name.toLowerCase() === name.toLowerCase() || a.name.toLowerCase().includes(name.toLowerCase()));
+      if (match) handleAlgorithmClick(match);
+    };
+    window.addEventListener('openAlgorithm', openHandler);
+    return () => window.removeEventListener('openAlgorithm', openHandler);
+  }, [category]);
 
   const handleBack = () => {
     window.history.back();
@@ -84,7 +106,12 @@ const CategoryLayout = ({ category, children }) => {
                 </h2>
                 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {category.algorithms.map((algorithm, index) => (
+                  {category.algorithms
+                    .filter((algorithm) => {
+                      if (!searchQuery) return true;
+                      return algorithm.name.toLowerCase().includes(searchQuery);
+                    })
+                    .map((algorithm, index) => (
                     <motion.div
                       key={algorithm.name}
                       initial={{ opacity: 0, y: 20 }}

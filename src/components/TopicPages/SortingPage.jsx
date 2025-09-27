@@ -90,6 +90,55 @@ const SortingPage = () => {
                   <td className="py-3 text-center font-mono">O(n²)</td>
                   <td className="py-3 text-center font-mono">O(1)</td>
                 </tr>
+
+                <tr className="border-b border-white/10">
+                  <td className="py-3 font-medium">Selection Sort</td>
+                  <td className="py-3 text-center font-mono">O(n²)</td>
+                  <td className="py-3 text-center font-mono">O(n²)</td>
+                  <td className="py-3 text-center font-mono">O(n²)</td>
+                  <td className="py-3 text-center font-mono">O(1)</td>
+                </tr>
+
+                <tr className="border-b border-white/10">
+                  <td className="py-3 font-medium">Insertion Sort</td>
+                  <td className="py-3 text-center font-mono">O(n)</td>
+                  <td className="py-3 text-center font-mono">O(n²)</td>
+                  <td className="py-3 text-center font-mono">O(n²)</td>
+                  <td className="py-3 text-center font-mono">O(1)</td>
+                </tr>
+
+                <tr className="border-b border-white/10">
+                  <td className="py-3 font-medium">Shell Sort</td>
+                  <td className="py-3 text-center font-mono">O(n log n)</td>
+                  <td className="py-3 text-center font-mono">O(n¹·²⁵)</td>
+                  <td className="py-3 text-center font-mono">O(n²)</td>
+                  <td className="py-3 text-center font-mono">O(1)</td>
+                </tr>
+
+                <tr className="border-b border-white/10">
+                  <td className="py-3 font-medium">Counting Sort</td>
+                  <td className="py-3 text-center font-mono">O(n + k)</td>
+                  <td className="py-3 text-center font-mono">O(n + k)</td>
+                  <td className="py-3 text-center font-mono">O(n + k)</td>
+                  <td className="py-3 text-center font-mono">O(n + k)</td>
+                </tr>
+
+                <tr className="border-b border-white/10">
+                  <td className="py-3 font-medium">Radix Sort</td>
+                  <td className="py-3 text-center font-mono">O(nk)</td>
+                  <td className="py-3 text-center font-mono">O(nk)</td>
+                  <td className="py-3 text-center font-mono">O(nk)</td>
+                  <td className="py-3 text-center font-mono">O(n + k)</td>
+                </tr>
+
+                <tr className="border-b border-white/10">
+                  <td className="py-3 font-medium">Bucket Sort</td>
+                  <td className="py-3 text-center font-mono">O(n + k)</td>
+                  <td className="py-3 text-center font-mono">O(n + k)</td>
+                  <td className="py-3 text-center font-mono">O(n²)</td>
+                  <td className="py-3 text-center font-mono">O(n + k)</td>
+                </tr>
+
                 <tr className="border-b border-white/10">
                   <td className="py-3 font-medium">Merge Sort</td>
                   <td className="py-3 text-center font-mono">O(n log n)</td>
@@ -97,6 +146,7 @@ const SortingPage = () => {
                   <td className="py-3 text-center font-mono">O(n log n)</td>
                   <td className="py-3 text-center font-mono">O(n)</td>
                 </tr>
+
                 <tr className="border-b border-white/10">
                   <td className="py-3 font-medium">Quick Sort</td>
                   <td className="py-3 text-center font-mono">O(n log n)</td>
@@ -104,6 +154,7 @@ const SortingPage = () => {
                   <td className="py-3 text-center font-mono">O(n²)</td>
                   <td className="py-3 text-center font-mono">O(log n)</td>
                 </tr>
+
                 <tr className="border-b border-white/10">
                   <td className="py-3 font-medium">Heap Sort</td>
                   <td className="py-3 text-center font-mono">O(n log n)</td>
