@@ -6,44 +6,87 @@ export const mergeSort = {
     const steps = [];
     const a = [...arr];
 
+    // Merge helper that records step-by-step actions for visualization
     function merge(left, mid, right) {
       const n1 = mid - left + 1;
       const n2 = right - mid;
-      const L = [];
-      const R = [];
-      for (let i = 0; i < n1; i++) L.push(a[left + i]);
-      for (let j = 0; j < n2; j++) R.push(a[mid + 1 + j]);
+      const L = new Array(n1);
+      const R = new Array(n2);
+      for (let i = 0; i < n1; i++) L[i] = a[left + i];
+      for (let j = 0; j < n2; j++) R[j] = a[mid + 1 + j];
 
+      // pointers into L, R and the main array
       let i = 0, j = 0, k = left;
+
+  // Visualize the ranges being merged
+  steps.push({ array: [...a], comparing: [], swapped: [], description: `Merging ranges [${left}-${mid}] and [${mid + 1}-${right}]`, codeLine: 1, phase: 'merge-start', mergeRange: [left, right], leftRange: [left, mid], rightRange: [mid + 1, right] });
+
+      // merge while both have elements
       while (i < n1 && j < n2) {
+        // show comparison between the two candidates
         steps.push({ array: [...a], comparing: [left + i, mid + 1 + j], swapped: [], description: `Compare ${L[i]} and ${R[j]}`, codeLine: 3, phase: 'comparison' });
+
         if (L[i] <= R[j]) {
-          a[k] = L[i++];
+          a[k] = L[i];
+          // highlight the index written to and the source
+          steps.push({ array: [...a], comparing: [], swapped: [k], description: `Write ${L[i]} to index ${k}`, codeLine: 4, phase: 'write' });
+          i++;
         } else {
-          a[k] = R[j++];
+          a[k] = R[j];
+          steps.push({ array: [...a], comparing: [], swapped: [k], description: `Write ${R[j]} to index ${k}`, codeLine: 4, phase: 'write' });
+          j++;
         }
-        steps.push({ array: [...a], comparing: [], swapped: [k], description: `Write to index ${k}`, codeLine: 4, phase: 'write' });
         k++;
       }
+
+      // remaining elements from left
       while (i < n1) {
-        a[k] = L[i++];
-        steps.push({ array: [...a], comparing: [], swapped: [k], description: `Write remainder from left to ${k}`, codeLine: 5, phase: 'write' });
-        k++;
+        steps.push({ array: [...a], comparing: [], swapped: [k], description: `Write remainder ${L[i]} from left to index ${k}`, codeLine: 5, phase: 'write' });
+        a[k] = L[i];
+        i++; k++;
       }
+
+      // remaining elements from right
       while (j < n2) {
-        a[k] = R[j++];
-        steps.push({ array: [...a], comparing: [], swapped: [k], description: `Write remainder from right to ${k}`, codeLine: 5, phase: 'write' });
-        k++;
+        steps.push({ array: [...a], comparing: [], swapped: [k], description: `Write remainder ${R[j]} from right to index ${k}`, codeLine: 5, phase: 'write' });
+        a[k] = R[j];
+        j++; k++;
       }
+
+      // mark the merged range as completed (for coloration)
+      const mergedIndices = [];
+      for (let idx = left; idx <= right; idx++) mergedIndices.push(idx);
+      steps.push({ array: [...a], comparing: [], swapped: mergedIndices, description: `Merged [${left}-${right}]`, codeLine: 6, phase: 'merge-complete', mergeRange: [left, right] });
     }
 
     function mergeSortRec(l, r) {
-      if (l >= r) return;
+      if (l >= r) {
+        // single element - base case (visualize as a completed single-item range)
+        steps.push({ array: [...a], comparing: [], swapped: [l], description: `Base case: single element at ${l}`, codeLine: 0, phase: 'base' });
+        return;
+      }
+
       const m = Math.floor((l + r) / 2);
+
+      // Show the divide operation
       steps.push({ array: [...a], comparing: [], swapped: [], description: `Divide [${l}-${r}] -> [${l}-${m}] & [${m + 1}-${r}]`, codeLine: 1, phase: 'divide' });
+
+      // Enter left recursion
+      steps.push({ array: [...a], comparing: [], swapped: [], description: `Enter left: [${l}-${m}]`, codeLine: 2, phase: 'divide-enter' });
       mergeSortRec(l, m);
+      steps.push({ array: [...a], comparing: [], swapped: [], description: `Left complete: [${l}-${m}]`, codeLine: 2, phase: 'divide-done' });
+
+      // Enter right recursion
+      steps.push({ array: [...a], comparing: [], swapped: [], description: `Enter right: [${m + 1}-${r}]`, codeLine: 2, phase: 'divide-enter' });
       mergeSortRec(m + 1, r);
+      steps.push({ array: [...a], comparing: [], swapped: [], description: `Right complete: [${m + 1}-${r}]`, codeLine: 2, phase: 'divide-done' });
+
+      // Conquer: about to merge the two halves
+      steps.push({ array: [...a], comparing: [], swapped: [], description: `Conquer: merge [${l}-${m}] & [${m + 1}-${r}]`, codeLine: 1, phase: 'conquer' });
       merge(l, m, r);
+
+      // Subarray sorted
+      steps.push({ array: [...a], comparing: [], swapped: [], description: `Subarray sorted: [${l}-${r}]`, codeLine: 6, phase: 'subarray-sorted' });
     }
 
     mergeSortRec(0, a.length - 1);

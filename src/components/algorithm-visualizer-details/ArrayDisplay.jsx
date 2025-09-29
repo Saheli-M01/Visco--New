@@ -2,6 +2,9 @@ import React from "react";
 
 const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps = [], currentStepIndex = 0, currentCodeLine = -1, selectedLanguage = 'javascript' || 'c', tempLineIndex = -1, languageHasTemp = false }) => {
   const currentStep = sortingSteps[currentStepIndex] || {};
+  const currentMergeRange = currentStep.mergeRange || null;
+  const currentLeftRange = currentStep.leftRange || null;
+  const currentRightRange = currentStep.rightRange || null;
   // Use structured temp field when available (preferred)
   let tempObj = currentStep && currentStep.temp ? currentStep.temp : null; // { value, index }
 
@@ -48,6 +51,9 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
             {currentArray.map((value, index) => {
               const isComparing = comparingIndices.includes(index);
               const isSwapped = sortingSteps[currentStepIndex]?.swapped?.includes(index);
+              const inMergeRange = currentMergeRange && index >= currentMergeRange[0] && index <= currentMergeRange[1];
+              const inLeftRange = currentLeftRange && index >= currentLeftRange[0] && index <= currentLeftRange[1];
+              const inRightRange = currentRightRange && index >= currentRightRange[0] && index <= currentRightRange[1];
               // highlight if this index matches the temp index and the temp UI is being shown
               const highlightForTemp = showTempUI && index === tempIndex;
 
@@ -55,6 +61,12 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
                 ? 'bg-blue-500 text-white border-blue-400 scale-110 animate-pulse'
                 : isSwapped
                 ? 'bg-green-500 text-white border-green-400 scale-105'
+                : inLeftRange
+                ? 'bg-indigo-600 text-white border-indigo-400'
+                : inRightRange
+                ? 'bg-pink-600 text-white border-pink-400'
+                : inMergeRange
+                ? 'bg-gray-600 text-white border-gray-400'
                 : 'bg-gray-700 text-white border-gray-600';
 
               const tempHighlightClass = highlightForTemp ? 'ring-4 ring-yellow-300' : '';
@@ -77,6 +89,14 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
 
           {sortingSteps[currentStepIndex]?.swapped?.length > 0 && (
             <div className="mt-6"><div className="bg-green-500 text-white text-sm px-4 py-2 rounded-full font-semibold">Elements Swapped!</div></div>
+          )}
+          {/* Legend for ranges */}
+          {(currentMergeRange || currentLeftRange || currentRightRange) && (
+            <div className="mt-6 flex gap-2 items-center">
+              {currentLeftRange && <div className="text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-800">Left: {currentLeftRange[0]}-{currentLeftRange[1]}</div>}
+              {currentRightRange && <div className="text-xs px-2 py-1 rounded-full bg-pink-100 text-pink-800">Right: {currentRightRange[0]}-{currentRightRange[1]}</div>}
+              {currentMergeRange && <div className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-800">Merging: {currentMergeRange[0]}-{currentMergeRange[1]}</div>}
+            </div>
           )}
         </div>
       </div>

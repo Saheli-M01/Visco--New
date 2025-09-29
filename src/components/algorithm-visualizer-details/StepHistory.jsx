@@ -33,16 +33,29 @@ const StepHistory = ({ stepHistory, currentStepIndex, isVisualizationActive, sor
               }}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold">Step {step.step + 1}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-semibold">Step {step.step + 1}</span>
+                  {step.leftRange && (
+                    <span className="text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-800">L:{step.leftRange[0]}-{step.leftRange[1]}</span>
+                  )}
+                  {step.rightRange && (
+                    <span className="text-xs px-2 py-1 rounded-full bg-pink-100 text-pink-800">R:{step.rightRange[0]}-{step.rightRange[1]}</span>
+                  )}
+                  {step.mergeRange && (
+                    <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-800">Range:{step.mergeRange[0]}-{step.mergeRange[1]}</span>
+                  )}
+                </div>
                 {step.phase && (
                   <span
                     className={`text-xs px-2 py-1 rounded-full ${
                       step.phase === "comparison"
                         ? "bg-blue-100 text-blue-800"
-                        : step.phase === "swap"
-                        ? "bg-red-100 text-red-800"
-                        : step.phase === "completed"
+                        : step.phase === "write"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : step.phase === "merge-complete"
                         ? "bg-green-100 text-green-800"
+                        : step.phase === "divide"
+                        ? "bg-indigo-100 text-indigo-800"
                         : "bg-gray-100 text-gray-800"
                     }`}
                   >
