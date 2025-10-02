@@ -6,6 +6,11 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
   const currentLeftRange = currentStep.leftRange || null;
   const currentRightRange = currentStep.rightRange || null;
   
+  // Quick Sort specific ranges and pivot
+  const currentPartitionRange = currentStep.partitionRange || null;
+  const currentPivotIndex = currentStep.pivotIndex !== undefined ? currentStep.pivotIndex : null;
+  const currentPivotStrategy = currentStep.pivotStrategy || null;
+  
   // Use structured temp field when available (preferred)
   let tempObj = currentStep && currentStep.temp ? currentStep.temp : null; // { value, index }
 
@@ -34,10 +39,7 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
     }
   }
 
-  // Debug logging to see mid variable presence
-  if (currentStep && currentStep.mid) {
-    console.log('Step with mid:', currentStep.phase, 'description:', currentStep.description, 'mid:', currentStep.mid);
-  }
+
 
   // Only show temp UI when the language actually uses a temp variable (C/Java)
   // and a temp object exists (either on this step or persisted from prior steps).
@@ -93,6 +95,11 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
               const inMergeRange = currentMergeRange && index >= currentMergeRange[0] && index <= currentMergeRange[1];
               const inLeftRange = currentLeftRange && index >= currentLeftRange[0] && index <= currentLeftRange[1];
               const inRightRange = currentRightRange && index >= currentRightRange[0] && index <= currentRightRange[1];
+              
+              // Quick Sort specific highlighting
+              const inPartitionRange = currentPartitionRange && index >= currentPartitionRange[0] && index <= currentPartitionRange[1];
+              const isPivot = currentPivotIndex !== null && index === currentPivotIndex;
+              
               // highlight if this index matches the temp index and the temp UI is being shown
               const highlightForTemp = showTempUI && index === tempIndex;
               // highlight if this index matches the mid position
@@ -102,6 +109,8 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
                 ? 'bg-blue-500 text-white border-blue-400 scale-110 animate-pulse'
                 : isSwapped
                 ? 'bg-green-500 text-white border-green-400 scale-105'
+                : isPivot
+                ? 'bg-red-500 text-white border-red-400 scale-110 animate-bounce'
                 : highlightForMid
                 ? 'bg-purple-500 text-white border-purple-400 scale-105'
                 : inLeftRange
@@ -110,6 +119,8 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
                 ? 'bg-pink-600 text-white border-pink-400'
                 : inMergeRange
                 ? 'bg-gray-600 text-white border-gray-400'
+                : inPartitionRange
+                ? 'bg-orange-500 text-white border-orange-400'
                 : 'bg-gray-700 text-white border-gray-600';
 
               const tempHighlightClass = highlightForTemp ? 'ring-4 ring-yellow-300' : '';
@@ -119,6 +130,9 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
                 <div key={`${index}-${value}`} className="flex flex-col items-center">
                   {isComparing && (
                     <div className="mb-2"><div className="bg-blue-400 text-white text-xs px-3 py-1 rounded-full font-semibold">Comparing</div></div>
+                  )}
+                  {isPivot && (
+                    <div className="mb-2"><div className="bg-red-400 text-white text-xs px-3 py-1 rounded-full font-semibold">Pivot</div></div>
                   )}
                   {highlightForMid && (
                     <div className="mb-2"><div className="bg-purple-400 text-white text-xs px-3 py-1 rounded-full font-semibold">Mid</div></div>
@@ -137,11 +151,17 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
           {sortingSteps[currentStepIndex]?.swapped?.length > 0 && (
             <div className="mt-6"><div className="bg-green-500 text-white text-sm px-4 py-2 rounded-full font-semibold">Elements Swapped!</div></div>
           )}
-          {/* Legend for ranges and mid */}
-          {(currentMergeRange || currentLeftRange || currentRightRange || showMidUI) && (
+          {/* Legend for ranges, mid, and pivot */}
+          {(currentMergeRange || currentLeftRange || currentRightRange || currentPartitionRange || currentPivotIndex !== null || showMidUI) && (
             <div className="mt-6 flex gap-2 items-center flex-wrap justify-center">
               {currentLeftRange && <div className="text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-800">Left: {currentLeftRange[0]}-{currentLeftRange[1]}</div>}
               {currentRightRange && <div className="text-xs px-2 py-1 rounded-full bg-pink-100 text-pink-800">Right: {currentRightRange[0]}-{currentRightRange[1]}</div>}
+              {currentPartitionRange && <div className="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-800">Partition: {currentPartitionRange[0]}-{currentPartitionRange[1]}</div>}
+              {currentPivotIndex !== null && (
+                <div className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-800">
+                  Pivot: {currentPivotIndex} {currentPivotStrategy && `(${typeof currentPivotStrategy === 'number' ? `index ${currentPivotStrategy}` : currentPivotStrategy})`}
+                </div>
+              )}
               {showMidUI && <div className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800">Mid: {midValue}</div>}
               {currentMergeRange && <div className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-800">Merging: {currentMergeRange[0]}-{currentMergeRange[1]}</div>}
             </div>

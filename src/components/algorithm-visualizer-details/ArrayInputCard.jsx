@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 
-const ArrayInputCard = ({ handleGo }) => {
+const ArrayInputCard = ({ handleGo, selectedAlgorithm, pivotStrategy, setPivotStrategy }) => {
   const [arrayInput, setArrayInput] = useState("");
   const [showValidationPopup, setShowValidationPopup] = useState(false);
   const [validationError, setValidationError] = useState("");
+  const [currentArrayLength, setCurrentArrayLength] = useState(0);
 
   // Keep the validation popup visible until the user edits the input
 
@@ -20,6 +21,29 @@ const ArrayInputCard = ({ handleGo }) => {
     }
     return { value: nums };
   };
+
+  // Parse array in real-time to update pivot range
+  const parseArrayForLength = (input) => {
+    if (!input || input.trim() === "") return 0;
+    const parts = input.split(",").map((s) => s.trim()).filter(Boolean);
+    let validCount = 0;
+    for (let p of parts) {
+      const n = Number(p);
+      if (!Number.isNaN(n)) validCount++;
+    }
+    return validCount;
+  };
+
+  // Update array length and adjust pivot strategy when input changes
+  useEffect(() => {
+    const length = parseArrayForLength(arrayInput);
+    setCurrentArrayLength(length);
+    
+    // If using index-based pivot and current index is out of bounds, adjust it
+    if (typeof pivotStrategy === 'number' && pivotStrategy >= length && length > 0) {
+      setPivotStrategy(length - 1);
+    }
+  }, [arrayInput, pivotStrategy, setPivotStrategy]);
 
   const onGo = () => {
     const res = validateAndParse(arrayInput);
@@ -54,6 +78,73 @@ const ArrayInputCard = ({ handleGo }) => {
             </div>
           )}
         </div>
+        
+        {/* Quick Sort Pivot Selection */}
+        {selectedAlgorithm?.name === "Quick Sort" && (
+          <div className="p-3 bg-white/10 rounded-lg border border-white/20">
+            <label className="block text-xs font-medium text-gray-700 mb-2">
+              Pivot Selection Strategy
+            </label>
+            <div className="space-y-2">
+              <select
+                value={typeof pivotStrategy === 'number' ? 'index' : pivotStrategy}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === 'index') {
+                    setPivotStrategy(0);
+                  } else {
+                    setPivotStrategy(value);
+                  }
+                }}
+                className="w-full p-2 text-xs rounded-lg bg-white/30 border border-white/40 text-gray-900 focus:ring-2 focus:ring-blue-300 focus:border-blue-400"
+              >
+                <option value="last">Last Element</option>
+                <option value="first">First Element</option>
+                <option value="middle">Middle Element</option>
+                <option value="index">Choose by Index</option>
+              </select>
+              
+              {typeof pivotStrategy === 'number' && (
+                <div>
+                  <input
+                    type="number"
+                    min="0"
+                    max={Math.max(0, currentArrayLength - 1)}
+                    value={pivotStrategy}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      const maxIndex = Math.max(0, currentArrayLength - 1);
+                      if (!isNaN(value) && value >= 0 && value <= maxIndex) {
+                        setPivotStrategy(value);
+                      }
+                    }}
+                    disabled={currentArrayLength === 0}
+                    className="w-full p-2 text-xs rounded-lg bg-white/30 border border-white/40 text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-blue-300 focus:border-blue-400"
+                    placeholder={currentArrayLength > 0 ? `Enter pivot index (0-${currentArrayLength - 1})` : "Enter array values first"}
+                  />
+                  <div className="text-xs text-gray-500 mt-1">
+                    {currentArrayLength > 0 
+                      ? `Valid range: 0 to ${currentArrayLength - 1} (array length: ${currentArrayLength})`
+                      : "Enter array values to set pivot range"
+                    }
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <p className="text-xs text-gray-600 mt-1">
+              {pivotStrategy === 'last' && 'Uses rightmost element as pivot'}
+              {pivotStrategy === 'first' && 'Uses leftmost element as pivot'}
+              {pivotStrategy === 'middle' && 'Uses middle element as pivot'}
+              {typeof pivotStrategy === 'number' && (
+                currentArrayLength > 0 
+                  ? `Uses element at index ${pivotStrategy} as pivot ${pivotStrategy >= currentArrayLength ? '(index out of bounds!)' : ''}` 
+                  : 'Enter array values first to set pivot index'
+              )}
+            </p>
+          </div>
+        )}
+        
         <button onClick={onGo} className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all shadow-md text-sm font-medium border border-gray-600">Go</button>
       </div>
     </div>

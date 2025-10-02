@@ -1,7 +1,30 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { FormControl, Select, MenuItem } from "@mui/material";
 
 const CodePreview = ({ selectedLanguage, requestLanguageChange, getCodeLines, selectedAlgorithm, currentCodeLine }) => {
+  const highlightedLineRef = useRef(null);
+  const codeContainerRef = useRef(null);
+
+  // Auto-scroll to highlighted line when currentCodeLine changes
+  useEffect(() => {
+    if (highlightedLineRef.current && codeContainerRef.current && currentCodeLine !== -1) {
+      const container = codeContainerRef.current;
+      const highlighted = highlightedLineRef.current;
+      
+      // Calculate the position to scroll to (center the highlighted line)
+      const containerHeight = container.clientHeight;
+      const highlightedTop = highlighted.offsetTop;
+      const highlightedHeight = highlighted.clientHeight;
+      
+      const scrollTop = highlightedTop - (containerHeight / 2) + (highlightedHeight / 2);
+      
+      container.scrollTo({
+        top: Math.max(0, scrollTop),
+        behavior: 'smooth'
+      });
+    }
+  }, [currentCodeLine]);
+
   const languages = [
     { value: "c", label: "C" },
     { value: "cpp", label: "C++" },
@@ -36,11 +59,15 @@ const CodePreview = ({ selectedLanguage, requestLanguageChange, getCodeLines, se
         </FormControl>
       </div>
 
-      <pre className="bg-gray-900 text-green-400 p-3 rounded-lg text-sm overflow-x-auto custom-scrollbar h-48 shadow-inner border border-gray-700">
+      <pre 
+        ref={codeContainerRef}
+        className="bg-gray-900 text-green-400 p-3 rounded-lg text-sm overflow-x-auto custom-scrollbar h-48 shadow-inner border border-gray-700"
+      >
         <code>
           {getCodeLines(selectedLanguage, selectedAlgorithm?.name).map((line, index) => (
             <div
               key={index}
+              ref={currentCodeLine === index ? highlightedLineRef : null}
               className={`${
                 currentCodeLine === index ? "bg-blue-300/70 text-yellow-100 border-l-4 border-blue-600 pl-2" : ""
               } ${currentCodeLine !== -1 && currentCodeLine !== index ? "text-gray-500" : "text-blue-400"}`}

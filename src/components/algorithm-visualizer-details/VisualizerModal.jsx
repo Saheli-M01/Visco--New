@@ -126,6 +126,9 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
   const [speed, setSpeed] = useState(1.0); // Speed multiplier: 0.5x to 2x
   const [currentStep, setCurrentStep] = useState(0);
   const [totalSteps, setTotalSteps] = useState(0); // total steps (0 when no steps)
+  
+  // Quick Sort pivot selection strategy
+  const [pivotStrategy, setPivotStrategy] = useState('last');
   const [isAutomatic, setIsAutomatic] = useState(false);
   const [arrayInputKey, setArrayInputKey] = useState(0); // used to reset ArrayInputCard
   const [stepHistory, setStepHistory] = useState([]);
@@ -265,6 +268,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
     setIsPlaying(false);
     setSpeed(1.0);
     setIsAutomatic(true);
+    setPivotStrategy('last'); // Reset pivot strategy
     // reset child input by bumping key
     setArrayInputKey((k) => k + 1);
     setIsVisualizationActive(false);
@@ -430,12 +434,20 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
     // Reset any running execution
     handlePause();
 
+    // Validate and adjust pivot strategy if using index-based selection
+    if (typeof pivotStrategy === 'number' && pivotStrategy >= parsedArray.length) {
+      setPivotStrategy(parsedArray.length - 1); // Set to maximum valid index
+    }
+
     setOriginalArray([...parsedArray]);
 
     // Get the appropriate algorithm implementation
     const algorithm = getAlgorithm(selectedAlgorithm?.name);
     // Pass the currently selected language so step generation matches displayed code
-    const steps = algorithm.generateSteps(parsedArray, selectedLanguage);
+    // For Quick Sort, also pass pivot strategy
+    const steps = selectedAlgorithm?.name === 'Quick Sort' 
+      ? algorithm.generateSteps(parsedArray, selectedLanguage, pivotStrategy)
+      : algorithm.generateSteps(parsedArray, selectedLanguage);
 
     setSortingSteps(steps);
     setCurrentStepIndex(0);
@@ -641,10 +653,13 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
                       </div>
 
                       {/* Right Column - 1/5 width */}
-                      <div className="lg:col-span-1 space-y-3">
+                      <div className="lg:col-span-1 space-y-3 max-h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar pr-2 pb-4">
                         <ArrayInputCard
                           key={arrayInputKey}
                           handleGo={handleGo}
+                          selectedAlgorithm={selectedAlgorithm}
+                          pivotStrategy={pivotStrategy}
+                          setPivotStrategy={setPivotStrategy}
                         />
 
                         <ControlsPanel
