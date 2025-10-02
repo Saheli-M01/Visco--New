@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const StepHistory = ({ stepHistory, currentStepIndex, isVisualizationActive, sortingSteps, setCurrentStepIndex, setCurrentStep, setCurrentArray, setComparingIndices, setCurrentCodeLine, currentStepRef, stepHistoryRef }) => {
+  
+  // Auto-scroll to current step when currentStepIndex changes
+  useEffect(() => {
+    if (currentStepRef.current) {
+      currentStepRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
+      });
+    }
+  }, [currentStepIndex]);
   return (
-    <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl  py-2 px-4 shadow-lg">
-      <h3 className="text-lg font-semibold text-gray-900 mb-1">Step History</h3>
+    <div className="backdrop-blur-md bg-card/20 border border-border/30 rounded-xl py-2 px-4 shadow-lg">
+      <h3 className="text-lg font-semibold text-foreground mb-1">Step History</h3>
       <div ref={stepHistoryRef} className="space-y-2 h-48 overflow-y-auto custom-scrollbar">
         {stepHistory.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm text-center">
+            <p className="text-foreground/70 text-sm text-center">
               No steps yet.<br />Enter array elements to start.
             </p>
           </div>
@@ -18,8 +28,8 @@ const StepHistory = ({ stepHistory, currentStepIndex, isVisualizationActive, sor
               ref={currentStepIndex === step.step ? currentStepRef : null}
               className={`p-3 rounded-lg transition-all cursor-pointer shadow-md border ${
                 currentStepIndex === step.step
-                  ? "bg-gray-800 text-white border-gray-600 shadow-lg ring-2 ring-blue-400/50"
-                  : "bg-white/30 border-white/40 hover:bg-white/40 text-gray-900 hover:shadow-lg"
+                  ? "bg-foreground/90 text-foreground-inverse border-border/60 shadow-lg ring-2 ring-primary/50"
+                  : "bg-card/30 border-border/40 hover:bg-card/40 text-foreground hover:shadow-lg"
               }`}
               onClick={() => {
                 if (isVisualizationActive && sortingSteps[step.step]) {
@@ -69,6 +79,13 @@ const StepHistory = ({ stepHistory, currentStepIndex, isVisualizationActive, sor
                     <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 ml-2">Temp</span>
                   ) : null;
                 })()}
+                {/* Show small Mid badge if mid calculation exists in this step */}
+                {(() => {
+                  const hasMidInStep = sortingSteps[step.step] && sortingSteps[step.step].mid;
+                  return hasMidInStep ? (
+                    <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800 ml-2">Mid</span>
+                  ) : null;
+                })()}
               </div>
               <div className="flex gap-1 flex-wrap mb-2">
                 {step.array.map((num, i) => (
@@ -76,15 +93,15 @@ const StepHistory = ({ stepHistory, currentStepIndex, isVisualizationActive, sor
                     key={i}
                     className={`px-2 py-1 rounded text-xs font-medium shadow-sm ${
                       currentStepIndex === step.step
-                        ? "bg-gray-600 text-white"
-                        : "bg-white/50 text-gray-800 border border-white/30"
+                        ? "bg-foreground/70 text-foreground-inverse"
+                        : "bg-card/50 text-foreground border border-border/30"
                     }`}
                   >
                     {num}
                   </span>
                 ))}
               </div>
-              <p className={`text-xs ${currentStepIndex === step.step ? "text-gray-300" : "text-gray-700"}`}>{step.description}</p>
+              <p className={`text-xs ${currentStepIndex === step.step ? "text-foreground/80" : "text-foreground/90"}`}>{step.description}</p>
             </div>
           ))
         )}

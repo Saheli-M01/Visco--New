@@ -10,6 +10,7 @@ import StepHistory from "./StepHistory";
 import ArrayDisplay from "./ArrayDisplay";
 import ControlsPanel from "./ControlsPanel";
 import ArrayInputCard from "./ArrayInputCard";
+import ConfirmModal from "./ConfirmModal";
 
 // Custom MUI theme for glassmorphic design
 const theme = createTheme({
@@ -125,10 +126,8 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
   const [speed, setSpeed] = useState(1.0); // Speed multiplier: 0.5x to 2x
   const [currentStep, setCurrentStep] = useState(0);
   const [totalSteps, setTotalSteps] = useState(0); // total steps (0 when no steps)
-  const [arrayInput, setArrayInput] = useState("");
   const [isAutomatic, setIsAutomatic] = useState(false);
-  const [validationError, setValidationError] = useState("");
-  const [showValidationPopup, setShowValidationPopup] = useState(false);
+  const [arrayInputKey, setArrayInputKey] = useState(0); // used to reset ArrayInputCard
   const [stepHistory, setStepHistory] = useState([]);
 
   // Array visualization state
@@ -156,11 +155,6 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
 
   // Get all sorting algorithms from categories
   const sortingAlgorithms = categories.sorting?.algorithms || [];
-
- 
-
-
-
   // Get code lines for highlighting
   const getCodeLines = (language, algorithmName) => {
     const algorithm = getAlgorithm(algorithmName);
@@ -269,11 +263,10 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
     setCurrentStep(0);
     setCurrentStepIndex(0);
     setIsPlaying(false);
-    setArrayInput("64, 34, 25, 12, 22, 11, 90");
     setSpeed(1.0);
     setIsAutomatic(true);
-    setValidationError("");
-    setShowValidationPopup(false);
+    // reset child input by bumping key
+    setArrayInputKey((k) => k + 1);
     setIsVisualizationActive(false);
     setCurrentArray([]);
     setOriginalArray([]);
@@ -285,134 +278,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
     setTotalSteps(0);
   };
 
-  // Real-time input validation - only allow digits, commas, spaces, and decimal points
-  const isValidCharacter = (char) => {
-    return /^[0-9,.\s-]$/.test(char);
-  };
-
-  // Validation function for array input
-  const validateArrayInput = (input) => {
-    if (!input.trim()) {
-      return "Please enter some numbers";
-    }
-
-    // Check if starts with comma
-    if (input.trim().startsWith(",")) {
-      return "Array cannot start with a comma. Please start with a number.";
-    }
-
-    // Check if ends with comma
-    if (input.trim().endsWith(",")) {
-      return "Array cannot end with a comma. Please end with a number.";
-    }
-
-    // Check for invalid characters
-    const invalidChars = input
-      .split("")
-      .filter((char) => !isValidCharacter(char));
-    if (invalidChars.length > 0) {
-      const uniqueInvalidChars = [...new Set(invalidChars)];
-      return `Invalid character(s): "${uniqueInvalidChars.join(
-        '", "'
-      )}" - Only numbers, commas, spaces, and decimal points are allowed.`;
-    }
-
-    // Check for consecutive commas
-    if (input.includes(",,")) {
-      return "Consecutive commas are not allowed. Please separate numbers with single commas.";
-    }
-
-    const values = input.split(",").map((val) => val.trim());
-
-    // Maximum allowed numbers check
-    if (values.length > 10) {
-      return "Please enter no more than 10 numbers. The visualizer supports up to 10 elements.";
-    }
-
-    // Check for empty values between commas
-    for (let i = 0; i < values.length; i++) {
-      if (values[i] === "") {
-        return "Empty values are not allowed. Please use comma-separated numbers like: 1, 2, 3";
-      }
-
-      const num = parseFloat(values[i]);
-      if (isNaN(num)) {
-        return `"${values[i]}" is not a valid number. Please enter only integers or decimal numbers.`;
-      }
-
-      // Check decimal places (maximum 3 digits after decimal)
-      if (values[i].includes(".")) {
-        const decimalPart = values[i].split(".")[1];
-        if (decimalPart && decimalPart.length > 3) {
-          return `"${values[i]}" has too many decimal places. Maximum 3 digits after decimal point are allowed.`;
-        }
-      }
-    }
-
-    // Must have at least 2 numbers for meaningful algorithm execution
-    if (values.length < 2) {
-      return "Please enter at least 2 numbers for the algorithm to work properly.";
-    }
-
-    return null; // No errors
-  };
-
-  // Handle array input change with real-time validation
-  const handleArrayInputChange = (e) => {
-    const value = e.target.value;
-
-    // Check if user is trying to start with comma
-    if (value === "," || (value.length === 1 && value === ",")) {
-      setValidationError(
-        "Array cannot start with a comma. Please start with a number."
-      );
-      setShowValidationPopup(true);
-      setTimeout(() => {
-        setShowValidationPopup(false);
-      }, 3000);
-      return; // Don't update the input
-    }
-
-    // Real-time character validation
-    const lastChar = value[value.length - 1];
-    if (lastChar && !isValidCharacter(lastChar)) {
-      // Show error immediately for invalid character
-      setValidationError(
-        `"${lastChar}" is not allowed. Only numbers, commas, spaces, and decimal points are allowed.`
-      );
-      setShowValidationPopup(true);
-      // Auto-hide popup after 3 seconds
-      setTimeout(() => {
-        setShowValidationPopup(false);
-      }, 3000);
-      return; // Don't update the input
-    }
-
-    // Live limit: prevent more than 10 numbers being entered
-    const potentialValues = value.split(",").map((v) => v.trim()).filter((v) => v !== "");
-    if (potentialValues.length > 10) {
-      setValidationError(
-        "Maximum 10 numbers allowed. The visualizer supports up to 10 elements."
-      );
-      setShowValidationPopup(true);
-      setTimeout(() => {
-        setShowValidationPopup(false);
-      }, 3000);
-      return; // Don't update the input - block the 11th entry
-    }
-
-    setArrayInput(value);
-
-    // Real-time validation for current input
-    const error = validateArrayInput(value);
-    if (error && value.length > 0) {
-      setValidationError(error);
-      setShowValidationPopup(true);
-    } else {
-      setValidationError("");
-      setShowValidationPopup(false);
-    }
-  };
+  // Array input is managed and validated inside ArrayInputCard; we use a key to reset it when needed
 
   // Handle escape key and cleanup
   useEffect(() => {
@@ -440,20 +306,6 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
       }
     };
   }, [isOpen, onClose, algorithm, executionInterval]);
-
-  // Auto-scroll to current step in step history
-  useEffect(() => {
-    if (
-      currentStepRef.current &&
-      stepHistoryRef.current &&
-      isVisualizationActive
-    ) {
-      currentStepRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
-  }, [currentStepIndex, isVisualizationActive]);
 
   // Handle speed changes during execution - restart interval with new speed
   useEffect(() => {
@@ -504,19 +356,80 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
     setSelectedAlgorithm(newAlgorithm);
   };
 
-  // Handle Go button click
-  const handleGo = () => {
-    const validation = validateArrayInput(arrayInput);
-    if (validation) {
-      setValidationError(validation);
-      setShowValidationPopup(true);
+  // Algorithm change confirmation flow (when a visualization is active and progressed)
+  const [showAlgorithmChangeConfirm, setShowAlgorithmChangeConfirm] =
+    useState(false);
+  const [pendingAlgorithm, setPendingAlgorithm] = useState(null);
+
+  const requestAlgorithmChange = (event) => {
+    const algorithmName = event?.target ? event.target.value : event;
+    // If no visualization is active, switch immediately
+    if (!isVisualizationActive) {
+      const newAlgorithm = sortingAlgorithms.find(
+        (algo) => algo.name === algorithmName
+      );
+      setSelectedAlgorithm(newAlgorithm);
       return;
     }
+
+    // Otherwise prompt and pause
+    setPendingAlgorithm(algorithmName);
+    setShowAlgorithmChangeConfirm(true);
+    handlePause();
+  };
+
+  const confirmAlgorithmChange = () => {
+    if (pendingAlgorithm) {
+      const newAlgorithm = sortingAlgorithms.find(
+        (algo) => algo.name === pendingAlgorithm
+      );
+      setSelectedAlgorithm(newAlgorithm);
+
+      // regenerate steps for the new algorithm using the original array
+      if (originalArray && originalArray.length > 0) {
+        const algorithm = getAlgorithm(newAlgorithm?.name);
+        const steps = algorithm.generateSteps(
+          [...originalArray],
+          selectedLanguage
+        );
+        setSortingSteps(steps);
+        setTotalSteps(steps.length);
+        setStepHistory(
+          steps.map((step, index) => ({
+            step: index,
+            description: step.description,
+            array: step.array,
+            phase: step.phase,
+          }))
+        );
+        setCurrentStepIndex(0);
+        setCurrentStep(0);
+        if (steps.length > 0) {
+          const firstStep = steps[0];
+          setCurrentArray([...firstStep.array]);
+          setComparingIndices(firstStep.comparing || []);
+          setCurrentCodeLine(
+            firstStep.codeLine !== undefined ? firstStep.codeLine : -1
+          );
+        }
+      }
+    }
+    setPendingAlgorithm(null);
+    setShowAlgorithmChangeConfirm(false);
+  };
+
+  const cancelAlgorithmChange = () => {
+    setPendingAlgorithm(null);
+    setShowAlgorithmChangeConfirm(false);
+  };
+
+  // Handle Go button click (child will pass a parsed array)
+  const handleGo = (parsedArray) => {
+    if (!Array.isArray(parsedArray) || parsedArray.length === 0) return;
 
     // Reset any running execution
     handlePause();
 
-    const parsedArray = parseArray(arrayInput);
     setOriginalArray([...parsedArray]);
 
     // Get the appropriate algorithm implementation
@@ -640,7 +553,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
             <VisualizerHeader
               sortingAlgorithms={sortingAlgorithms}
               selectedAlgorithm={selectedAlgorithm}
-              handleAlgorithmChange={handleAlgorithmChange}
+              handleAlgorithmChange={requestAlgorithmChange}
               activeTab={activeTab}
               handleTabChange={handleTabChange}
               handleRefresh={handleRefresh}
@@ -730,10 +643,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
                       {/* Right Column - 1/5 width */}
                       <div className="lg:col-span-1 space-y-3">
                         <ArrayInputCard
-                          arrayInput={arrayInput}
-                          handleArrayInputChange={handleArrayInputChange}
-                          showValidationPopup={showValidationPopup}
-                          validationError={validationError}
+                          key={arrayInputKey}
                           handleGo={handleGo}
                         />
 
@@ -764,7 +674,9 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
                             </span>
                             <span className="text-sm font-medium text-gray-700">
                               {sortingSteps.length > 0
-                                ? `${currentStepIndex + 1} / ${sortingSteps.length}`
+                                ? `${currentStepIndex + 1} / ${
+                                    sortingSteps.length
+                                  }`
                                 : `0 / 0`}
                             </span>
                           </div>
@@ -774,7 +686,6 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
                               style={{ width: `${progress}%` }}
                             />
                           </div>
-                        
                         </div>
                       </div>
                     </div>
@@ -798,41 +709,24 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
           </div>
         </div>
       </AnimatePresence>
-      {/* Language change confirmation modal */}
-      {showLanguageChangeConfirm && (
-        <div
-          className="fixed inset-0 flex items-center justify-center"
-          style={{ zIndex: 9999 }}
-        >
-          <div className="absolute inset-0 bg-black/70" />
-          <div
-            className="relative bg-white rounded-lg p-6 shadow-lg w-96"
-            style={{ zIndex: 10000 }}
-          >
-            <h3 className="text-lg font-semibold mb-2">
-              Change language and regenerate?
-            </h3>
-            <p className="text-sm text-gray-700 mb-4">
-              Changing the language now will regenerate the visualization steps
-              and reset progress. Do you want to continue?
-            </p>
-            <div className="flex justify-end gap-2">
-              <button
-                className="px-3 py-1 rounded bg-gray-200"
-                onClick={cancelLanguageChange}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-3 py-1 rounded bg-red-500 text-white"
-                onClick={confirmLanguageChange}
-              >
-                Continue
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        isOpen={showLanguageChangeConfirm}
+        title="Change language and regenerate?"
+        message="Changing the language now will regenerate the visualization steps and reset progress. Do you want to continue?"
+        onCancel={cancelLanguageChange}
+        onConfirm={confirmLanguageChange}
+        confirmLabel="Continue"
+        cancelLabel="Cancel"
+      />
+      <ConfirmModal
+        isOpen={showAlgorithmChangeConfirm}
+        title="Change algorithm and regenerate?"
+        message="Changing the algorithm now will regenerate the visualization steps and reset progress. Do you want to continue?"
+        onCancel={cancelAlgorithmChange}
+        onConfirm={confirmAlgorithmChange}
+        confirmLabel="Continue"
+        cancelLabel="Cancel"
+      />
     </ThemeProvider>
   );
 };

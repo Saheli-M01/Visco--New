@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+ @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Zalando+Sans+SemiExpanded:ital,wght@0,200..900;1,200..900&display=swap');
 
 @tailwind base;
@@ -58,6 +58,9 @@ section {
     --border: 220 15% 90%;
     --input: 220 15% 95%;
     --ring: 230 85% 60%;
+
+    /* Code Elements */
+    --code-bg: 220 15% 96%;
 
     /* Design System */
     --radius: 0.75rem;
@@ -129,6 +132,9 @@ section {
     --border: 225 15% 20%;
     --input: 225 15% 18%;
     --ring: 230 90% 70%;
+
+    /* Code Elements */
+    --code-bg: 225 15% 15%;
 
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(230 90% 70%), hsl(270 90% 70%));
@@ -228,6 +234,11 @@ section {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+
+  /* Utility Overrides for Theme Tokens */
+  .bg-code {
+    background-color: hsl(var(--code-bg));
   }
 
   /* Custom Scrollbar Styles */

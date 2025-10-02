@@ -5,6 +5,7 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
   const currentMergeRange = currentStep.mergeRange || null;
   const currentLeftRange = currentStep.leftRange || null;
   const currentRightRange = currentStep.rightRange || null;
+  
   // Use structured temp field when available (preferred)
   let tempObj = currentStep && currentStep.temp ? currentStep.temp : null; // { value, index }
 
@@ -19,6 +20,25 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
     }
   }
 
+  // Get mid variable information
+  let midObj = currentStep && currentStep.mid ? currentStep.mid : null; // { value, leftIndex, rightIndex }
+
+  // If the current step lacks a mid, try to find the most recent mid from
+  // earlier steps so the UI persists the mid once it's calculated.
+  if (!midObj && sortingSteps && sortingSteps.length > 0) {
+    for (let s = currentStepIndex - 1; s >= 0; s--) {
+      if (sortingSteps[s] && sortingSteps[s].mid) {
+        midObj = sortingSteps[s].mid;
+        break;
+      }
+    }
+  }
+
+  // Debug logging to see mid variable presence
+  if (currentStep && currentStep.mid) {
+    console.log('Step with mid:', currentStep.phase, 'description:', currentStep.description, 'mid:', currentStep.mid);
+  }
+
   // Only show temp UI when the language actually uses a temp variable (C/Java)
   // and a temp object exists (either on this step or persisted from prior steps).
   const languageUsesTemp = selectedLanguage === 'c' || selectedLanguage === 'java';
@@ -26,24 +46,43 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
   const tempValue = showTempUI ? tempObj.value : null;
   const tempIndex = showTempUI ? tempObj.index : -1;
 
+  // Show mid UI when mid calculation is relevant (merge sort algorithm)
+  const showMidUI = !!midObj;
+  const midValue = showMidUI ? midObj.value : null;
+  const midLeftIndex = showMidUI ? midObj.leftIndex : -1;
+  const midRightIndex = showMidUI ? midObj.rightIndex : -1;
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-800">Array Visualization</h3>
-        <div className="text-sm text-gray-600">Step {currentStepIndex + 1} of {sortingSteps.length}</div>
+        <h3 className="text-lg font-semibold text-foreground">Array Visualization</h3>
+        <div className="text-sm text-foreground/70">Step {currentStepIndex + 1} of {sortingSteps.length}</div>
       </div>
 
-      <div className="bg-gray-900 rounded-lg p-8 min-h-[250px] flex items-center justify-center">
+      <div className="bg-code-bg rounded-lg p-8 min-h-[250px] flex items-center justify-center">
         <div className="flex flex-col items-center w-full">
-          {/* Temp slot - only rendered for languages that use a temp (C/Java) and when appropriate */}
-          {showTempUI && (
-            <div className="mb-4 flex items-center justify-center w-full">
-              <div className={`h-12 w-28 rounded-lg flex items-center justify-center font-medium bg-yellow-300 text-gray-900 shadow-md`}>
-                <div className="text-center">
-                  <div className="text-xs text-gray-700">Temp</div>
-                  <div className="text-lg font-bold">{tempValue != null ? tempValue : '-'}</div>
+          {/* Variables section - show temp and mid when appropriate */}
+          {(showTempUI || showMidUI) && (
+            <div className="mb-4 flex items-center justify-center w-full gap-4">
+              {/* Temp slot - only rendered for languages that use a temp (C/Java) and when appropriate */}
+              {showTempUI && (
+                <div className={`h-12 w-28 rounded-lg flex items-center justify-center font-medium bg-yellow-300 text-gray-900 shadow-md`}>
+                  <div className="text-center">
+                    <div className="text-xs text-gray-700">Temp</div>
+                    <div className="text-lg font-bold">{tempValue != null ? tempValue : '-'}</div>
+                  </div>
                 </div>
-              </div>
+              )}
+              
+              {/* Mid slot - shown during merge sort operations */}
+              {showMidUI && (
+                <div className={`h-12 w-32 rounded-lg flex items-center justify-center font-medium bg-purple-300 text-gray-900 shadow-md`}>
+                  <div className="text-center">
+                    <div className="text-xs text-gray-700">Mid = ({midLeftIndex} + {midRightIndex}) / 2</div>
+                    <div className="text-lg font-bold">{midValue != null ? midValue : '-'}</div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -56,11 +95,15 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
               const inRightRange = currentRightRange && index >= currentRightRange[0] && index <= currentRightRange[1];
               // highlight if this index matches the temp index and the temp UI is being shown
               const highlightForTemp = showTempUI && index === tempIndex;
+              // highlight if this index matches the mid position
+              const highlightForMid = showMidUI && index === midValue;
 
               const baseClass = isComparing
                 ? 'bg-blue-500 text-white border-blue-400 scale-110 animate-pulse'
                 : isSwapped
                 ? 'bg-green-500 text-white border-green-400 scale-105'
+                : highlightForMid
+                ? 'bg-purple-500 text-white border-purple-400 scale-105'
                 : inLeftRange
                 ? 'bg-indigo-600 text-white border-indigo-400'
                 : inRightRange
@@ -70,14 +113,18 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
                 : 'bg-gray-700 text-white border-gray-600';
 
               const tempHighlightClass = highlightForTemp ? 'ring-4 ring-yellow-300' : '';
+              const midHighlightClass = highlightForMid ? 'ring-4 ring-purple-300' : '';
 
               return (
                 <div key={`${index}-${value}`} className="flex flex-col items-center">
                   {isComparing && (
                     <div className="mb-2"><div className="bg-blue-400 text-white text-xs px-3 py-1 rounded-full font-semibold">Comparing</div></div>
                   )}
+                  {highlightForMid && (
+                    <div className="mb-2"><div className="bg-purple-400 text-white text-xs px-3 py-1 rounded-full font-semibold">Mid</div></div>
+                  )}
 
-                  <div className={`flex items-center justify-center h-16 px-4 rounded-lg font-bold text-lg transition-all duration-500 ease-in-out transform shadow-lg border-2 min-w-[60px] ${baseClass} ${tempHighlightClass}`}>
+                  <div className={`flex items-center justify-center h-16 px-4 rounded-lg font-bold text-lg transition-all duration-500 ease-in-out transform shadow-lg border-2 min-w-[60px] ${baseClass} ${tempHighlightClass} ${midHighlightClass}`}>
                     <span className="drop-shadow-lg">{value}</span>
                   </div>
 
@@ -90,11 +137,12 @@ const ArrayDisplay = ({ currentArray = [], comparingIndices = [], sortingSteps =
           {sortingSteps[currentStepIndex]?.swapped?.length > 0 && (
             <div className="mt-6"><div className="bg-green-500 text-white text-sm px-4 py-2 rounded-full font-semibold">Elements Swapped!</div></div>
           )}
-          {/* Legend for ranges */}
-          {(currentMergeRange || currentLeftRange || currentRightRange) && (
-            <div className="mt-6 flex gap-2 items-center">
+          {/* Legend for ranges and mid */}
+          {(currentMergeRange || currentLeftRange || currentRightRange || showMidUI) && (
+            <div className="mt-6 flex gap-2 items-center flex-wrap justify-center">
               {currentLeftRange && <div className="text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-800">Left: {currentLeftRange[0]}-{currentLeftRange[1]}</div>}
               {currentRightRange && <div className="text-xs px-2 py-1 rounded-full bg-pink-100 text-pink-800">Right: {currentRightRange[0]}-{currentRightRange[1]}</div>}
+              {showMidUI && <div className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800">Mid: {midValue}</div>}
               {currentMergeRange && <div className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-800">Merging: {currentMergeRange[0]}-{currentMergeRange[1]}</div>}
             </div>
           )}
