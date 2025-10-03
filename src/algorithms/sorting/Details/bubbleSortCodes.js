@@ -14,8 +14,7 @@ export const timeComplexity = {
 
 export const spaceComplexity = "O(1)";
 const codes = {
-  javascript: `// Bubble Sort - JavaScript (runnable)
-function bubbleSort(arr) {
+  javascript: `function bubbleSort(arr) {
   const a = [...arr];
   const n = a.length;
   for (let i = 0; i < n - 1; i++) {
@@ -33,8 +32,7 @@ const arr = [5, 1, 4, 2, 8];
 console.log('Original:', arr);
 console.log('Sorted:  ', bubbleSort(arr));
 `,
-  python: `# Bubble Sort - Python (runnable)
-def bubble_sort(arr):
+  python: `def bubble_sort(arr):
     a = arr.copy()
     n = len(a)
     for i in range(n - 1):
@@ -48,8 +46,7 @@ if __name__ == '__main__':
     print('Original:', arr)
     print('Sorted:  ', bubble_sort(arr))
 `,
-  java: `// Bubble Sort - Java (runnable)
-import java.util.Arrays;
+  java: `import java.util.Arrays;
 
 public class BubbleSortExample {
     public static int[] bubbleSort(int[] arr) {
@@ -74,8 +71,7 @@ public class BubbleSortExample {
     }
 }
 `,
-  c: `/* Bubble Sort - C (runnable with a main) */
-#include <stdio.h>
+  c: `#include <stdio.h>
 
 void bubbleSort(int a[], int n) {
     for (int i = 0; i < n - 1; i++) {
@@ -94,16 +90,15 @@ int main() {
     int n = sizeof(arr) / sizeof(arr[0]);
     printf("Original: ");
     for (int i = 0; i < n; ++i) printf("%d ", arr[i]);
-    printf("\n");
+    printf("\\n");
     bubbleSort(arr, n);
     printf("Sorted:   ");
     for (int i = 0; i < n; ++i) printf("%d ", arr[i]);
-    printf("\n");
+    printf("\\n");
     return 0;
 }
 `,
-  cpp: `// Bubble Sort - C++ (runnable)
-#include <bits/stdc++.h>
+  cpp: `#include <bits/stdc++.h>
 using namespace std;
 
 vector<int> bubbleSort(const vector<int>& arr) {
@@ -120,10 +115,10 @@ vector<int> bubbleSort(const vector<int>& arr) {
 int main() {
   vector<int> arr = {5, 1, 4, 2, 8};
   cout << "Original: "; for (int v: arr) cout << v << ' ';
-  cout << "\n";
+  cout << "\\n";
   auto sorted = bubbleSort(arr);
   cout << "Sorted:   "; for (int v: sorted) cout << v << ' ';
-  cout << "\n";
+  cout << "\\n";
   return 0;
 }
 `,

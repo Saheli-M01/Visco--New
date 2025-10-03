@@ -82,13 +82,13 @@ const AlgorithmDetails = ({ algorithm, topic }) => {
     <div className="mx-auto w-[95vw]">
       <div className="grid md:grid-cols-5 gap-6">
         {/* Left: Overview + How it works (span 2) */}
-        <div className="md:col-span-2 space-y-6 ">
+        <div className="md:col-span-3 space-y-6 ">
           {/* Algorithm Overview */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="backdrop-blur-sm bg-white border border-white/30 rounded-2xl p-6 shadow-xl"
+            className="backdrop-blur-sm bg-white/90 border border-white/30 rounded-2xl p-6 shadow-xl"
           >
             <div className="flex items-start justify-between mb-4 ">
               <div>
@@ -120,7 +120,7 @@ const AlgorithmDetails = ({ algorithm, topic }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="backdrop-blur-sm bg-white border border-white/30 rounded-2xl p-6 shadow-xl"
+            className="backdrop-blur-sm bg-white/90 border border-white/30 rounded-2xl p-6 shadow-xl"
           >
             <div className="flex items-center mb-4">
               <BookOpen className="h-5 w-5 text-gray-900 mr-2" />
@@ -147,7 +147,7 @@ const AlgorithmDetails = ({ algorithm, topic }) => {
 
 
         {/* Right: Code (top) and Complexity (below) */}
-        <div className="md:col-span-3 space-y-4">
+        <div className="md:col-span-2 space-y-4">
           {codeLoaders[algorithm.name] && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -176,7 +176,7 @@ const AlgorithmDetails = ({ algorithm, topic }) => {
               </div>
 
               <div className="relative">
-                <pre className="whitespace-pre-wrap bg-gray-900 text-gray-100 p-3 rounded-lg overflow-auto text-[0.9rem] font-mono max-h-56">
+                <pre className="whitespace-pre-wrap bg-gray-900 text-gray-100 p-3 rounded-lg overflow-auto text-[0.9rem] font-mono max-h-60">
                   <code>
                     {loadingCode && !loadedCodes[algorithm.name]
                       ? "Loading implementation..."
@@ -197,7 +197,7 @@ const AlgorithmDetails = ({ algorithm, topic }) => {
           )}
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="backdrop-blur-sm bg-white border border-white/30 rounded-2xl p-4 shadow-xl">
+            <div className="backdrop-blur-sm bg-white/90 border border-white/30 rounded-2xl p-4 shadow-xl">
               <div className="flex items-center mb-2">
                 <BarChart3 className="h-5 w-5 text-gray-900 mr-2" />
                 <h5 className="text-sm font-semibold text-gray-900">Time Complexity</h5>
@@ -218,7 +218,7 @@ const AlgorithmDetails = ({ algorithm, topic }) => {
               </div>
             </div>
 
-            <div className="backdrop-blur-sm bg-white border border-white/30 rounded-2xl p-4 shadow-xl">
+            <div className="backdrop-blur-sm bg-white/90 border border-white/30 rounded-2xl p-4 shadow-xl">
               <div className="flex items-center mb-2">
                 <BarChart3 className="h-5 w-5 text-gray-900 mr-2" />
                 <h5 className="text-sm font-semibold text-gray-900">Space Complexity</h5>
