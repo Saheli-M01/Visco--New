@@ -303,7 +303,7 @@ export const Navigation = () => {
             <a
               href="#topics"
               onClick={(e) => handleNavClick(e, "#topics")}
-              className="hidden md:inline-flex items-center rounded-xl bg-white/30 backdrop-blur-sm border border-white/40 px-4 py-2 text-sm font-semibold text-gray-900 shadow-md hover:bg-white/40 hover:shadow-lg transition-all cursor-pointer"
+              className="hidden md:inline-flex items-center rounded-xl bg-white/30 backdrop-blur-sm border border-gray-300/40 px-4 py-2 text-sm font-semibold text-gray-900 shadow-md hover:bg-white/40 hover:shadow-lg transition-all cursor-pointer"
             >
               Get Started
             </a>

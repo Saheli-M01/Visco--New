@@ -30,7 +30,7 @@ const SortingPage = () => {
         transition={{ duration: 0.8 }}
         className="mb-16"
       >
-        <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-3xl px-8 py-12 shadow-xl">
+        <div className="backdrop-blur-md bg-white/50 border border-white/20 rounded-3xl px-8 py-12 shadow-xl">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
             Why Learn Sorting Algorithms?
           </h2>
@@ -45,7 +45,7 @@ const SortingPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="backdrop-blur-sm bg-white/20 border border-white/30 rounded-xl p-6 text-center"
+                className="backdrop-blur-sm bg-white  border border-gray-300/30 rounded-xl p-6 text-center"
               >
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">
                   {feature.title}
@@ -66,7 +66,7 @@ const SortingPage = () => {
         transition={{ duration: 0.8, delay: 0.1 }}
         className="mb-16"
       >
-        <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-3xl px-8 py-12 shadow-xl">
+        <div className="backdrop-blur-md bg-white/10 border border-white/60 rounded-3xl px-8 py-12 shadow-xl">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
             Complexity Comparison
           </h2>

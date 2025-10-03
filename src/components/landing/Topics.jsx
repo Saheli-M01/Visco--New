@@ -70,7 +70,7 @@ export const Topics = () => {
   };
 
   return (
-    <section className="relative py-4 px-6 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 overflow-hidden">
+    <section className="relative py-16 px-6 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 overflow-hidden">
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-15">
         <div
@@ -89,9 +89,9 @@ export const Topics = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-10"
         >
-          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-3xl px-12 py-16 shadow-xl mb-12">
+          <div className="backdrop-blur-md  border border-white/20 rounded-3xl px-12  mb-12">
             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900">
               Choose Your{" "}
               <span className="text-gray-700">Learning Path</span>
@@ -104,7 +104,7 @@ export const Topics = () => {
         </motion.div>
 
         {/* Topics Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {topics.map((topic, index) => (
             <motion.div
               key={topic.id}
@@ -115,10 +115,10 @@ export const Topics = () => {
               onClick={() => handleTopicClick(topic)}
               className="group cursor-pointer"
             >
-              <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl px-6 py-8 shadow-xl h-full hover:bg-white/15 hover:border-white/30 transition-all duration-300">
+              <div className="backdrop-blur-md bg-white/70 border border-gray-200/60 rounded-2xl px-6 py-8 shadow-xl h-full hover:bg-white hover:border-white/30 transition-all duration-300">
                 <div className="flex items-start justify-between mb-4">
                   <motion.div
-                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    whileHover={{ scale: 1.1 }}
                     transition={{ duration: 0.3 }}
                     className={`p-3 rounded-xl bg-gradient-to-br ${topic.color} shadow-lg`}
                   >

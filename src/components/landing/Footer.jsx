@@ -5,10 +5,10 @@ export const Footer = () => {
 
   return (
     <footer className="bg-gradient-to-br from-muted/30 to-background border-t border-border/50">
-      <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+      <div className="max-w-6xl mx-auto px-6 pt-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
 
         {/* Left Side: Brand & Description */}
-        <div className="max-w-md">
+        <div className="max-w-2xl">
           <div className="flex items-center space-x-2 mb-4">
             <span className="font-display font-bold text-xl">Visco</span>
           </div>
