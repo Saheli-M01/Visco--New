@@ -29,7 +29,7 @@ const ControlsPanel = ({
   isExecuting,
 }) => {
   return (
-    <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg">
+    <div className="bg-white border border-gray-300 rounded-xl p-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-md font-semibold text-gray-900">Controls</h3>
       </div>
@@ -60,12 +60,7 @@ const ControlsPanel = ({
       {isAutomatic ? (
         <div className="space-y-3">
           <div className="flex items-center justify-center gap-2">
-            <button
-              onClick={handleReset}
-              className="p-2 rounded-lg backdrop-blur-sm bg-white/30 border border-white/40 hover:bg-white/40 transition-all text-gray-900 shadow-md"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </button>
+            
             <button
               onClick={isPlaying ? handlePause : handlePlay}
               className="p-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition-all shadow-lg border border-gray-600"

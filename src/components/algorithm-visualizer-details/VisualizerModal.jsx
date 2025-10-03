@@ -126,9 +126,9 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
   const [speed, setSpeed] = useState(1.0); // Speed multiplier: 0.5x to 2x
   const [currentStep, setCurrentStep] = useState(0);
   const [totalSteps, setTotalSteps] = useState(0); // total steps (0 when no steps)
-  
+
   // Quick Sort pivot selection strategy
-  const [pivotStrategy, setPivotStrategy] = useState('last');
+  const [pivotStrategy, setPivotStrategy] = useState("last");
   const [isAutomatic, setIsAutomatic] = useState(false);
   const [arrayInputKey, setArrayInputKey] = useState(0); // used to reset ArrayInputCard
   const [stepHistory, setStepHistory] = useState([]);
@@ -268,7 +268,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
     setIsPlaying(false);
     setSpeed(1.0);
     setIsAutomatic(true);
-    setPivotStrategy('last'); // Reset pivot strategy
+    setPivotStrategy("last"); // Reset pivot strategy
     // reset child input by bumping key
     setArrayInputKey((k) => k + 1);
     setIsVisualizationActive(false);
@@ -315,7 +315,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
   useEffect(() => {
     if (
       isVisualizationActive &&
-      selectedAlgorithm?.name === 'Quick Sort' &&
+      selectedAlgorithm?.name === "Quick Sort" &&
       originalArray &&
       originalArray.length > 0
     ) {
@@ -324,12 +324,19 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
       handlePause();
 
       // Debug logging
-      console.log('Regenerating Quick Sort with pivot strategy:', pivotStrategy);
-      console.log('Original array:', originalArray);
+      console.log(
+        "Regenerating Quick Sort with pivot strategy:",
+        pivotStrategy
+      );
+      console.log("Original array:", originalArray);
 
       // Regenerate steps with new pivot strategy
       const algorithm = getAlgorithm(selectedAlgorithm.name);
-      const steps = algorithm.generateSteps([...originalArray], selectedLanguage, pivotStrategy);
+      const steps = algorithm.generateSteps(
+        [...originalArray],
+        selectedLanguage,
+        pivotStrategy
+      );
 
       setSortingSteps(steps);
       setTotalSteps(steps.length);
@@ -488,7 +495,10 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
     handlePause();
 
     // Validate and adjust pivot strategy if using index-based selection
-    if (typeof pivotStrategy === 'number' && pivotStrategy >= parsedArray.length) {
+    if (
+      typeof pivotStrategy === "number" &&
+      pivotStrategy >= parsedArray.length
+    ) {
       setPivotStrategy(parsedArray.length - 1); // Set to maximum valid index
     }
 
@@ -498,9 +508,10 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
     const algorithm = getAlgorithm(selectedAlgorithm?.name);
     // Pass the currently selected language so step generation matches displayed code
     // For Quick Sort, also pass pivot strategy
-    const steps = selectedAlgorithm?.name === 'Quick Sort' 
-      ? algorithm.generateSteps(parsedArray, selectedLanguage, pivotStrategy)
-      : algorithm.generateSteps(parsedArray, selectedLanguage);
+    const steps =
+      selectedAlgorithm?.name === "Quick Sort"
+        ? algorithm.generateSteps(parsedArray, selectedLanguage, pivotStrategy)
+        : algorithm.generateSteps(parsedArray, selectedLanguage);
 
     setSortingSteps(steps);
     setCurrentStepIndex(0);
@@ -613,7 +624,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
           </div>
 
           {/* Full-screen modal content */}
-          <div className="relative h-full w-full backdrop-blur-sm bg-white/20 flex flex-col">
+          <div className="relative h-full w-full backdrop-blur-sm bg-gray-300 flex flex-col">
             {/* Header */}
             <VisualizerHeader
               sortingAlgorithms={sortingAlgorithms}
@@ -661,9 +672,9 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
                         </div>
 
                         {/* Second Row - Output (Full Width) */}
-                        <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg">
+                        <div className="backdrop-blur-md bg-white border border-gray-300 rounded-xl p-4">
                           {!isVisualizationActive ? (
-                            <div className="bg-gray-900 text-white p-4 rounded-lg text-sm font-mono min-h-[200px] overflow-y-auto custom-scrollbar shadow-inner border border-gray-700">
+                            <div className="bg-gray-900 text-white p-4 rounded-lg text-sm font-mono min-h-[290px] overflow-y-auto custom-scrollbar shadow-inner border border-gray-700">
                               <div className="text-green-400">
                                 Ready to run {selectedAlgorithm?.name}...
                               </div>
@@ -706,7 +717,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
                       </div>
 
                       {/* Right Column - 1/5 width */}
-                      <div className="lg:col-span-1 space-y-3 max-h-[calc(100vh-160px)] overflow-y-auto custom-scrollbar pr-2 pb-4">
+                      <div className="lg:col-span-1 space-y-3 min-h-[80vh] overflow-y-auto custom-scrollbar pr-2 pb-4 ">
                         <ArrayInputCard
                           key={arrayInputKey}
                           handleGo={handleGo}
@@ -735,7 +746,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
                         />
 
                         {/* Progress Bar - 3rd Row */}
-                        <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg">
+                        <div className=" bg-white border border-gray-300 rounded-xl p-4">
                           <div className="flex items-center justify-between mb-3">
                             <span className="text-sm font-medium text-gray-700">
                               Progress

@@ -12,7 +12,7 @@ const StepHistory = ({ stepHistory, currentStepIndex, isVisualizationActive, sor
     }
   }, [currentStepIndex]);
   return (
-    <div className="backdrop-blur-md bg-card/20 border border-border/30 rounded-xl py-2 px-4 shadow-lg">
+    <div className="border border-gray-300 bg-white  rounded-xl py-2 px-4">
       <h3 className="text-lg font-semibold text-foreground mb-1">Step History</h3>
       <div ref={stepHistoryRef} className="space-y-2 h-48 overflow-y-auto custom-scrollbar">
         {stepHistory.length === 0 ? (
@@ -28,7 +28,7 @@ const StepHistory = ({ stepHistory, currentStepIndex, isVisualizationActive, sor
               ref={currentStepIndex === step.step ? currentStepRef : null}
               className={`p-3 rounded-lg transition-all cursor-pointer shadow-md border ${
                 currentStepIndex === step.step
-                  ? "bg-foreground/90 text-foreground-inverse border-border/60 shadow-lg ring-2 ring-primary/50"
+                  ? "bg-indigo-400/30 text-white border-border/60 shadow-lg "
                   : "bg-card/30 border-border/40 hover:bg-card/40 text-foreground hover:shadow-lg"
               }`}
               onClick={() => {
@@ -43,8 +43,8 @@ const StepHistory = ({ stepHistory, currentStepIndex, isVisualizationActive, sor
               }}
             >
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold">Step {step.step + 1}</span>
+                  <div className="flex items-center gap-3">
+                  <span className={`text-sm font-semibold ${currentStepIndex === step.step ? 'text-gray-900' : ''}`}>Step {step.step + 1}</span>
                   {step.leftRange && (
                     <span className="text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-800">L:{step.leftRange[0]}-{step.leftRange[1]}</span>
                   )}
@@ -94,14 +94,14 @@ const StepHistory = ({ stepHistory, currentStepIndex, isVisualizationActive, sor
                     className={`px-2 py-1 rounded text-xs font-medium shadow-sm ${
                       currentStepIndex === step.step
                         ? "bg-foreground/70 text-foreground-inverse"
-                        : "bg-card/50 text-foreground border border-border/30"
+                        : "bg-card/30 text-foreground border border-border"
                     }`}
                   >
                     {num}
                   </span>
                 ))}
               </div>
-              <p className={`text-xs ${currentStepIndex === step.step ? "text-foreground/80" : "text-foreground/90"}`}>{step.description}</p>
+              <p className={`text-[0.8rem] ${currentStepIndex === step.step ? "text-foreground" : "text-foreground/90"}`}>{step.description}</p>
             </div>
           ))
         )}

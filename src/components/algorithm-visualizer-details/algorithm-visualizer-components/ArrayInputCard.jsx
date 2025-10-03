@@ -57,7 +57,7 @@ const ArrayInputCard = ({ handleGo, selectedAlgorithm, pivotStrategy, setPivotSt
   };
 
   return (
-    <div className="backdrop-blur-md bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg">
+    <div className="bg-white border border-gray-300 rounded-xl p-4">
       <h3 className="text-md font-semibold text-gray-900 mb-3">Array Input</h3>
       <div className="space-y-3">
         <div className="relative">
