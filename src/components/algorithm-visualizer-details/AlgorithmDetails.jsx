@@ -4,16 +4,16 @@ import { Clock, BarChart3, Code, Play, BookOpen } from "lucide-react";
 
 // Dynamic code loaders (lazy import to keep bundle small)
 const codeLoaders = {
-  "Bubble Sort": () => import("../../algorithms/sorting/Details/bubbleSortCodes"),
-  "Selection Sort": () => import("../../algorithms/sorting/Details/selectionSortCodes"),
-  "Insertion Sort": () => import("../../algorithms/sorting/Details/insertionSortCodes"),
-  "Merge Sort": () => import("../../algorithms/sorting/Details/mergeSortCodes"),
-  "Quick Sort": () => import("../../algorithms/sorting/Details/quickSortCodes"),
-  "Shell Sort": () => import("../../algorithms/sorting/Details/shellSortCodes"),
-  "Bucket Sort": () => import("../../algorithms/sorting/Details/bucketSortCodes"),
-  "Radix Sort": () => import("../../algorithms/sorting/Details/radixSortCodes"),
-  "Counting Sort": () => import("../../algorithms/sorting/Details/countingSortCodes"),
-  "Heap Sort": () => import("../../algorithms/sorting/Details/heapSortCodes"),
+  "Bubble Sort": () => import("../algorithms/sorting/Details/bubbleSortCodes"),
+  "Selection Sort": () => import("../algorithms/sorting/Details/selectionSortCodes"),
+  "Insertion Sort": () => import("../algorithms/sorting/Details/insertionSortCodes"),
+  "Merge Sort": () => import("../algorithms/sorting/Details/mergeSortCodes"),
+  "Quick Sort": () => import("../algorithms/sorting/Details/quickSortCodes"),
+  "Shell Sort": () => import("../algorithms/sorting/Details/shellSortCodes"),
+  "Bucket Sort": () => import("../algorithms/sorting/Details/bucketSortCodes"),
+  "Radix Sort": () => import("../algorithms/sorting/Details/radixSortCodes"),
+  "Counting Sort": () => import("../algorithms/sorting/Details/countingSortCodes"),
+  "Heap Sort": () => import("../algorithms/sorting/Details/heapSortCodes"),
 };
 
 const AlgorithmDetails = ({ algorithm, topic }) => {
