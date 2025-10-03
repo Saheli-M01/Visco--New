@@ -4,12 +4,12 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AlgorithmDetails from "./AlgorithmDetails";
 import { categories } from "../../data/categories";
 import { getAlgorithm, parseArray } from "../../algorithms/algorithmFactory";
-import VisualizerHeader from "./VisualizerHeader";
-import CodePreview from "./CodePreview";
-import StepHistory from "./StepHistory";
-import ArrayDisplay from "./ArrayDisplay";
-import ControlsPanel from "./ControlsPanel";
-import ArrayInputCard from "./ArrayInputCard";
+import VisualizerHeader from "./algorithm-visualizer-components/VisualizerHeader";
+import CodePreview from "./algorithm-visualizer-components/CodePreview";
+import StepHistory from "./algorithm-visualizer-components/StepHistory";
+import ArrayDisplay from "./algorithm-visualizer-components/ArrayDisplay";
+import ControlsPanel from "./algorithm-visualizer-components/ControlsPanel";
+import ArrayInputCard from "./algorithm-visualizer-components/ArrayInputCard";
 import ConfirmModal from "./ConfirmModal";
 
 // Custom MUI theme for glassmorphic design
@@ -310,6 +310,59 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
       }
     };
   }, [isOpen, onClose, algorithm, executionInterval]);
+
+  // Handle pivot strategy changes during active Quick Sort visualization
+  useEffect(() => {
+    if (
+      isVisualizationActive &&
+      selectedAlgorithm?.name === 'Quick Sort' &&
+      originalArray &&
+      originalArray.length > 0
+    ) {
+      // Pause execution during regeneration
+      const wasPlaying = isPlaying;
+      handlePause();
+
+      // Debug logging
+      console.log('Regenerating Quick Sort with pivot strategy:', pivotStrategy);
+      console.log('Original array:', originalArray);
+
+      // Regenerate steps with new pivot strategy
+      const algorithm = getAlgorithm(selectedAlgorithm.name);
+      const steps = algorithm.generateSteps([...originalArray], selectedLanguage, pivotStrategy);
+
+      setSortingSteps(steps);
+      setTotalSteps(steps.length);
+      setStepHistory(
+        steps.map((step, index) => ({
+          step: index,
+          description: step.description,
+          array: step.array,
+          phase: step.phase,
+        }))
+      );
+
+      // Reset to first step with new visualization
+      setCurrentStepIndex(0);
+      setCurrentStep(0);
+      if (steps.length > 0) {
+        const firstStep = steps[0];
+        setCurrentArray([...firstStep.array]);
+        setComparingIndices(firstStep.comparing || []);
+        setCurrentCodeLine(
+          firstStep.codeLine !== undefined ? firstStep.codeLine : -1
+        );
+      }
+
+      // Resume playing if it was playing before
+      if (wasPlaying) {
+        setTimeout(() => {
+          setIsPlaying(true);
+          setIsExecuting(true);
+        }, 100);
+      }
+    }
+  }, [pivotStrategy]); // Only watch pivotStrategy changes
 
   // Handle speed changes during execution - restart interval with new speed
   useEffect(() => {
@@ -711,7 +764,7 @@ const FullScreenModal = ({ isOpen, onClose, algorithm, topic }) => {
               {/* Details Tab */}
               {activeTab === 1 && (
                 <div className="h-full overflow-y-auto bg-gradient-to-br from-white/10 to-white/20 backdrop-blur-sm custom-scrollbar">
-                  <div className="p-6 text-gray-900 max-w-6xl mx-auto">
+                  <div className="p-6 text-gray-900 max-w-full mx-auto">
                     <AlgorithmDetails
                       algorithm={selectedAlgorithm}
                       topic={topic}

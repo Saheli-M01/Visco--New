@@ -1,6 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Clock, BarChart3, Code, Play, BookOpen } from "lucide-react";
+
+// Dynamic code loaders (lazy import to keep bundle small)
+const codeLoaders = {
+  "Bubble Sort": () => import("../../algorithms/sorting/Details/bubbleSortCodes"),
+  "Selection Sort": () => import("../../algorithms/sorting/Details/selectionSortCodes"),
+  "Insertion Sort": () => import("../../algorithms/sorting/Details/insertionSortCodes"),
+  "Merge Sort": () => import("../../algorithms/sorting/Details/mergeSortCodes"),
+  "Quick Sort": () => import("../../algorithms/sorting/Details/quickSortCodes"),
+  "Shell Sort": () => import("../../algorithms/sorting/Details/shellSortCodes"),
+  "Bucket Sort": () => import("../../algorithms/sorting/Details/bucketSortCodes"),
+  "Radix Sort": () => import("../../algorithms/sorting/Details/radixSortCodes"),
+  "Counting Sort": () => import("../../algorithms/sorting/Details/countingSortCodes"),
+  "Heap Sort": () => import("../../algorithms/sorting/Details/heapSortCodes"),
+};
 
 const AlgorithmDetails = ({ algorithm, topic }) => {
   const getDifficultyColor = (difficulty) => {
@@ -16,213 +30,204 @@ const AlgorithmDetails = ({ algorithm, topic }) => {
     }
   };
 
-  // Sample algorithm data - you can expand this based on your needs
-  const getAlgorithmContent = (algorithmName) => {
-    const content = {
-      "Bubble Sort": {
-        description:
-          "Bubble Sort is the simplest sorting algorithm that works by repeatedly swapping the adjacent elements if they are in the wrong order. This algorithm is not suitable for large data sets as its average and worst-case time complexity is quite high.",
-        howItWorks: [
-          "Compare adjacent elements in the array",
-          "Swap them if they are in the wrong order",
-          "Continue until no more swaps are needed",
-          "The largest element 'bubbles' to the end in each pass",
-        ],
-        pseudoCode: `procedure bubbleSort(A : list of sortable items)
-    n := length(A)
-    repeat
-        swapped := false
-        for i := 1 to n - 1 inclusive do
-            if A[i - 1] > A[i] then
-                swap(A[i - 1], A[i])
-                swapped = true
-            end if
-        end for
-        n := n - 1
-    until not swapped
-end procedure`,
-        timeComplexity: {
-          best: "O(n)",
-          average: "O(n²)",
-          worst: "O(n²)",
-        },
-        spaceComplexity: "O(1)",
-      },
-      "Binary Search": {
-        description:
-          "Binary Search is a searching algorithm used in a sorted array by repeatedly dividing the search interval in half. It compares the target value to the middle element of the array.",
-        howItWorks: [
-          "Start with the entire sorted array",
-          "Find the middle element",
-          "Compare with target value",
-          "If equal, return the position",
-          "If target is smaller, search the left half",
-          "If target is larger, search the right half",
-          "Repeat until found or array is exhausted",
-        ],
-        pseudoCode: `procedure binarySearch(A, target)
-    low := 0
-    high := length(A) - 1
-    
-    while low <= high do
-        mid := floor((low + high) / 2)
-        if A[mid] = target then
-            return mid
-        else if A[mid] < target then
-            low := mid + 1
-        else
-            high := mid - 1
-        end if
-    end while
-    
-    return -1
-end procedure`,
-        timeComplexity: {
-          best: "O(1)",
-          average: "O(log n)",
-          worst: "O(log n)",
-        },
-        spaceComplexity: "O(1)",
-      },
-      // Add more algorithms as needed
-    };
 
-    return (
-      content[algorithmName] || {
-        description: `${algorithmName} is an important algorithm in computer science. This is a placeholder description that will be replaced with detailed content.`,
-        howItWorks: [
-          "Step 1: Algorithm initialization",
-          "Step 2: Main processing logic",
-          "Step 3: Result computation",
-          "Step 4: Return final result",
-        ],
-        pseudoCode: `// Pseudocode for ${algorithmName}
-// Implementation details coming soon...`,
-        timeComplexity: {
-          best: algorithm.complexity,
-          average: algorithm.complexity,
-          worst: algorithm.complexity,
-        },
-        spaceComplexity: "O(1)",
-      }
-    );
+
+  const [implLang, setImplLang] = useState("javascript");
+  const [copied, setCopied] = useState(false);
+  const [loadedCodes, setLoadedCodes] = useState({});
+  const [loadingCode, setLoadingCode] = useState(false);
+  const [algoMeta, setAlgoMeta] = useState({ description: "", howItWorks: [], timeComplexity: {}, spaceComplexity: "" });
+
+  const copyCode = async (code) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (e) {
+      console.error("Copy failed", e);
+    }
   };
 
-  const content = getAlgorithmContent(algorithm.name);
+  // Load code module for the current algorithm on demand
+  React.useEffect(() => {
+    let mounted = true;
+    const loader = codeLoaders[algorithm.name];
+    if (!loader) return;
+    setLoadingCode(true);
+    loader()
+      .then((mod) => {
+        if (!mounted) return;
+        const codes = mod && (mod.default || mod);
+        setLoadedCodes((s) => ({ ...s, [algorithm.name]: codes }));
+        // ensure implLang is valid for the newly loaded codes
+        if (codes && !codes[implLang]) setImplLang(Object.keys(codes)[0] || "javascript");
+        // Set meta fields from named exports if present
+        setAlgoMeta({
+          description: mod.description || "",
+          howItWorks: mod.howItWorks || [],
+          timeComplexity: mod.timeComplexity || {},
+          spaceComplexity: mod.spaceComplexity || "",
+        });
+      })
+      .catch((err) => console.error("Failed to load code module", err))
+      .finally(() => {
+        if (mounted) setLoadingCode(false);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [algorithm.name]);
 
   return (
-    <div className="space-y-8">
-      {/* Algorithm Overview */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="backdrop-blur-sm bg-white/20 border border-white/30 rounded-2xl p-6 shadow-xl"
-      >
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              {algorithm.name}
-            </h3>
-            <p className="text-gray-700 font-medium">{topic.title}</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(
-                algorithm.difficulty
-              )}`}
+    <div className="mx-auto w-[95vw]">
+      <div className="grid md:grid-cols-5 gap-6">
+        {/* Left: Overview + How it works (span 2) */}
+        <div className="md:col-span-2 space-y-6">
+          {/* Algorithm Overview */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="backdrop-blur-sm bg-white/20 border border-white/30 rounded-2xl p-6 shadow-xl"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  {algorithm.name}
+                </h3>
+                <p className="text-gray-700 font-medium">{topic.title}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(
+                    algorithm.difficulty
+                  )}`}
+                >
+                  {algorithm.difficulty}
+                </span>
+                <div className="flex items-center text-gray-600 bg-white/30 px-3 py-1 rounded-full">
+                  <Clock className="h-4 w-4 mr-1" />
+                  <span className="font-mono text-sm">{algorithm.complexity}</span>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-gray-700 leading-relaxed font-medium">{algoMeta.description}</p>
+          </motion.div>
+
+          {/* How It Works */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="backdrop-blur-sm bg-white/20 border border-white/30 rounded-2xl p-6 shadow-xl"
+          >
+            <div className="flex items-center mb-4">
+              <BookOpen className="h-5 w-5 text-gray-900 mr-2" />
+              <h4 className="text-xl font-semibold text-gray-900">How It Works</h4>
+            </div>
+            <ol className="space-y-3">
+              {algoMeta.howItWorks.map((step, index) => (
+                <motion.li
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
+                  className="flex items-start"
+                >
+                  <span className="inline-flex items-center justify-center w-6 h-6 bg-white/30 text-gray-900 rounded-full text-sm font-bold mr-3 mt-0.5 flex-shrink-0">
+                    {index + 1}
+                  </span>
+                  <span className="text-gray-700 font-medium">{step}</span>
+                </motion.li>
+              ))}
+            </ol>
+          </motion.div>
+        </div>
+
+
+        {/* Right: Code (top) and Complexity (below) */}
+        <div className="md:col-span-3 space-y-4">
+          {codeLoaders[algorithm.name] && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.25 }}
+              className="backdrop-blur-sm bg-white/20 border border-white/30 rounded-2xl p-4 shadow-xl"
             >
-              {algorithm.difficulty}
-            </span>
-            <div className="flex items-center text-gray-600 bg-white/30 px-3 py-1 rounded-full">
-              <Clock className="h-4 w-4 mr-1" />
-              <span className="font-mono text-sm">{algorithm.complexity}</span>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <Code className="h-5 w-5 text-gray-900 mr-2" />
+                  <h4 className="text-lg font-semibold text-gray-900">Implementation</h4>
+                </div>
+                <div className="flex items-center gap-2">
+                  {Object.keys(loadedCodes[algorithm.name] || {}).map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => setImplLang(lang)}
+                      className={`px-2 py-1 rounded-md text-xs font-medium ${
+                        implLang === lang ? "bg-gray-900 text-white" : "bg-white/30 text-gray-900"
+                      }`}
+                    >
+                      {lang.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative">
+                <pre className="whitespace-pre-wrap bg-gray-900 text-gray-100 p-3 rounded-lg overflow-auto text-xs font-mono max-h-56">
+                  <code>
+                    {loadingCode && !loadedCodes[algorithm.name]
+                      ? "Loading implementation..."
+                      : (loadedCodes[algorithm.name] || {})[implLang] || algoMeta.pseudoCode || "No implementation available."}
+                  </code>
+                </pre>
+                <div className="absolute top-3 right-3 flex items-center gap-2">
+                  <button
+                    onClick={() => copyCode((loadedCodes[algorithm.name] || {})[implLang])}
+                    className="px-3 py-1 bg-white/10 text-gray-900 rounded-md text-sm font-medium hover:bg-white/20"
+                  >
+                    Copy
+                  </button>
+                  {copied && <span className="text-sm text-green-600">Copied!</span>}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="backdrop-blur-sm bg-white/20 border border-white/30 rounded-2xl p-4 shadow-xl">
+              <div className="flex items-center mb-2">
+                <BarChart3 className="h-5 w-5 text-gray-900 mr-2" />
+                <h5 className="text-sm font-semibold text-gray-900">Time Complexity</h5>
+              </div>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Best:</span>
+                  <code className="bg-white/30 px-2 py-0.5 rounded text-gray-900 font-mono">{algoMeta.timeComplexity.best}</code>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Average:</span>
+                  <code className="bg-white/30 px-2 py-0.5 rounded text-gray-900 font-mono">{algoMeta.timeComplexity.average}</code>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Worst:</span>
+                  <code className="bg-white/30 px-2 py-0.5 rounded text-gray-900 font-mono">{algoMeta.timeComplexity.worst}</code>
+                </div>
+              </div>
+            </div>
+
+            <div className="backdrop-blur-sm bg-white/20 border border-white/30 rounded-2xl p-4 shadow-xl">
+              <div className="flex items-center mb-2">
+                <BarChart3 className="h-5 w-5 text-gray-900 mr-2" />
+                <h5 className="text-sm font-semibold text-gray-900">Space Complexity</h5>
+              </div>
+              <code className="bg-white/30 px-3 py-1 rounded text-gray-900 font-mono text-sm">{algoMeta.spaceComplexity}</code>
             </div>
           </div>
         </div>
-
-        <p className="text-gray-700 leading-relaxed font-medium">
-          {content.description}
-        </p>
-      </motion.div>
-
-      {/* How It Works */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="backdrop-blur-sm bg-white/20 border border-white/30 rounded-2xl p-6 shadow-xl"
-      >
-        <div className="flex items-center mb-4">
-          <BookOpen className="h-5 w-5 text-gray-900 mr-2" />
-          <h4 className="text-xl font-semibold text-gray-900">How It Works</h4>
-        </div>
-        <ol className="space-y-3">
-          {content.howItWorks.map((step, index) => (
-            <motion.li
-              key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
-              className="flex items-start"
-            >
-              <span className="inline-flex items-center justify-center w-6 h-6 bg-white/30 text-gray-900 rounded-full text-sm font-bold mr-3 mt-0.5 flex-shrink-0">
-                {index + 1}
-              </span>
-              <span className="text-gray-700 font-medium">{step}</span>
-            </motion.li>
-          ))}
-        </ol>
-      </motion.div>
-
-      {/* Time & Space Complexity */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="grid md:grid-cols-2 gap-6"
-      >
-        <div className="backdrop-blur-sm bg-white/20 border border-white/30 rounded-2xl p-6 shadow-xl">
-          <div className="flex items-center mb-4">
-            <BarChart3 className="h-5 w-5 text-gray-900 mr-2" />
-            <h4 className="text-lg font-semibold text-gray-900">
-              Time Complexity
-            </h4>
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-gray-700">Best Case:</span>
-              <code className="bg-white/30 px-2 py-1 rounded text-gray-900 font-mono">
-                {content.timeComplexity.best}
-              </code>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-700">Average Case:</span>
-              <code className="bg-white/30 px-2 py-1 rounded text-gray-900 font-mono">
-                {content.timeComplexity.average}
-              </code>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-700">Worst Case:</span>
-              <code className="bg-white/30 px-2 py-1 rounded text-gray-900 font-mono">
-                {content.timeComplexity.worst}
-              </code>
-            </div>
-          </div>
-        </div>
-
-        <div className="backdrop-blur-sm bg-white/20 border border-white/30 rounded-2xl p-6 shadow-xl">
-          <div className="flex items-center mb-4">
-            <BarChart3 className="h-5 w-5 text-gray-900 mr-2" />
-            <h4 className="text-lg font-semibold text-gray-900">
-              Space Complexity
-            </h4>
-          </div>
-          <code className="bg-white/30 px-4 py-2 rounded-lg text-gray-900 font-mono text-lg">
-            {content.spaceComplexity}
-          </code>
-        </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

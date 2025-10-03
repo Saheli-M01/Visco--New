@@ -5,6 +5,8 @@ export const quickSort = {
   generateSteps: (arr, language = 'javascript', pivotStrategy = 'last') => {
     const steps = [];
     const a = [...arr];
+    // Debug: log incoming pivotStrategy
+    try { console.debug('[quickSort] generateSteps pivotStrategy:', pivotStrategy, 'array:', a); } catch(e) {}
 
     function partition(low, high) {
       // Choose pivot based on strategy
@@ -15,17 +17,25 @@ export const quickSort = {
       } else if (pivotStrategy === 'middle') {
         pivotIdx = Math.floor((low + high) / 2);
       } else if (typeof pivotStrategy === 'number') {
-        // Index-based pivot selection
-        pivotIdx = Math.min(Math.max(pivotStrategy, low), high);
+        // Index-based pivot selection - only use the exact index if it's within the current partition
+        if (pivotStrategy >= low && pivotStrategy <= high) {
+          pivotIdx = pivotStrategy;
+        } else {
+          // If specified index is outside current partition, use last element of partition
+          pivotIdx = high;
+        }
       }
       // For 'last', pivotIdx remains high
       
-      // Move chosen pivot to last position if not already there
+  // Debug: show chosen pivot index before swap
+  try { console.debug('[quickSort] partition choose pivotIdx=', pivotIdx, 'low=', low, 'high=', high, 'pivotStrategy=', pivotStrategy); } catch(e) {}
+  // Move chosen pivot to last position if not already there
       if (pivotIdx !== high) {
+        // swap a[pivotIdx] and a[high]
         const temp = a[pivotIdx];
-        a[high] = a[pivotIdx];
-        a[pivotIdx] = temp;
-        
+        a[pivotIdx] = a[high];
+        a[high] = temp;
+
         steps.push({ 
           array: [...a], 
           comparing: [], 
@@ -46,7 +56,7 @@ export const quickSort = {
         array: [...a], 
         comparing: [], 
         swapped: [], 
-        description: `Select pivot (${typeof pivotStrategy === 'number' ? `index ${pivotStrategy}` : pivotStrategy}): arr[${high}] = ${pivot}`, 
+        description: `Select pivot (${typeof pivotStrategy === 'number' ? `index ${pivotStrategy}, using arr[${pivotIdx}]` : pivotStrategy}): arr[${high}] = ${pivot}`, 
         codeLine: 7,
         phase: 'pivot-selection',
         pivotIndex: high,

@@ -26,7 +26,7 @@ export const About = () => {
   ];
 
   return (
-    <section className="relative py-24 px-6 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 overflow-hidden">
+    <section className="relative py-4 px-6 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 overflow-hidden">
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-15">
         <div
@@ -45,7 +45,7 @@ export const About = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-8"
         >
           <div className=" rounded-3xl px-12 py-16  mb-12">
             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900">

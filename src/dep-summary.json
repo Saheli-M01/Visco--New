@@ -1,0 +1,46 @@
+{
+  "totalNodes": 104,
+  "totalEdges": 34,
+  "topUsed": [
+    [
+      "data/categories.js",
+      3
+    ],
+    [
+      "App.jsx",
+      2
+    ],
+    [
+      "hooks/useAlgorithmCounts.js",
+      2
+    ],
+    [
+      "algorithms/algorithmFactory.js",
+      1
+    ],
+    [
+      "algorithms/sorting/Visualizer/bubbleSort.js",
+      1
+    ],
+    [
+      "algorithms/sorting/Visualizer/selectionSort.js",
+      1
+    ],
+    [
+      "algorithms/sorting/Visualizer/insertionSort.js",
+      1
+    ],
+    [
+      "algorithms/sorting/Visualizer/mergeSort.js",
+      1
+    ],
+    [
+      "algorithms/sorting/Visualizer/quickSort.js",
+      1
+    ],
+    [
+      "algorithms/sorting/Visualizer/heapSort.js",
+      1
+    ]
+  ]
+}

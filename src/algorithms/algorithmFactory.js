@@ -1,13 +1,13 @@
-import { bubbleSort } from "./sorting/bubbleSort.js";
-import { selectionSort } from "./sorting/selectionSort.js";
-import { insertionSort } from "./sorting/insertionSort.js";
-import { mergeSort } from "./sorting/mergeSort.js";
-import { quickSort } from "./sorting/quickSort.js";
-import { heapSort } from "./sorting/heapSort.js";
-import { bucketSort } from "./sorting/bucketSort.js";
-import { radixSort } from "./sorting/radixSort.js";
-import { shellSort } from "./sorting/shellSort.js";
-import { countingSort } from "./sorting/countingSort.js";
+import { bubbleSort } from "./sorting/Visualizer/bubbleSort.js";
+import { selectionSort } from "./sorting/Visualizer/selectionSort.js";
+import { insertionSort } from "./sorting/Visualizer/insertionSort.js";
+import { mergeSort } from "./sorting/Visualizer/mergeSort.js";
+import { quickSort } from "./sorting/Visualizer/quickSort.js";
+import { heapSort } from "./sorting/Visualizer/heapSort.js";
+import { bucketSort } from "./sorting/Visualizer/bucketSort.js";
+import { radixSort } from "./sorting/Visualizer/radixSort.js";
+import { shellSort } from "./sorting/Visualizer/shellSort.js";
+import { countingSort } from "./sorting/Visualizer/countingSort.js";
 
 // Algorithm factory to get the appropriate algorithm implementation
 export const getAlgorithm = (algorithmName) => {
