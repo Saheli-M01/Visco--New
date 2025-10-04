@@ -39,8 +39,8 @@ export const bubbleSort = {
         array: [...sortedArray],
         comparing: [],
         swapped: [],
-        description: `Pass ${i + 1}: Starting outer loop (i = ${i})`,
-        codeLine: 1, // for (let i = 0; i < n - 1; i++)
+        description: `Pass ${i + 1}: Starting outer loop: i = ${i}`,
+        codeLine: 2, // for (let i = 0; i < n - 1; i++)
         phase: "outer_loop"
       });
 
@@ -51,7 +51,7 @@ export const bubbleSort = {
           comparing: [],
           swapped: [],
           description: `Inner loop: j = ${j}`,
-          codeLine: 2, // for (let j = 0; j < n - i - 1; j++)
+          codeLine: 3, // for (let j = 0; j < n - i - 1; j++)
           phase: "inner_loop"
         });
 
@@ -60,8 +60,8 @@ export const bubbleSort = {
           array: [...sortedArray],
           comparing: [j, j + 1],
           swapped: [],
-          description: `Comparing arr[${j}] (${sortedArray[j]}) with arr[${j + 1}] (${sortedArray[j + 1]})`,
-          codeLine: 3, // if (arr[j] > arr[j + 1])
+          description: `Comparing arr[${j}] = ${sortedArray[j]} with arr[${j + 1}] = ${sortedArray[j + 1]}`,
+          codeLine: 4, // if (arr[j] > arr[j + 1])
           phase: "comparison"
         });
 
@@ -80,7 +80,7 @@ export const bubbleSort = {
               swapped: [],
               description: `temp = ${temp1}`,
               temp: { value: temp1, index: j },
-              codeLine: 4, // int temp = arr[j];
+              codeLine: 5, // int temp = arr[j];
               phase: "swap_step"
             });
 
@@ -92,7 +92,7 @@ export const bubbleSort = {
               swapped: [j, j + 1],
               description: `arr[${j}] = ${temp2}`,
               temp: { value: temp1, index: j },
-              codeLine: 5, // arr[j] = arr[j + 1];
+              codeLine: 6, // arr[j] = arr[j + 1];
               phase: "swap_step"
             });
 
@@ -105,7 +105,7 @@ export const bubbleSort = {
               swapped: [j, j + 1],
               description: `arr[${j + 1}] = ${temp1}`,
               temp: { value: temp1, index: j },
-              codeLine: 6, // arr[j + 1] = temp;
+              codeLine: 7, // arr[j + 1] = temp;
               phase: "swap"
             });
           } else {
@@ -116,7 +116,7 @@ export const bubbleSort = {
               comparing: [j, j + 1],
               swapped: [j, j + 1],
               description: `Swapping: ${temp1} ↔ ${temp2}`,
-              codeLine: 4, // swap operation (single-line)
+              codeLine: 5, // swap operation (single-line)
               phase: "swap"
             });
           }
@@ -126,7 +126,7 @@ export const bubbleSort = {
             comparing: [j, j + 1],
             swapped: [],
             description: `No swap needed: ${sortedArray[j]} ≤ ${sortedArray[j + 1]}`,
-            codeLine: 3, // staying in comparison
+            codeLine: 4, // staying in comparison
             phase: "no_swap"
           });
         }
@@ -146,7 +146,7 @@ export const bubbleSort = {
       }
     }
     
-    // For languages that use a temp variable (C/Java), ensure the temp value
+  // For languages that use a temp variable (C/Java), ensure the temp value
     // persists across subsequent steps once it's created. This mirrors the
     // behavior where the temp variable remains in scope until overwritten.
     const languageUsesTemp = language === 'c' || language === 'java';
@@ -170,6 +170,22 @@ export const bubbleSort = {
       }
     }
 
+  // Ensure the steps end with a clear 'completed' state so the UI doesn't
+    // display lingering comparing indices after the algorithm finishes.
+    if (steps.length > 0) {
+      const last = steps[steps.length - 1];
+      if (last.phase !== 'completed') {
+        steps.push({
+          array: [...sortedArray],
+          comparing: [],
+          swapped: [],
+          description: 'Array is now fully sorted',
+          codeLine: -1,
+          phase: 'completed'
+        });
+      }
+    }
+
     return steps;
   },
 
@@ -178,64 +194,69 @@ export const bubbleSort = {
     const codeLines = {
       javascript: [
         "function bubbleSort(arr) {",                    // 0
-        "  for (let i = 0; i < n - 1; i++) {",         // 1
-        "    for (let j = 0; j < n - i - 1; j++) {",   // 2
-        "      if (arr[j] > arr[j + 1]) {",             // 3
-        "        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];", // 4
-        "      }",                                       // 5
-        "    }",                                         // 6
-        "  }",                                           // 7
-        "  return arr;",                                 // 8
-        "}"                                              // 9
+        "  const n = arr.length;",                      // 1
+        "  for (let i = 0; i < n - 1; i++) {",         // 2
+        "    for (let j = 0; j < n - i - 1; j++) {",   // 3
+        "      if (arr[j] > arr[j + 1]) {",             // 4
+        "        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];", // 5
+        "      }",                                       // 6
+        "    }",                                         // 7
+        "  }",                                           // 8
+        "  return arr;",                                 // 9
+        "}"                                              // 10
       ],
       
       python: [
         "def bubble_sort(arr):",                         // 0
-        "    for i in range(len(arr) - 1):",            // 1
-        "        for j in range(len(arr) - i - 1):",    // 2
-        "            if arr[j] > arr[j + 1]:",           // 3
-        "                arr[j], arr[j + 1] = arr[j + 1], arr[j]", // 4
-        "    return arr"                                 // 5
+        "    n = len(arr)",                              // 1
+        "    for i in range(n - 1):",                    // 2
+        "        for j in range(n - i - 1):",            // 3
+        "            if arr[j] > arr[j + 1]:",           // 4
+        "                arr[j], arr[j + 1] = arr[j + 1], arr[j]", // 5
+        "    return arr"                                 // 6
       ],
       
       java: [
         "public static void bubbleSort(int[] arr) {",    // 0
-        "    for (int i = 0; i < arr.length - 1; i++) {", // 1
-        "        for (int j = 0; j < arr.length - i - 1; j++) {", // 2
-        "            if (arr[j] > arr[j + 1]) {",         // 3
-        "                int temp = arr[j];",             // 4
-        "                arr[j] = arr[j + 1];",           // 5
-        "                arr[j + 1] = temp;",             // 6
-        "            }",                                  // 7
-        "        }",                                      // 8
-        "    }",                                         // 9
-        "}"                                              // 10
+        "    int n = arr.length;",                       // 1
+        "    for (int i = 0; i < n - 1; i++) {",         // 2
+        "        for (int j = 0; j < n - i - 1; j++) {", // 3
+        "            if (arr[j] > arr[j + 1]) {",         // 4
+        "                int temp = arr[j];",             // 5
+        "                arr[j] = arr[j + 1];",           // 6
+        "                arr[j + 1] = temp;",             // 7
+        "            }",                                  // 8
+        "        }",                                      // 9
+        "    }",                                         // 10
+        "}"                                              // 11
       ],
       
       cpp: [
         "void bubbleSort(vector<int>& arr) {",           // 0
-        "    for (int i = 0; i < arr.size() - 1; i++) {", // 1
-        "        for (int j = 0; j < arr.size() - i - 1; j++) {", // 2
-        "            if (arr[j] > arr[j + 1]) {",         // 3
-        "                swap(arr[j], arr[j + 1]);",      // 4
-        "            }",                                  // 5
-        "        }",                                      // 6
-        "    }",                                         // 7
-        "}"                                              // 8
+        "    int n = arr.size();",                       // 1
+        "    for (int i = 0; i < n - 1; i++) {",         // 2
+        "        for (int j = 0; j < n - i - 1; j++) {", // 3
+        "            if (arr[j] > arr[j + 1]) {",         // 4
+        "                swap(arr[j], arr[j + 1]);",      // 5
+        "            }",                                  // 6
+        "        }",                                      // 7
+        "    }",                                         // 8
+        "}"                                              // 9
       ],
       
       c: [
         "void bubbleSort(int arr[], int n) {",           // 0
-        "    for (int i = 0; i < n - 1; i++) {",        // 1
-        "        for (int j = 0; j < n - i - 1; j++) {", // 2
-        "            if (arr[j] > arr[j + 1]) {",         // 3
-        "                int temp = arr[j];",             // 4
-        "                arr[j] = arr[j + 1];",           // 5
-        "                arr[j + 1] = temp;",             // 6
-        "            }",                                  // 7
-        "        }",                                      // 8
-        "    }",                                         // 9
-        "}"                                              // 10
+        "    // n is provided as a parameter",          // 1 (placeholder to align indices)
+        "    for (int i = 0; i < n - 1; i++) {",        // 2
+        "        for (int j = 0; j < n - i - 1; j++) {", // 3
+        "            if (arr[j] > arr[j + 1]) {",         // 4
+        "                int temp = arr[j];",             // 5
+        "                arr[j] = arr[j + 1];",           // 6
+        "                arr[j + 1] = temp;",             // 7
+        "            }",                                  // 8
+        "        }",                                      // 9
+        "    }",                                         // 10
+        "}"                                              // 11
       ]
     };
 
