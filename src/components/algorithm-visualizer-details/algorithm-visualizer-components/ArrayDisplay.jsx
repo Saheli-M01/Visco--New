@@ -134,7 +134,7 @@ const ArrayDisplay = ({
               const highlightForMid = showMidUI && index === midValue;
 
               const baseClass = isComparing
-                ? "bg-blue-500 text-white border-blue-400 scale-110 animate-pulse"
+                ? "bg-indigo-400 text-white border-indigo-600 scale-110 animate-pulse"
                 : isSwapped
                 ? "bg-green-500 text-white border-green-400 scale-105"
                 : isPivot
@@ -165,7 +165,7 @@ const ArrayDisplay = ({
                 >
                   {isComparing && (
                     <div className="mb-2">
-                      <div className="bg-blue-400 text-white text-xs px-3 py-1 rounded-full font-semibold">
+                      <div className="bg-indigo-400 text-white text-xs px-3 py-1 rounded-full font-semibold">
                         Comparing
                       </div>
                     </div>
@@ -186,7 +186,7 @@ const ArrayDisplay = ({
                   )}
 
                   <div
-                    className={`flex items-center justify-center h-16 px-4 rounded-lg font-bold text-lg transition-all duration-500 ease-in-out transform shadow-lg border-2 min-w-[60px] ${baseClass} ${tempHighlightClass} ${midHighlightClass}`}
+                    className={`flex items-center justify-center h-16 px-4 rounded-lg font-bold text-lg transition-all duration-500 ease-in-out transform shadow-lg border-2 min-w-[60px] ${baseClass}  ${midHighlightClass}`}
                   >
                     <span className="drop-shadow-lg">{value}</span>
                   </div>
